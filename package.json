@@ -1,0 +1,66 @@
+{
+  "name": "workshop-template",
+  "private": true,
+  "epicshop": {
+    "title": "Mocking Techniques",
+    "githubRoot": "https://github.com/epicweb-dev/mocking-techniques",
+    "forms": {
+      "exercise": "https://docs.google.com/forms/d/e/1FAIpQLSf8xpntKQzPYYO9H1OvMcxEa224PqmhVeYfUSj_MotHy-fSUQ/viewform?usp=pp_url&entry.1709952199={workshopTitle}&entry.1597352702={exerciseTitle}",
+      "workshop": "https://docs.google.com/forms/d/e/1FAIpQLSd4xYc0qW-q3vXbVh2YoU4i3OVinvUdOs3kpkEi5WKmxPu5ew/viewform?usp=pp_url&entry.1709952199={workshopTitle}"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "build": "npm run build --if-present --workspaces",
+    "start": "epicshop start",
+    "dev": "epicshop start",
+    "test": "npm run test --silent --prefix playground",
+    "test:e2e": "npm run test:e2e --silent --prefix playground",
+    "test:e2e:dev": "npm run test:e2e:dev --silent --prefix playground",
+    "test:e2e:run": "npm run test:e2e:run --silent --prefix playground",
+    "pretest:all": "npm run build",
+    "test:all": "node ./scripts/test.js",
+    "setup": "node ./setup.js",
+    "setup:custom": "node ./scripts/setup-custom.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "typecheck": "tsc -b",
+    "validate:all": "npm-run-all --parallel --print-label --print-name --continue-on-error test:all lint typecheck"
+  },
+  "keywords": [],
+  "author": "Artem Zakharchenko <me@kettanaito.com> (https://kettanaito.com/)",
+  "license": "GPL-3.0-only",
+  "eslintIgnore": [
+    "/node_modules",
+    "/build",
+    "/public/build"
+  ],
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "sourceType": "module"
+    }
+  },
+  "workspaces": [
+    "exercises/*/*"
+  ],
+  "engines": {
+    "node": ">=20.11.0",
+    "npm": ">=8.16.0",
+    "git": ">=2.18.0"
+  },
+  "dependencies": {
+    "@epic-web/workshop-app": "^4.1.0",
+    "@epic-web/workshop-utils": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.6",
+    "@typescript-eslint/parser": "^7.1.0",
+    "eslint": "^8.57.0",
+    "execa": "^8.0.1",
+    "fs-extra": "^11.1.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
