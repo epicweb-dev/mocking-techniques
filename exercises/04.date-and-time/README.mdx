@@ -1,4 +1,38 @@
 # Date and time
 
 1. Date and time (`vi.useFakeTimers()` + `vi.setSystemTime()`).
-1. Timers (`vi.advanceTimers()` / `vi.advanceTimersToNextTimer()`). Handle `setTimeout` and `setInterval` in your tested code.
+
+```ts
+import { createTimeLabel } from '~'
+
+beforeAll(() => {
+  vi.useFakeTimers()
+})
+
+afterAll(() => {
+  vi.useRealTimers()
+})
+
+it('returns "now" if the current date equals to created date', () => {
+  const date = new Date('2024-01-01')
+  vi.setSystemTime(date)
+  expect(createTimeLabel(date).toBe('Now')
+})
+
+it('returns "xyz ago" if the current date supercedes the created date', () => {
+  vi.setSystemTime(new Date('2024-06-06'))
+  expect(createTimeLabel(new Date('2024-01-01'))).toBe('6 months ago')
+})
+```
+
+> A nice opprtunity to passively learn how to do a "xyz ago" indicator logic! I believe the standard `Intl` has some nice data/time manipulation methods.
+
+2. Timers (`vi.advanceTimers()` / `vi.advanceTimersToNextTimer()`). Handle `setTimeout` and `setInterval` in your tested code.
+
+```ts
+it('', () => {
+  vi.advanceTimers(...)
+})
+```
+
+- Timeout functionality? But I don't want to bring in the network here.

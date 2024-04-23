@@ -2,6 +2,58 @@
 
 > Beware not to introduce _implenentation-detail testing_! Spying can lead you off track in no time. Teach what's okay to spy on and what's not.
 
-1. Spies (`vi.spyOn()` + `.toHaveBeenCalledWith()`).
-1. Mock functions (`vi.fn()`).
-1. Mock implementation (`.mockImplementation()`, etc).
+1. Spies (`vi.spyOn()` + `.toHaveBeenCalledWith()`). Spy and assert on the unmodified behavior.
+1. Mock functions (`vi.fn()`). Mock a function so the tested code can run (setup phase). Better than using plain `() => {}` dummies because those will not compile in TypeScript:
+
+```ts
+// ❌ If "b: (n: number) => number",
+// providing an empty function will error.
+make({ b: () => {} })
+       ^^^^^^^^^^^
+
+// ✅ Using "vi.fn()" infers the "b" type.
+make({ b: vi.fn() })
+```
+
+> `vi.fn()` is usually for the things you control, like arguments.
+
+3. Mock implementation (`.mockImplementation()`, etc). + `.vi.resetAllMocks()` / `vi.restoreAllMocks()`.
+
+You can also _change_ a behavior of a mock function between tests:
+
+```ts
+// Initial function mock.
+const fn = vi.fn()
+
+afterEach(() => vi.resetAllMocks())
+
+// The first test runs using the initial mock.
+it('first', () => fn())
+
+// The second test provides an implementation override
+// for the mock so it behaves differently.
+it('second', () => {
+  fn.mockImplementation(() => 1)
+})
+```
+
+> [!] `vi.fn(impl)` is a shorthand for `vi.fn().mockImplementation(impl)`.
+
+> `.mockImplementation()` is usually for the things you don't control directly (a dependency code) or at all (a third-party dependency).
+
+```ts
+import { CartService } from '~/services/cart'
+import { UserService } from '~/services/user'
+
+it('throws an error when adding to the cart as unauthorized user', () => {
+  // Running the actual check is irrelevant for the CartService.
+  // It only cares about the result to set it into the right state.
+  vi.spyOn(UserService, 'isAuthenticated').mockImplementation(() => false)
+})
+
+// Here, another test that needs a different implementation.
+// This teaches about ".resetAllMocks()".
+// ...
+```
+
+> This is way too close to the implementation detail detesting to my liking. At the same time, this is problably a viable strategy for test setup that depends on other modules.
