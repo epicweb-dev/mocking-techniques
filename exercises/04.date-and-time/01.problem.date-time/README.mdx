@@ -1,0 +1,26 @@
+# Date and time
+
+```ts
+import { createTimeLabel } from '~'
+
+beforeAll(() => {
+  vi.useFakeTimers()
+})
+
+afterAll(() => {
+  vi.useRealTimers()
+})
+
+test('returns "now" if the current date equals to created date', () => {
+  const date = new Date('2024-01-01')
+  vi.setSystemTime(date)
+  expect(createTimeLabel(date).toBe('Now')
+})
+
+test('returns "xyz ago" if the current date supercedes the created date', () => {
+  vi.setSystemTime(new Date('2024-06-06'))
+  expect(createTimeLabel(new Date('2024-01-01'))).toBe('6 months ago')
+})
+```
+
+> A nice opportunity to passively learn how to do a "xyz ago" indicator logic! I believe the standard `Intl` has some nice data/time manipulation methods.

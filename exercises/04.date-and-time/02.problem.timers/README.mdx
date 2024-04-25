@@ -1,0 +1,22 @@
+# Timers
+
+Timers (`vi.advanceTimers()` / `vi.advanceTimersToNextTimer()`). Handle `setTimeout` and `setInterval` in your tested code.
+
+```ts
+function withTimeout(promise: Promise<unknown>, timeoutDuration: number) {
+  const timeoutPromise = ew Promise((_, reject) => {
+    setTimeout(() => reject(new Error('Promise timed out')), timeoutDuration)
+  }))
+
+  return Promise.race([promise, timeoutPromise])
+}
+
+test('test', () => {
+  const promise = withTimeout(new Promise(() => {}), 1000)
+  vi.advanceTimers(1000)
+  await expect(promise).rejects.toThrow('Promise timed out')
+})
+
+// ...The same for resolution.
+// ...The same for success scenario.
+```

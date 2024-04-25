@@ -1,0 +1,15 @@
+# Mock functions
+
+Mock functions (`vi.fn()`). Mock a function so the tested code can run (setup phase). Better than using plain `() => {}` dummies because those will not compile in TypeScript:
+
+```ts
+// ❌ If "b: (n: number) => number",
+// providing an empty function will error.
+make({ b: () => {} })
+       ^^^^^^^^^^^
+
+// ✅ Using "vi.fn()" infers the "b" type.
+make({ b: vi.fn() })
+```
+
+> `vi.fn()` is usually for the things you control, like arguments.

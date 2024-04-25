@@ -1,4 +1,50 @@
 {
   "files": [],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ],
+  "references": [
+    {
+      "path": "exercises/01.boundaries/01.problem.boundaries"
+    },
+    {
+      "path": "exercises/01.boundaries/01.solution.boundaries"
+    },
+    {
+      "path": "exercises/03.functions/01.problem.spies"
+    },
+    {
+      "path": "exercises/03.functions/01.solution.spies"
+    },
+    {
+      "path": "exercises/03.functions/02.problem.mock-functions"
+    },
+    {
+      "path": "exercises/03.functions/02.solution.mock-functions"
+    },
+    {
+      "path": "exercises/03.functions/03.problem.mock-implementation"
+    },
+    {
+      "path": "exercises/03.functions/03.solution.mock-implementation"
+    },
+    {
+      "path": "exercises/04.date-and-time/01.problem.date-time"
+    },
+    {
+      "path": "exercises/04.date-and-time/01.solution.date-time"
+    },
+    {
+      "path": "exercises/04.date-and-time/02.problem.timers"
+    },
+    {
+      "path": "exercises/04.date-and-time/02.solution.timers"
+    },
+    {
+      "path": "exercises/06.modules/01.problem.local-modules"
+    },
+    {
+      "path": "exercises/06.modules/01.solution.local-modules"
+    }
+  ]
 }

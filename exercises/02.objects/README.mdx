@@ -1,8 +1,81 @@
 # Objects
 
-> This shouldn't do any spying since "Functions" is about that.
+> This shouldn't do any spying since "Functions" do that!
 
-1. Mocking globals you own.
-1. Mocking globals you don't own.
-1. (?) Dependency injection.
-1. (?) Fakes. You have an object, how do you create a fake for it? Likely for the test setup.
+Maybe split this into "Globals" and something else? Globals can be mocked in many different ways: monkey-patching, using `Proxy`, using `.spyOn()`, using the test setup, etc.
+
+1. Mocking globals.
+
+```ts
+function greet(name: string) {
+  // Return a different greeting based on the user's language.
+  if (navigator.languages.includes('es')) {
+    return `¡Hola, ${name}!`
+  }
+
+  return `Hello, ${name}!`
+}
+
+const originalNavigator = globalThis.navigator
+
+afterEach(() => {
+  globalThis.navigator = originalNavigator
+})
+
+test('returns a greeting for Spanish users', () => {
+  // Don't use ".spyOn()" just yet. Simple monkey-patching
+  // will also work. You don't need to spy on this value.
+  globalThis.navigator = {
+    languages: ['es'],
+  }
+
+  expect(greet('Sarah')).toBe('¡Hola, Sarah!')
+})
+
+test('returns a greeting for other users', () => {
+  expect(greet('John')).toBe('Hello, John!')
+})
+```
+
+> TODO: Explain how to deal with TypeScript if you want to patch just one property of an object.
+
+1. Fakes (with Dependency injection). Don't focus on DI because it's _not_ exclusively a testing technique. We can still showcase how it helps with testing.
+
+- 📜 **Article: Good Code Is Testable Code**.
+
+```ts
+// Use "implements" for type-safety and compatibility
+// with the actual class we are trying to fake.
+class FakeDatabase implements Database {
+  users: Array<string> = []
+
+  // Implement one of the Database methods
+  // but make it simpler. Same behavior, different
+  // implementation.
+  public addUser(email: string) {
+    if (!this.users.includes(emails)) {
+      this.users.push(email)
+    }
+  }
+}
+
+test('sends an email', () => {
+  // Create a fake database and provide it to the
+  // email service so it's used in the test.
+  // The email service calls "db.addUser()" internally.
+  const database = new FakeDatabase()
+  const emailService = new EmailService(database)
+
+  const result = await emailService.sendEmail({
+    to: 'kody@epicweb.dev',
+    subject: 'Hello!',
+  })
+
+  // Must send the email.
+  expect(result.sent).toBe(true)
+  // Must store the recepient's email address.
+  expect(database.users).toEqual(['kody@epicweb.dev'])
+})
+```
+
+> NOTE: We mustn't assert that `database.addUser()` has been called! That's an implementation detail. Instead, assert on the database state, which is `database.users`.

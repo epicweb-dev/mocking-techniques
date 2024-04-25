@@ -6,3 +6,19 @@
 ---
 
 - Mocking is about telling "I don't care" about a particular piece of code. This code is not related to what I'm trying to test.
+
+Build a simple app and deploy it separately (`https://howmocks.work`?) that does the following:
+
+1. Shows an abstract code graph describing two modules:
+
+```
+- A
+  - methodOne()
+  - methodTwo()
+    - B
+      - methodThree()
+        - thirdParty()
+          - httpCall()
+```
+
+1. There's a slider on the page. When you move the slider, parts of the module graph become grayed-out, indicating thta they are mocked out. The left-most state of the slider is "code as-is", the right-most state is "everything mocked". _You never want to be on either end of the slider_.
