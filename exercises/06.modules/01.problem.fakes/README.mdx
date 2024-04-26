@@ -1,43 +1,4 @@
-# Objects
-
-> This shouldn't do any spying since "Functions" do that!
-
-Maybe split this into "Globals" and something else? Globals can be mocked in many different ways: monkey-patching, using `Proxy`, using `.spyOn()`, using the test setup, etc.
-
-1. Mocking globals.
-
-```ts
-function greet(name: string) {
-  // Return a different greeting based on the user's language.
-  if (navigator.languages.includes('es')) {
-    return `¡Hola, ${name}!`
-  }
-
-  return `Hello, ${name}!`
-}
-
-const originalNavigator = globalThis.navigator
-
-afterEach(() => {
-  globalThis.navigator = originalNavigator
-})
-
-test('returns a greeting for Spanish users', () => {
-  // Don't use ".spyOn()" just yet. Simple monkey-patching
-  // will also work. You don't need to spy on this value.
-  globalThis.navigator = {
-    languages: ['es'],
-  }
-
-  expect(greet('Sarah')).toBe('¡Hola, Sarah!')
-})
-
-test('returns a greeting for other users', () => {
-  expect(greet('John')).toBe('Hello, John!')
-})
-```
-
-> TODO: Explain how to deal with TypeScript if you want to patch just one property of an object.
+# Fakes
 
 1. Fakes (with Dependency injection). Don't focus on DI because it's _not_ exclusively a testing technique. We can still showcase how it helps with testing.
 

@@ -1,0 +1,34 @@
+# Monkey-patching
+
+```ts
+function greet(name: string) {
+  // Return a different greeting based on the user's language.
+  if (navigator.languages.includes('es')) {
+    return `¡Hola, ${name}!`
+  }
+
+  return `Hello, ${name}!`
+}
+
+const originalNavigator = globalThis.navigator
+
+afterEach(() => {
+  globalThis.navigator = originalNavigator
+})
+
+test('returns a greeting for Spanish users', () => {
+  // Don't use ".spyOn()" just yet. Simple monkey-patching
+  // will also work. You don't need to spy on this value.
+  globalThis.navigator = {
+    languages: ['es'],
+  }
+
+  expect(greet('Sarah')).toBe('¡Hola, Sarah!')
+})
+
+test('returns a greeting for other users', () => {
+  expect(greet('John')).toBe('Hello, John!')
+})
+```
+
+> TODO: Explain how to deal with TypeScript if you want to patch just one property of an object.

@@ -1,0 +1,15 @@
+# Proxy
+
+```ts
+const original = something
+
+beforeAll(() => {
+  // Proxy API is neat because you can spy on many different
+  // handlers, including at the same time!
+  globalThis.something = new Proxy(something, handler)
+})
+
+afterAll(() => {
+  globalThis.something = original
+})
+```
