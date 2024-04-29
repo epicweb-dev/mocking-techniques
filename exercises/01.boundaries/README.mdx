@@ -1,24 +1,104 @@
 # Boundaries
 
-- Mocking is a tool to establish _test boundaries_.
-- What is a "test boundary"?
+There has been almost two decades since mocks (originally called "_test doubles_") were first defined. If you go and search for "mocks" online right now, you will find a plethora of technical explanations and usage examples on how to substitute, spy, stub, replace, fake, and do all sorts of things with the tested code. Most of those resources put emphasis on different ways to mock but, somehow, fail to explain to you what _is_ a mock, _when_ would you reach out for one, and _what_ it actually does to your code.
 
----
+## What is mocking?
 
-- Mocking is about telling "I don't care" about a particular piece of code. This code is not related to what I'm trying to test.
+Mocking is a technique to establish _test boundaries_.
 
-Build a simple app and deploy it separately (`https://howmocks.work`?) that does the following:
+Take a look at this `one()` function:
 
-1. Shows an abstract code graph describing two modules:
+```ts filename=one.ts highlight=3
+import { two } from './two.js'
 
-```
-- A
-  - methodOne()
-  - methodTwo()
-    - B
-      - methodThree()
-        - thirdParty()
-          - httpCall()
+export function one() {
+  // Take the number returned from "two()"...
+  const result = two()
+  // ...and double it.
+  return result * 2
+}
 ```
 
-1. There's a slider on the page. When you move the slider, parts of the module graph become grayed-out, indicating thta they are mocked out. The left-most state of the slider is "code as-is", the right-most state is "everything mocked". _You never want to be on either end of the slider_.
+If you write an automated test for this function, it would run both `one()` and `two()` during the test:
+
+```ts filename=one.test.ts highlight=4
+import { one } from './one.js'
+
+it('doubles what "two" returns', () => {
+  expect(one()).toBe(expected)
+})
+```
+
+This creates an _integration test_ where the connection between `one()` and `two()` is important. This test will fail if `one()` behaves unexpectedly. This test will also fail if `two()` happened to do the same, despite being the test for the `one()` function.
+
+This behavior is neither good nor bad. You are testing the code as-is, and the code has a dependency on another code. If you do nothing about that dependency, you will bring it into the test as well, which is precisely what you want for an integration test!
+
+Sometimes, however, you need to test certain behaviors in isolation. Sometimes, you need to make dependencies behave a certain way to put your tested code in the right state. In those situations, you need to establish a test boundary.
+
+> A _test boundary_ is a line you draw through the tested code to state that nothing past that line matters.
+
+Following our previous example, you can define a test boundary by mocking the `two()` function and thus removing the dependency on it from the test completely.
+
+```ts filename=one.test.ts highlight=5-7
+import { one } from './one.js'
+import { two } from './two.js'
+
+it('doubles what "two" returns', () => {
+  // Mock the "two" function to
+  // always return a fixed number.
+  mock(two, () => 5)
+  expect(one()).toBe(10)
+})
+```
+
+> The `mock()` API here is a pseudocode but you will learn how to actually mock functions and modules and much more later in this workshop!
+
+By mocking `two()`, you have trimmed down this test to focus on this logic of `one()`:
+
+```ts filename=one.test.ts
+return result * 2
+//            ^^^
+```
+
+Because everything else in `one()` is now _mocked_. The test will no longer fail if `two()` has a bug, only if `one()` fails to do the multiplication.
+
+> You use mocking to preserve the dependency but lift its behavior from the code to the test, making it controllable.
+
+## When do you use mocking?
+
+Mocking in tests can be used for various different reasons:
+
+- To establish the test setup;
+- To model particular scenarios;
+- To handle (irrelevant) side-effects;
+- To focus the test on certain behaviors;
+- To control and spy on dependencies.
+
+But no matter the purpose, mocking is always about introducing a test boundary (or a few) and reaping the benefits and drawbacks of it. While you may hear that mocking should be discouraged in testing, rest assured, it's a tremendously useful tool in your arsenal as long as you know how to wield it.
+
+> It's absolutely crucial you think of mocking as a tool that helps you achieve something.
+
+If you are uncertain whether you should use mocking or not, it may be a good idea to ask yourself some of these questions:
+
+- What exactly does my test do right now?
+- Does my tested code depend on anything?
+- How does keeping that dependency affect the test?
+- When would this test fail? Why?
+
+But also, perhaps the most important question: What does mocking do to my code?
+
+## What mocking does to your code?
+
+Mocking is an essential tool for testing. It can be your lever to transition between different testing levels, handle dependencies, model behaviors, and focus on particular logic (not to mention various mocking applications outside of the realm of testing!). But beware: when mocking, **you are modifying your code**.
+
+Any mock you introduce creates a tiny alternative universe where the code you are testing is mostly the same but not quite. Those "not quite"s can be desired and manageable, but they can also decrease the quality of your tests and make you trust them less. Like any tool, mocking has to be handled with purpose and care.
+
+you will testing nothing at all.
+
+> The more you alter the system under test, the more you are testing a different system.
+
+> **TODO: Link to the Rule of Deviation article.**
+
+You don't want to end up in the state where you are running tests against mocks alone. If that happens, you aren't testing anything and should take a good dozen of steps back to reconsider your testing strategy.
+
+In this workshop, we will take a look at the most common applications of mocking and also when and how to use those. But before we begin, let's make sure you get the hang of the test boundary first.
