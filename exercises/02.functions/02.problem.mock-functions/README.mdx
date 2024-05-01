@@ -15,3 +15,5 @@ make({ b: vi.fn() })
 > `vi.fn()` is usually for the things you control, like arguments.
 
 - `localStorage` is a commonly used API and it's a global object. The values stored can also be objects! May be a good candidate for the example.
+
+- Can also use a primitive `EventEmitter` implementation to test the _expectation_ of the `listener` function being called when a certain event occurs. A side effect? The student learns a bit about how emitters work!
