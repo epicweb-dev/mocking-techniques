@@ -1,0 +1,47 @@
+# Mock functions
+
+We have an `Emitter` implementation that can add listeners to events and call those listeners whenever a matching event is emitted. This behavior is achieved by implementing two core methods on the emitter: `.on()` and `.emit()`:
+
+<CodeFile file="emitter.ts" range="7-22" nocopy />
+
+<CodeFile file="emitter.ts" range="24-44" nocopy />
+
+Here's how this emitter is used in our application:
+
+```ts
+// The owner of the emitter describes which events it can handle.
+// This keeps the communication type-safe!
+const emitter = new Emitter<{ login: [User] }>()
+
+// The consumers then attach listeners to events...
+emitter.on('login', (user) => {})
+
+// ...and emit events when needed.
+emitter.emit('login', currentUser)
+```
+
+We have a single strong intention behind the `Emitter` class:
+
+> When event X is emitted, call all the listeners for that event.
+
+One of the ways to write such a test is to make the event listener perform a side effect and assert on the result of that side effect.
+
+```js highlight=2,5
+const emitter = new Emitter<{ hello: [string]}>()
+let isListenerCalled = false
+
+emitter.on('hello', (firstName) => {
+  isListenerCalled = true
+})
+emitter.emit('hello', 'John')
+
+expect(isListenerCalled).toBe(true)
+```
+
+> If the `hello` event listener gets called, it will change the value of the `isListenerCalled` and the test would pass.
+
+It may seem like we are covering the intention here but in reality, we are not. All we are testing here is that `isListenerCalled` becomes `true` at some point. The test will pass even if the initial value for the variable is mistakingly set to `true`, and fail if we forget to update it even if the listener has been called correctly.
+
+In other words, in this test, we are testing _what_ the listener does, not _if_ it gets called. The fact of it getting called becomes an [implicit assertion](https://www.epicweb.dev/implicit-assertions). Such assertions are tremendously useful but **the main intention we are testing must always be clear and explicit**.
+
+👨‍💼 Your task in this exercise is to write a proper test for the listener being called, using the `vi.fn()` function from Vitest.

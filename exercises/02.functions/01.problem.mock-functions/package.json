@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "name": "exercises__sep__02.functions__sep__01.problem.mock-functions",
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
+}
