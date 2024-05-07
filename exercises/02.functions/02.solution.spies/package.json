@@ -1,4 +1,10 @@
 {
   "type": "module",
-  "name": "exercises__sep__02.functions__sep__02.solution.spies"
+  "name": "exercises__sep__02.functions__sep__02.solution.spies",
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
 }

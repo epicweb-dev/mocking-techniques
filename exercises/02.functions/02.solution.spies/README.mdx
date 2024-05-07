@@ -1,1 +1,53 @@
 # Spies
+
+Let's start from creating a spy over the global `console` object using the `vi.spyOn()` function from Vitest. The `spyOn()` function has a bit of unusual call signature as it _will not_ accept the `console.log` method reference directly. Instead, it expects the object that owns the method first, and then the method name as a string:
+
+```ts
+vi.spyOn(target, methodName)
+```
+
+> 📝 The reason behind this call signature is how `.spyOn()` works under the hood. It redefines the `methodName` on the `target` object with a spied version of that method! You can think of it as `target[methodName] = methodSpy`.
+
+Keep this in mind when spying on deeply nested methods!
+
+```ts
+// To spy on deeply nested methods, provide the entire
+// path to the method's target object (excluding the method itself)
+// as the first argument to the `vi.spyOn()` function.
+vi.spyOn(document.body, 'appenChild')
+//       ^^^^^^^^^^^^^
+```
+
+I will introduce the console spy in the `beforeAll` hook so it's ready before the tests start running:
+
+<CodeFile file="log-request.test.ts" range="3-5" />
+
+> 📜 Learn more about [`vi.spyOn()`](https://vitest.dev/api/vi.html#vi-spyon) from the Vitest documentation.
+
+It's a rule of thumb to undo any mocks you introduce in the test. I'm going to add the `afterAll` hook and use the `vi.restoreAllMocks()` function that does precisely that once all tests are done.
+
+<CodeFile file="log-request.test.ts" range="11-13" />
+
+> ... TODO Explain that we also need `vi.restoreAllMocks()`.
+
+<CodeFile file="log-request.test.ts" range="7-9" />
+
+Now that the spy is in place, we can call the `logRequest` function and count on the `console.log` calls being recorded by Vitest!
+
+<CodeFile file="log-request.test.ts" range="16-20" highlight="20" />
+
+It's time to write some assertions.
+
+In this test scenario, the `request` instance has a body (`"hello world"`), which means that the `logRequest` function will print _two_ messages to the console. The order of those messages is a part of the intention, as the `METHOD + PATHNAME` must print first, and the body must follow after.
+
+The `.toHaveBeenNthCalledWith()` assertion in Vitest allows me to describe just that—the number of the call and the arguments I expect that call to have:
+
+<CodeFile file="log-request.test.ts" range="22" />
+
+Similarly, I can describe that the second time the `console.log` is called in this test, it must print the request's body:
+
+<CodeFile file="log-request.test.ts" range="23" />
+
+And finally, the tested function must not print any additional messages so I make sure the total number of `console.log` calls in this test is two:
+
+<CodeFile file="log-request.test.ts" range="24" />

@@ -1,1 +1,27 @@
 # Spies
+
+Testing the intentions that revolve around side effects is always tricky. Like this `logRequest` function that's supposed to log out a given Fetch API `Request` instance to the console:
+
+<CodeFile file="log-request.ts" nocopy />
+
+```ts
+logRequest(new Request('https://example.com/one'))
+// GET /one
+
+logRequest(
+  new Request('https://example.com/two', {
+    method: 'POST',
+    body: 'hello world',
+  }),
+)
+// POST /two
+// hello world
+```
+
+The intended behavior for this function is to call `console.log()` with the right arguments the right number of times. The thing is, this function _doesn't own the `console` object_. And neither does it accept it as an argument so we could model it in test.
+
+A proper test for this `logRequest` function would require a bit more intelligence. It's time to bring in some _spies_!
+
+Spying is a technique to observe a function's execution and record its calls. Unlike mock functions, which have also have recording capabilities, spies can be created over any functions, even those you don't own. Like `console.log`!
+
+👨‍💼 Your task is to write the test for the `logRequest` function to make sure it prints the right messages to the console. And to do that, you will be spying on `console.log` in test!
