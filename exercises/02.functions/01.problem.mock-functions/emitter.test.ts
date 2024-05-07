@@ -16,7 +16,7 @@ it('invokes the listener whenever a matching event is emitted', () => {
 
   // 🐨 Write an assertion for the mock "listener" function
   // to have been called once.
-  // 💰 expect(fn).toHaveBeenCalledTimes(n)
+  // 💰 expect(fn).toHaveBeenCalledOnce()
 
   // 🐨 Write another assertion for the mock "listener" function
   // to have been called with the string "John" as an argument.

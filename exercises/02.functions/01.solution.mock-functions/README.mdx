@@ -4,6 +4,8 @@ In the `emitter.test.ts`, I will start from creating the `listener` function but
 
 <CodeFile file="emitter.test.ts" range="5" />
 
+> 📜 Learn more about [`vi.fn()`](https://vitest.dev/api/vi.html#vi-fn) from the Vitest documentation.
+
 The return of `vi.fn()` is a function imbued with superpowers, one of which is the ability to know when and how it is being called!
 
 > Note that for this test, I will create an _empty_ mock function because what the listener itself does is irrelevant to the point of the test.
@@ -23,7 +25,7 @@ I expect two things to happen once the `hello` event is emitted:
 
 The `expect()` function from Vitest comes with handy assertions to describe both expectations!
 
-First, I will use the `.toHaveBeenCalledTimes()` assertion:
+First, I will use the `.toHaveBeenCalledOnce()` assertion:
 
 <CodeFile file="emitter.test.ts" range="10" />
 
