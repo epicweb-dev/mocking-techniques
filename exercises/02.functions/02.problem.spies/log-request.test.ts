@@ -9,7 +9,7 @@ import { logRequest } from './log-request.js'
 // using the "vi.restoreAllMocks()" function.
 // 💰 afterAll(callback)
 
-it('logs the given request in the console', () => {
+test('logs the given request in the console', () => {
   const request = new Request('https://epicweb.dev/mocking-techniques', {
     method: 'POST',
     body: 'hello world',

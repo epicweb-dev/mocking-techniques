@@ -13,7 +13,7 @@ import { OrderController, Order, Cart } from './OrderController.js'
 // 💰 afterAll(callback)
 // 💰 vi.restoreAllMocks()
 
-it('creates an order when all items are in stock', () => {
+test('creates an order when all items are in stock', () => {
   // 🐨 Mock the return value of the "isItemInStock" mock function
   // to always return true.
   // 💰 <mock>.mockReturnValue(true)
@@ -33,7 +33,7 @@ it('creates an order when all items are in stock', () => {
   // 💰 expect(order).toEqual<Order>(expected)
 })
 
-it('throws an error when one of the items is out of stock', () => {
+test('throws an error when one of the items is out of stock', () => {
   // 🐨 Mock the implementation of the "isItemInStock" mock function
   // to only return true if the "item.id" equals 4.
   // 💰 <mock>.mockImplementation(item => {})

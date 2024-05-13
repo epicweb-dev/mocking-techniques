@@ -12,7 +12,7 @@ afterAll(() => {
   vi.restoreAllMocks()
 })
 
-it('logs the given request in the console', async () => {
+test('logs the given request in the console', async () => {
   const request = new Request('https://epicweb.dev/mocking-techniques', {
     method: 'POST',
     body: 'hello world',

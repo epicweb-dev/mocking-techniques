@@ -1,6 +1,6 @@
 import { Emitter } from './emitter.js'
 
-it('invokes the listener whenever a matching event is emitted', () => {
+test('invokes the listener whenever a matching event is emitted', () => {
   // We have an emitter that can emit and handle the "hello" event,
   // accepting a "firstName" string as the event data.
   const emitter = new Emitter<{ hello: [firstName: string] }>()

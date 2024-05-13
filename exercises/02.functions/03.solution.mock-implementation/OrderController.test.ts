@@ -10,7 +10,7 @@ afterAll(() => {
   vi.restoreAllMocks()
 })
 
-it('creates an order when all items are in stock', () => {
+test('creates an order when all items are in stock', () => {
   isItemInStock.mockReturnValue(true)
   const controller = new OrderController()
   const cart: Cart = [
@@ -34,7 +34,7 @@ it('creates an order when all items are in stock', () => {
   })
 })
 
-it('throws an error when one of the items is out of stock', () => {
+test('throws an error when one of the items is out of stock', () => {
   isItemInStock.mockImplementation((item) => {
     return item.id === 4
   })

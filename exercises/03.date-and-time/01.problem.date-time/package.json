@@ -1,4 +1,10 @@
 {
   "type": "module",
-  "name": "exercises__sep__03.date-and-time__sep__01.problem.date-time"
+  "name": "exercises__sep__03.date-and-time__sep__01.problem.date-time",
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
 }
