@@ -1,0 +1,9 @@
+{
+  "items": [
+    {
+      "id": 123,
+      "name": "Foo",
+      "quantity": 29
+    }
+  ]
+}

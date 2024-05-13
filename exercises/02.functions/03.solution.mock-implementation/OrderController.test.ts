@@ -1,4 +1,4 @@
-import { OrderController, Order } from './OrderController.js'
+import { OrderController, Order, Cart } from './OrderController.js'
 
 const isItemInStock = vi.spyOn(OrderController.prototype, 'isItemInStock')
 
@@ -12,19 +12,17 @@ afterAll(() => {
 
 it('creates an order when all items are in stock', () => {
   isItemInStock.mockReturnValue(true)
-  const order = new OrderController()
+  const controller = new OrderController()
+  const cart: Cart = [
+    {
+      id: 4,
+      name: 'Porcelain vase',
+      quantity: 1,
+    },
+  ]
+  const order = controller.createOrder({ cart })
 
-  expect(
-    order.createOrder({
-      cart: [
-        {
-          id: 4,
-          name: 'Porcelain vase',
-          quantity: 1,
-        },
-      ],
-    }),
-  ).toEqual<Order>({
+  expect(order).toEqual<Order>({
     createdAt: expect.any(Date),
     cart: [
       {
@@ -38,32 +36,29 @@ it('creates an order when all items are in stock', () => {
 
 it('throws an error when one of the items is out of stock', () => {
   isItemInStock.mockImplementation((item) => {
-    // Only the item with ID 4 is considered in stock.
     return item.id === 4
   })
 
-  const order = new OrderController()
+  const controller = new OrderController()
+  const cart: Cart = [
+    {
+      id: 4,
+      name: 'Porcelain vase',
+      quantity: 1,
+    },
+    {
+      id: 5,
+      name: 'Sofa',
+      quantity: 3,
+    },
+    {
+      id: 6,
+      name: 'Microwave',
+      quantity: 1,
+    },
+  ]
 
-  // Includes a single out-of-stock item's ID in the error "cause".
-  expect(() =>
-    order.createOrder({
-      cart: [
-        {
-          id: 4,
-          name: 'Porcelain vase',
-          quantity: 1,
-        },
-        {
-          id: 5,
-          name: 'Sofa',
-          quantity: 3,
-        },
-        {
-          id: 6,
-          name: 'Microwave',
-          quantity: 1,
-        },
-      ],
-    }),
-  ).toThrowError('Failed to create an order: found out of stock items (5, 6)')
+  expect(() => controller.createOrder({ cart })).toThrowError(
+    'Failed to create an order: found out of stock items (5, 6)',
+  )
 })
