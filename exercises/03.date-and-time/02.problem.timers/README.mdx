@@ -1,22 +1,60 @@
 # Timers
 
-Timers (`vi.advanceTimers()` / `vi.advanceTimersToNextTimer()`). Handle `setTimeout` and `setInterval` in your tested code.
+For once, let's take a "break" and work on some utility functions. Something that would make our developer lives easier while being much more scoped and managed.
+
+Something like a `debounce()` function!
+
+<CodeFile file="debounce.ts" />
+
+The intention behind the `debounce()` function is to accept a `callback` and keep delaying its execution until a certain time `duration` has passed since its last call. For example, consider this usage scenario:
 
 ```ts
-function withTimeout(promise: Promise<unknown>, timeoutDuration: number) {
-  const timeoutPromise = ew Promise((_, reject) => {
-    setTimeout(() => reject(new Error('Promise timed out')), timeoutDuration)
-  }))
-
-  return Promise.race([promise, timeoutPromise])
-}
-
-test('test', () => {
-  const promise = withTimeout(new Promise(() => {}), 1000)
-  vi.advanceTimers(1000)
-  await expect(promise).rejects.toThrow('Promise timed out')
-})
-
-// ...The same for resolution.
-// ...The same for success scenario.
+// Create a debounced function of "foo"
+// with the debounce duration of 250ms.
+const bar = debounce(foo, 250)
+bar(1)
+bar(2)
+bar(3)
 ```
+
+Here, the `bar()` function is just a debounced wrapped over `foo()`. Not all calls to `bar()` will translate to the calls of `foo()` (hence, the whole point of debouncing). Here's what's happening in the example above:
+
+- `bar(1)` gets called, starting a 250ms timer for `foo(1)`.
+- `bar(2)` gets called, cancelling the previous timer and starting a new one for `foo(2)`.
+- `bar(3)` gets called, cancelling the previous timer and starting a new one for `foo(3)`.
+- 250ms passes without any calls to `bar()`, and the `foo(3)` finally gets called.
+
+Let's try writing this very use case in an automated test:
+
+```ts filename=debounce.test.ts
+test('executes the callback after the debounce timeout', () => {
+  const foo = vi.fn<[number]>()
+  const bar = debounce(foo, 250)
+
+  bar(1)
+  bar(2)
+  bar(3)
+
+  expect(foo).toHaveBeenCalledOnce()
+  expect(foo).toHaveBeenCalledWith(3)
+})
+```
+
+Running this test, however, will produce something _unexpected_:
+
+```txt highlight=6
+ FAIL  debounce.test.ts > executes the callback after the debounce timeout
+AssertionError: expected "spy" to be called once, but got 0 times
+ ❯ debounce.test.ts:19:15
+     7|   bar(3)
+     8|
+     9|   expect(foo).toHaveBeenCalledOnce()
+```
+
+The `foo()` function is not called at all!
+
+Our assertions throw because they run _immediately_ after the debounced calls. We aren't taking the timeouts each debounce call create into account at all. I think it's time we did.
+
+You already know how to mock date and time using the `vi.useFakeTimers()` and `vi.setSystemTime()` methods, but this exercise doesn't just require you to mock them, it requires you to _advance_ the time.
+
+👨‍💼 Complete the test suite for <InlineFile file="debounce.test.ts" /> by handling the `setTimeout()` in test and having the scenarios pass.

@@ -1,3 +1,46 @@
 # Timers
 
-Solution.
+I begin from setting up the testing hooks to mock time in this test, using the `vi.useFakeTimers()` and `vi.useRealTimers()` functions.
+
+<CodeFile file="debounce.test.ts" range="3-9" highlight="4,8" />
+
+> Note that mocking date and time includes mocking timers and intervals as well!
+
+My next goal is to call the `debouncedFn()` and make sure that the wrapped `fn` function is _not_ called since the debounce duration has not yet passed.
+
+<CodeFile file="debounce.test.ts" range="11-17" highlight="15,16" />
+
+> Since the `debounce()` accepts _any_ function as the argument, I am creating a mock function via `vi.fn()` so I can spy on its calls and assert them! Passing it a type argument of `[number]` also allows me to define the call signature of that mocked function to keep its usage in test type-safe.
+
+Now, let's shift the time!
+
+Vitest provides us with a bunch of utility functions to control timers in test:
+
+- [`vi.advanceTimersByTime()`](https://vitest.dev/api/vi.html#vi-advancetimersbytime)
+- [`vi.advanceTimersByTimeAsync()`](https://vitest.dev/api/vi.html#vi-advancetimersbytimeasync)
+- [`vi.advanceTimersToNextTimer()`](https://vitest.dev/api/vi.html#vi-advancetimerstonexttimer)
+- [`vi.advanceTimersToNextTimerAsync()`](https://vitest.dev/api/vi.html#vi-advancetimerstonexttimerasync)
+
+All of those are great tools to have in your toolbelt. In this test, I will use the `vi.advanceTimersByTime()` function to advance the time in test by 250 milliseconds.
+
+<CodeFile file="debounce.test.ts" range="18" />
+
+This will immediately fastforward the universe in test by 250ms, allowing me to write my expectations toward the tested debounced function:
+
+<CodeFile file="debounce.test.ts" range="20-21" />
+
+The second test case will employ everything we've learned thus far to test the repetative calls to the debounced function:
+
+<CodeFile file="debounce.test.ts" range="24-40" highlight="31,36" />
+
+> Note that you can use fake timers and `vi.advanceTimersByTime()` and `vi.advanceTimersToNextTimer()` to test intervals (`setInterval`) too!
+
+## Difference with `sleep()`
+
+You may be wondering about the difference between `vi.advanceTimersByTime()` and something like a `sleep()` function. Since in this case we do need to wait for a fixed period of time to pass, using `sleep()` may seem like an option. But the two behave completely differently.
+
+The `vi.advanceTimersByTime()` function advances the mocked time _immediately_. You can advance the timers by a year and only a millisecond will pass in your test (this is _not_ an Interstellar reference). It allows you to be in full control over the time in your test, separating the mocked and the real time.
+
+The `sleep()` function, on the other hand, will actually wait for the given time. So if your functionality has a timeout that exceeds your test's timeout, you won't be able to sleep it through. From this perspective, `sleep()` becomes a part of the _action_ in your test, not the setup.
+
+> It's worth mentioning that since `sleep()` often depends on `setTimeout()`, it _won't do anything if you are using fake timers_. You would have to advance the timers anyway for the `sleep()` function to work. You usually do not combine these two approaches.
