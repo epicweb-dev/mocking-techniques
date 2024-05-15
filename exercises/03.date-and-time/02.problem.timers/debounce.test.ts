@@ -3,6 +3,8 @@ import { debounce } from './debounce.js'
 // 🐨 Add the "beforeAll" and "afterAll" hooks that
 // mock the date using `vi.useFakeTimers()` and
 // `vi.useRealTimers()` respectively.
+// 💰 beforeAll(callback)
+// 💰 afterAll(callback)
 
 test('executes the callback after the debounce timeout passes', () => {
   const fn = vi.fn<[number]>()

@@ -1,3 +1,81 @@
 # Ticks and tasks
 
-- Consider testing `process.nextTick()` and `queueMicrotask()`! `vi.runAllTicks()`.
+Since we are touching on the topic of testing logic that executes at a different time, we have to talk about the event loop. JavaScript is a single-threaded language, which means that it executes the operations in your app one-by-one, making them _blocking_ (the next piece of code cannot run until the previous one is finished). To know what code to run, JavaScript uses an _event loop_.
+
+Whenever an action happens in your code, it's added to the execution stack—a queue of all the operations to run. As the name suggests, the event loop constantly iterates over that stack to see if there's anything else left to run. Once the stack is empty, it frees the thread so it can schedule next operations, and so on.
+
+There are cases when you want for an operation to _escape_ the current event loop and be scheduled for its next iteration (otherwise known as a "tick"). By doing that, you can unblock the thread and ensure that the operation runs _after_ all the following operations are done.
+
+Let's take a look at an example.
+
+## Events and listeners
+
+Here's a `Connection` class that extends `EventTarget` and emits a `connection` event as soon as its constructed:
+
+```ts filename=connection.ts highlight=4
+export class Connection extends EventTarget {
+  constructor() {
+    super()
+    this.dispatchEvent(new Event('connection'))
+  }
+}
+```
+
+You'd expect the consumers of this class to be able to listen to the `connection` event but that's not going to happen:
+
+```ts
+const connection = new Connection()
+connection.addEventListener('connection', () => {
+  console.log('This is never called!')
+})
+```
+
+To help you understand this behavior, visualize the event loop for this example:
+
+1. `new Connection()`
+1. `super()`
+1. `this.dispatchEvent(new Event('connection'))`
+1. `connection.addEventListener('connection', () => { ... })`
+
+The class dispatches the `connection` event (3) _before_ the consumer code adds a listener for it (4). If we wish for the consumers to listen to that constructor event, we have to _scheduled its dispatch for later_.
+
+## Scheduling tasks
+
+JavaScript provides you with two main ways to schedule tasks:
+
+- `process.nextTick()` in Node.js;
+- `queueMicrotask()` in the browser and Node.js.
+
+> The two are similar but different, with the tasks scheduled via `process.nextTick()` taking higher priority in the event loop lookup than those scheduled via `queueMicrotask()`.
+
+So to solve our `connection` event example, let's queue a microtask of dispatching that event to the next tick:
+
+```ts filename=connection.ts highlight=4-6
+export class Connection extends EventTarget {
+  constructor() {
+    super()
+    queueMicrotask(() => {
+      this.dispatchEvent(new Event('connection'))
+    })
+  }
+}
+```
+
+With this changes, the event loop for the same usage example will look like this:
+
+1. `new Connection()`
+1. `super()`
+1. `connection.addEventListener('connection', () => { ... })`
+1. (end of the tick)
+1. (next tick)
+1. (queued) `this.dispatchEvent(new Event('connection'))`
+
+Notice how adding the event listener and dispatching the event swapped places! By scheduling the event dispatch to the next tick, we can make sure that any consumers listening to that event will attach the listeners before that event is actually dispatched.
+
+## Writing tests
+
+The event loop controls everything that runs in JavaScript, including your tests. It's important to know how you can await event loop iterations in test to assert things like that `connection` event being dispatched.
+
+I think that's a fantastic task for you!
+
+👨‍💼 Finish the automated test for <InlineFile file="connection.test.ts" /> to await the next tick before asserting on the `connection` event listener being called (you may want to _spy_ on it!).
