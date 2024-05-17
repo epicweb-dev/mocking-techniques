@@ -41,6 +41,15 @@
       "path": "exercises/03.date-and-time/02.solution.timers"
     },
     {
+      "path": "exercises/03.date-and-time/03.solution.ticks-and-tasks"
+    },
+    {
+      "path": "exercises/04.globals/01.problem.monkey-patching"
+    },
+    {
+      "path": "exercises/04.globals/01.solution.monkey-patching"
+    },
+    {
       "path": "exercises/06.modules/02.problem.local-modules"
     },
     {

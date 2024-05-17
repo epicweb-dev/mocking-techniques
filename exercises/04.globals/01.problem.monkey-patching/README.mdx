@@ -1,34 +1,51 @@
-# Monkey-patching
+# Monkey patching
 
-```ts
-function greet(name: string) {
-  // Return a different greeting based on the user's language.
-  if (navigator.languages.includes('es')) {
-    return `¡Hola, ${name}!`
-  }
+When developing applications, you can do things conditionally based on a client's locale. It can be displaying a discount price for certain countries, or showing a different greeting message based on where the user's language preferences. You can access those via the global `navigator` object in the browser.
 
-  return `Hello, ${name}!`
+In our <InlineFile file="get-greeting-text.ts" /> module, the `getGreetingText()` function does preciesly that—it checks the client's `navigator.languages` array to decide which greeting text to return (right now, it can only handle English and Spanish but, hey, we have to start from somewhere).
+
+<CodeFile file="get-greeting-text.ts" nocopy />
+
+What interests us in this function is that it has the `navigator` object as a _global dependency_. Unlike some other dependencies, we don't want to completely eliminate the language preferences from our test run but instead to _model_ different preference scenarios by _controlling_ the value of the `languages` array in individual tests.
+
+One of the ways to do that is by using _monkey patching_.
+
+## Monkey patching
+
+_Monkey patching_ is a technique to change the behavior of a piece of code at runtime.
+
+> :owl: The term "monkey patching" originates from the original name for this technique—guerrilla (as in "partisan") patching. Historically, it referred to doing sneaky changes (patches) to the code, deserving its name. As time went by, "guerrilla" became "gorilla" due to how similar the two sound, eventually becoming "monkey".
+
+Notice that monkey patching is not exclusive to patching globals, and you can also monkey patch your own code just the same. Neither is it a testing technique per se, although in this exercise you will learn to wield it as such!
+
+Despite you not interacting with monkey patching directly yet, almost every Vitest API you've been using up to this point utilizes patching under the hood to work:
+
+- `vi.spyOn()` patches any given object to record calls to its methods;
+- `vi.useFakeTimers()` patches the `globalThis.Date` constructor to control time.
+
+In practice, "patching" something simply means _reassigning its value_:
+
+```ts nocopy
+const instance = new MyClass()
+
+const originalMethod = instance.method
+
+instance.method = function (args) {
+  console.log('method() is called!')
+  return originalMethod.apply(this, args)
 }
-
-const originalNavigator = globalThis.navigator
-
-afterEach(() => {
-  globalThis.navigator = originalNavigator
-})
-
-test('returns a greeting for Spanish users', () => {
-  // Don't use ".spyOn()" just yet. Simple monkey-patching
-  // will also work. You don't need to spy on this value.
-  globalThis.navigator = {
-    languages: ['es'],
-  }
-
-  expect(greet('Sarah')).toBe('¡Hola, Sarah!')
-})
-
-test('returns a greeting for other users', () => {
-  expect(greet('John')).toBe('Hello, John!')
-})
 ```
 
-> TODO: Explain how to deal with TypeScript if you want to patch just one property of an object.
+In the example above, we are patching the `.method` on the `instance` to print something to console before actually invoking that method. We are _modifying_ its behavior not as a part of the `MyClass` declaration but during runtime.
+
+## Back to tests!
+
+👨‍💼 Use monkey patching to modify the behavior of a piece of code (`globalThis.navigator.languages`) on runtime (in the test), and complete the <InlineFile file="get-greeting-text.test.ts" /> test suite.
+
+There's only one catch.
+
+Not all things in JavaScript can be reassigned.
+
+For example, the `navigator.languages` property [_only has a getter_](https://html.spec.whatwg.org/multipage/system-state.html#language-preferences). You can assign a value to it but it will have no effect on what the property returns.
+
+To account for that, use [`Object.defineProperty()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty) to redefine the entire `languages` property on the navigator object, providing it the `value` you need.
