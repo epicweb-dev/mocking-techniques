@@ -1,1 +1,37 @@
 # Monkey patching
+
+To start, I will store the original value of `globalThis.navigator.languages` in a standalone variable before anything even happens in the test:
+
+<CodeFile file="get-greeting-text.test.ts" range="3" />
+
+This both allows me to reference the real value whenever I want but also to _clean up_ the patching once the tests are done. Speaking of which, let's do just that:
+
+<CodeFile file="get-greeting-text.test.ts" range="5-9" />
+
+I am using the `afterEach` and _not_ `afterAll` hook here so different tests could have different language preferences set. The hook ensures that whatever changes a test does to `languages` is discarded before continuing with the next test.
+
+<CodeFile file="get-greeting-text.test.ts" range="11-15" highlight="12-15" />
+
+> I am setting `writable: true` in this property descriptor to mark the `languages` property as _writable_. Writable properties can be reassigned later on. Without this flag, the clean up logic in `afterEach` won't be able to reset the `languages` to its original value.
+
+And what remains is the assertion:
+
+<CodeFile file="get-greeting-text.test.ts" range="16" />
+
+If I run `npm test`, I can see both test cases passing, which verifies the testing setup (monkey patching) as well as test isolation (the `afterEach` hook) :tada:.
+
+```
+ ✓ get-greeting-text.test.ts (2)
+   ✓ returns a user greeting in Spanish
+   ✓ returns a user greeting in English by default
+```
+
+## Dangers of monkey patching
+
+Monkey patching may seem like the easiest technique to control global dependencies, however, I would actively _advise against it_. You must certainly not use monkey patching in the application code, but even in tests, prefer not to rely on it directly.
+
+Any engineering decision comes with a cost, and monkey patching not only has that but also a few dangers that are not always immediately apparent. Perhaps, it's a tool far too powerful to wield.
+
+> Please read my article on [Why Patching Globals Is Harmful](https://kettanaito.com/blog/why-patching-globals-is-harmful) if you wish to learn how React and Next.js made a mistake of patching globals.
+
+Luckily, we will talk about the alternatives to monkey patching in the following exercises.

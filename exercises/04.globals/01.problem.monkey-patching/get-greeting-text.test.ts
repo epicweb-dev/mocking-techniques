@@ -14,7 +14,12 @@ import { getGreetingText } from './get-greeting-text.js'
 test('returns a user greeting in Spanish', () => {
   // 🐨 In this test, set the value of the `languages` to equal
   // to `['es']` before calling `getGreetingText`.
-  // Use the same `Object.defineProperty` function you used in the "afterEach" hook.
+  // Use the same `Object.defineProperty` function you used in the "afterEach" hook,
+  // but add the "writable: true" property to the descriptor.
+  // 💰 Object.defineProperty(globalThis.navigator, 'languages', {
+  //  value: ['es'],
+  //  writable: true,
+  // })
   //
   // 🐨 Write an assertion for the `getGreetingText` function call
   // returning the string '¡Hola, Sarah!'.
