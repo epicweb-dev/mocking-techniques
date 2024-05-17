@@ -1,6 +1,6 @@
 # Monkey patching
 
-When developing applications, you can do things conditionally based on a client's locale. It can be displaying a discount price for certain countries, or showing a different greeting message based on where the user's language preferences. You can access those via the global `navigator` object in the browser.
+When developing applications, you can do things conditionally based on a client's locale. It can be displaying a discount price for certain countries, or showing a different greeting message based on the user's language preferences. You can access those via the global `navigator` object in the browser.
 
 In our <InlineFile file="get-greeting-text.ts" /> module, the `getGreetingText()` function does preciesly that—it checks the client's `navigator.languages` array to decide which greeting text to return (right now, it can only handle English and Spanish but, hey, we have to start from somewhere).
 
