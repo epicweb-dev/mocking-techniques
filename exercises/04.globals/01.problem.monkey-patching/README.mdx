@@ -1,14 +1,12 @@
 # Monkey patching
 
-When developing applications, you can do things conditionally based on a client's locale. It can be displaying a discount price for certain countries, or showing a different greeting message based on the user's language preferences. You can access those via the global `navigator` object in the browser.
+In our <InlineFile file="print-server-url.ts" /> module, we have a `printServerUrl()` function that takes a `Server` object and prints its URL to the console.
 
-In our <InlineFile file="get-greeting-text.ts" /> module, the `getGreetingText()` function does preciesly that—it checks the client's `navigator.languages` array to decide which greeting text to return (right now, it can only handle English and Spanish but, hey, we have to start from somewhere).
+<CodeFile file="print-server-url.ts" range="6-12" nocopy />
 
-<CodeFile file="get-greeting-text.ts" nocopy />
+What interests us in this function is that it has the `console` object as a _global dependency_. It exists on the global scope but we still need to gain control over it in test so we can spy on its calls and control its behavior.
 
-What interests us in this function is that it has the `navigator` object as a _global dependency_. Unlike some other dependencies, we don't want to completely eliminate the language preferences from our test run but instead to _model_ different preference scenarios by _controlling_ the value of the `languages` array in individual tests.
-
-One of the ways to do that is by using _monkey patching_.
+One of the ways to do that is to use _monkey patching_.
 
 ## Monkey patching
 
@@ -40,12 +38,4 @@ In the example above, we are patching the `.method` on the `instance` to print s
 
 ## Back to tests!
 
-👨‍💼 Use monkey patching to modify the behavior of a piece of code (`globalThis.navigator.languages`) on runtime (in the test), and complete the <InlineFile file="get-greeting-text.test.ts" /> test suite.
-
-There's only one catch.
-
-Not all things in JavaScript can be reassigned.
-
-For example, the `navigator.languages` property [_only has a getter_](https://html.spec.whatwg.org/multipage/system-state.html#language-preferences). You can assign a value to it but it will have no effect on what the property returns.
-
-To account for that, use [`Object.defineProperty()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty) to redefine the entire `languages` property on the navigator object, providing it the `value` you need.
+👨‍💼 Use monkey patching to replace the value of `globalThis.console.log` with a _mock function_ (`vi.fn()`) and complete the test suite at <InlineFile file="print-server-url.test.ts" />.
