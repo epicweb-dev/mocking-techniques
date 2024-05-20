@@ -1,15 +1,40 @@
 # Proxy
 
-```ts
-const original = something
+Proxying is an alternative to monkey patching with one crucial difference. If monkey patching is replacing the thing entirely, eventually calling the original logic, then proxying is _wrapping_ the thing, keeping the original logic, and eventually calling your custom one.
 
-beforeAll(() => {
-  // Proxy API is neat because you can spy on many different
-  // handlers, including at the same time!
-  globalThis.something = new Proxy(something, handler)
+In the context of this exercise, I will be referring to the [Proxy API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) in JavaScript whenever I say "proxying". `Proxy` is a standard API that allows you to, well, proxy any object to observe and modify its behavior.
+
+Here's a basic example of using Proxy:
+
+```ts highlight=6-15,19
+// This is the original object "user".
+const user = { name: 'John', age: 32 }
+
+// Creaet a proxy over the "user" object.
+const proxyUser = new Proxy(user, {
+  get(target, propertyName) {
+    // If getting a property which name is "name"...
+    if (propertyName === 'name') {
+      // ...return a different (e.g. mock) value.
+      return 'Sarah'
+    }
+
+    // Otherwise, return the original value.
+    return Reflect.get(...arguments)
+  },
 })
 
-afterAll(() => {
-  globalThis.something = original
-})
+// The proxied property returns a custom value.
+proxyUser.name // "Sarah"
+
+// Other properties are intact.
+proxyUser.age // 32
 ```
+
+Even from this example you may notice that `Proxy` doesn't replace the `user`, it creates a _new_, proxied object that wraps around the original one. It doesn't do the "replace" part, only the "control" part. That's really handy when debugging, for example, as you can pass the `proxyUser` strategically to some consumers and see what properties they access or methods they call.
+
+When mocking globals, that "replace" part is quite important. Although we can creaet a `consoleProxy` object, we wouldn't be able to instruct our tested code to use the proxy instead of the global `console`.
+
+That being said, proxying objects still has tremendous benefits compared to monkey patching.
+
+👨‍💼 In this exercise, rewrite the existing <InlineFile file="print-server-url.test.ts" /> test suite from monkey patching to `Proxy`.
