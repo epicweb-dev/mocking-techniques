@@ -1,15 +1,22 @@
 import { printServerUrl } from './print-server-url.js'
 
 const originalConsoleLog = globalThis.console.log
-const consoleLogSpy = vi.fn()
+const consoleLogSpy = vi.fn<Parameters<typeof console.log>>()
 
 beforeAll(() => {
-  globalThis.console.log = new Proxy(globalThis.console.log, {
-    apply(target, thisArg, args) {
-      consoleLogSpy.apply(thisArg, args)
-      // return Reflect.apply(target, thisArg, args)
-    },
-  })
+  // 💣 Remove this assignment.
+  globalThis.console.log = consoleLogSpy
+
+  // 🐨 Create a new Proxy over `globalThis.console.log`
+  // and provide it the `apply` trap for it to handle the `log` method calls.
+  // 💰 new Proxy(globalThis.console.log, { apply(target, thisArg, args) {} })
+
+  // 🐨 In the proxy's `apply` trap, call the `consoleLogSpy` with the
+  // same arguments that were passed to the trap method.
+  // 💰 apply(target, thisArg, args) { consoleLogSpy.apply(this, arguments) }
+
+  // 🐨 Reassign the value of `globalThis.console.log` to the proxy.
+  // 💰 globalThis.console.log = new Proxy(...)
 })
 
 afterEach(() => {
