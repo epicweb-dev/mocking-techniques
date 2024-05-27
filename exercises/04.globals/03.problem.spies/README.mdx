@@ -1,7 +1,64 @@
 # Spies
 
-- Would be nice to showcase `console` mocking because it's useful and it _is_ a global object.
+- [ ] TODO: Show how to work with `console.log` once it's been spied! So `console.log.mock` is type-safe.
 
-```ts
-vi.spyOn(globalThis, 'console').mockImplementation(() => {})
+The grand reveal is that spying on the globals is not that different from spying on the things you declare yourself.
+
+In fact, it's identical. It's always `vi.spyOn()`.
+
+But how does it compare with monkey patching and using proxies? To answer that, we have to understand how the `spyOn()` function works.
+
+In a simplified form, this is how you can implement `vi.spyOn()`:
+
+```ts filename=spyOn.ts
+const kState = Symbol('kState')
+
+function spyOn<T extends Object>(target: T, method: keyof T) {
+  // Store the original function.
+  const original = target[method]
+
+  const spy = function (...args: Parameters<T[keyof T]>) {
+    // Get or create a state inside the spy.
+    const state = original[kState] || {}
+
+    // Keep track of the spy's calls.
+    state.called = true
+    state.calls++
+    state.calls.push(args)
+
+    // Store the state on the spy
+    // so our test can reference its values.
+    Object.defineProperty(original, kState, {
+      value: state,
+    })
+
+    // Execute the original function.
+    return original.apply(this, args)
+  }
+
+  // Reassign the original function with the spy.
+  target[method] = spy
+}
 ```
+
+1. You grab the original value (e.g. a function).
+2. You create as `spy` that has internal `state` to keep track of the function's calls.
+3. You ressign the original function with the spy.
+
+This looks suspiciously similar to monkey patching... Because it is! As we've touched on in the previous exercise, mocking globals will inevitably involve reassigning those globals to keep the same call signature in the tested code.
+
+## Benefits of `vi.spyOn()`
+
+Despite the implementation similarities, there are a few reasons to prefer `vi.spyOn()` to your own monkey patches:
+
+1. Consistency. It's great to use the same API to mock your own functions and global functions. It's also easier to learn for others in the team because [`vi.spyOn()`](https://vitest.dev/api/vi.html#vi-spyon) is nicely documented.
+1. Control. Vitest gives you a more powerful spying capabilities by recording more information about the spied function.
+1. Operability. `vi.spyOn()` works great with the built-in assertions like `.toHaveBeenCalledWith()` or `.toHaveReturned()` because they all come from the same framework.
+
+At the end of the day, if you wish for a bullet-proof spying API you will end up implementing your own `spyOn()` function anyway. So why not use the one that's already there?
+
+In fact, let's do just that!
+
+## Your task
+
+👨‍💼 In this exercise, rewrite <InlineFile file="print-server-url.test.ts" /> to use the `vi.spyOn()` API from Vitest. Adjust the setup phase and the assertions to reflect the changes.

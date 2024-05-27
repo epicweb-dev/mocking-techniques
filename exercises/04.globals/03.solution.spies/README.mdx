@@ -1,1 +1,64 @@
 # Spies
+
+Once the previous Proxy implementation is removed, I start with creating the actual `console.log` spy using the `vi.spyOn()` function:
+
+<CodeFile file="print-server-url.test.ts" range="3-5" />
+
+> I'm overriding the implementation of `console.log` for this test suite by using `.mockImplementation()` and providing it an empty function. With this, I can still assert on the `console.log` calls without it actually printing anything to the terminal output.
+
+From this moment forward, all `console.log` calls are recorded and I can assert on them in any test.
+
+Next, I need to make sure that the recorded state of spy function is reset between the tests. I will use `vi.resetAllMocks()` for that:
+
+<CodeFile file="print-server-url.test.ts" range="7-9" />
+
+> `vi.resetAllMocks()` targets _all_ mocks created in this test suite, not just the spy for `console.log`. Instead of resetting an individual spy, I prefer resetting all mocks because none of them should leak their state to irrelevant tests.
+
+And, finally, restore the original implementation of `console.log` once the tests are done:
+
+<CodeFile file="print-server-url.test.ts" range="11-13" />
+
+This concludes the testing setup changes but we still have some assertions to adjust.
+
+Previously, we asserted the calls of the `consoleSpy` we've created manually. Now, I can assert directly on the `console.log` object because its value has been overridden by the spy:
+
+<CodeFile
+  file="print-server-url.test.ts"
+  range="18-21,27-30"
+  highlight="18,21,27,30"
+/>
+
+The only thing remaining is to run the tests and make sure they are passing:
+
+```
+ ✓ print-server-url.test.ts (2)
+   ✓ prints the server message for url with host and no port
+   ✓ prints the server message for url with host and port
+```
+
+## Bonus: Type-safe global spies
+
+Although Vitest reassigns the value of `console.log` to a spy function on runtime, TypeScript doesn't know about that. In fact, if you attempt to read some of the spy function's properties, you'll be greeted with a type error:
+
+```ts
+console.log.mock.calls
+// Property 'mock' does not exist on type '...'
+```
+
+To fix this, you need to extend the type of `Console['log']` in your test and mark it as a mock instance.
+
+```ts
+import { MockInstance } from 'vitest'
+
+declare namespace console {
+  var log: Console['log'] &
+    MockInstance<Parameters<Console['log']>, ReturnType<Console['log']>>
+}
+```
+
+```ts
+console.log.mock.calls
+// [["Server is listening at http://localhost:5639/"]]
+```
+
+The way you extend the global type will depend on the declaration for that type. The type of `console.log` happened to be declared in a global namespace `console` so that's the namespace we extend above. Inspect the type declaration of the global you wish to extend to know how to properly do so.
