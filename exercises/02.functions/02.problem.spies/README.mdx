@@ -1,34 +1,19 @@
 # Spies
 
-## TODO
+Testing the intentions around side effects is always tricky. Like this `UserController` class that's supposed to log out the `createUser` event whenever a new user is created:
 
-- Rewrite this exercise not to spy on `console.log` (globals). You _can_ spy on things you own.
-- `console.log` spying is covered in the "Globals" exercise block.
+<CodeFile file="user-service.ts" highlight="7" nocopy />
 
----
+To make things more complicated, logging out the event is not the responsibility of the `UserController` class. Instead, it relies on the `Logger` class and its `.log()` method to do that. So while the actual logging logic is irrelevant in the context of `UserController`, we still have to test the intention of it _calling_ `logger.log()` with the correct arguments.
 
-Testing the intentions that revolve around side effects is always tricky. Like this `logRequest` function that's supposed to log out a given Fetch API `Request` instance to the console:
+Luckily, the class accepts a `logger` instance as an argument:
 
-<CodeFile file="log-request.ts" nocopy />
+<CodeFile file="user-service.ts" range="4" nocopy />
 
-```ts
-logRequest(new Request('https://example.com/one'))
-// GET /one
+This means we can use a _dependency injection_ to provide it with whichever logger instance we want in test. For example, a logger that we will 🕵️ _spy on_.
 
-logRequest(
-  new Request('https://example.com/two', {
-    method: 'POST',
-    body: 'hello world',
-  }),
-)
-// POST /two
-// hello world
-```
+_Spying_ is a technique to record a function's execution. It's like pressing a record button on a radio to listen to any function calls while it's being used. Spies gives us access to the information like the number of calls, the exact arguments, and the return values. Spies also allow us to completely override the behavior of any function, if we want to.
 
-The intended behavior for this function is to call `console.log()` with the right arguments the right number of times. The thing is, this function _doesn't own the `console` object_. And neither does it accept it as an argument so we could model it in test.
+You will use both recording and overriding in this exercise.
 
-A proper test for this `logRequest` function would require a bit more intelligence. It's time to bring in some _spies_!
-
-Spying is a technique to observe a function's execution and record its calls. Unlike mock functions, which have also have recording capabilities, spies can be created over any functions, even those you don't own. Like `console.log`!
-
-👨‍💼 Your task is to write the test for the `logRequest` function to make sure it prints the right messages to the console. And to do that, you will be spying on `console.log` in test!
+👨‍💼 Complete the <InlineFile file="user-service.test.ts" /> test suite by adding a spy on `logger.log()`. Add the assertions on the expected spy calls and make sure that the test is passing with `npm test`.
