@@ -1,0 +1,123 @@
+# Set up MSW
+
+Setting up Mock Service Worker in your project consists of three steps:
+
+1. Install the library;
+1. Describe the network using [request handlers](https://mswjs.io/docs/concepts/request-handler);
+1. Integrate MSW into the environments or tools you need.
+
+There are many use cases for API mocking. In this exercise, we will focus primarily on using MSW for integration testing in Node.js (Vitest). Please refer to the [Getting started](https://mswjs.io/docs/getting-started) guide in the library's documentation for more detailed instructions on using it for other purposes.
+
+Follow 🐨 Kody to help you set up MSW in the playground.
+
+## Install
+
+🐨 First, install `msw` as a dependency to the project:
+
+```bash
+npm install msw --save-dev
+```
+
+## Describe
+
+When working with MSW, you describe the network using functions called _request handlers_. They decide which requests to intercept and how to handle their responses.
+
+It's a good practice to start with a single `handlers.ts` file that will contain all the request handlers for your application or tests. This is where you describe the "happy paths" of your network.
+
+🐨 <InlineFile file="handlers.ts">Click here to create a `handlers.ts` file.</InlineFile>
+
+In `handlers.ts`, we will add a single request handler that will print any outgoing requests in test to the console.
+
+🐨 Past the following contents into `handlers.ts`:
+
+```ts filename=handlers.ts highlight=4-6
+import { http } from 'msw'
+
+export const handlers = [
+  http.all('*', ({ request }) => {
+    console.log(request.method, request.url)
+  }),
+]
+```
+
+> This is an examplary handler that matches all request methods (`http.all()`) to all paths (`*`). You will learn more about request handlers in the upcoming exercises.
+
+## Integrate
+
+MSW is installed and request handlers are written but it doesn't do anything yet. To kick off mocking, you have to integrate MSW into your environment (browser or Node.js).
+
+We are planning on using MSW in Vitest, so let's create a setup file for it first.
+
+🐨 <InlineFile file="handlers.ts">Click here to create a `vitest.setup.ts` file.</InlineFile>
+
+Next, go to `vitest.config.ts` and add the `setupFiles` property to the configuration to use the newly create setup module:
+
+```ts filename=vitest.config.ts add=6
+import { defineConfig } from 'vitest/config'
+
+export default defineConfig({
+  test: {
+    globals: true,
+    setupFiles: ['./vitest.setup.ts'],
+  },
+})
+```
+
+🐨 In the `vitest.setup.ts` module, import the `setupServer()` function from `msw/node`:
+
+```ts filename=vitest.setup.ts
+import { setupServer } from 'msw/node'
+```
+
+> The [`setupServer()`](https://mswjs.io/docs/api/setup-server/) function enables MSW in any Node.js environment, like Vitest! Despite the name, there are no actual servers involved, and the mocking happens in the same process' runtime as the `setupServer()` call.
+
+```ts filename=vitest.setup.ts add=2,4
+import { setupServer } from 'msw/node'
+import { handlers } from './handlers.js'
+
+const server = setupServer(...handlers)
+```
+
+Because using MSW is still mocking something, let's make sure that it starts and finishes as a part of the test run.
+
+🐨 Add the `beforeAll()` and `afterAll()` hooks and call `server.listen()` and `server.close()` in them, respectively:
+
+```ts filename=vitest.setup.ts add=6-8,10-12
+import { setupServer } from 'msw/node'
+import { handlers } from './handlers.js'
+
+const server = setupServer(...handlers)
+
+beforeAll(() => {
+  server.listen()
+})
+
+afterAll(() => {
+  server.close()
+})
+```
+
+> The [`server.listen()`](https://mswjs.io/docs/api/setup-server/listen) and [`server.close()`](https://mswjs.io/docs/api/setup-server/close) functions start and stop the interception of requests in this process, respectively.
+
+🐨 To complete the setup, add the `afterEach()` hook and call the `server.resetHandlers()` function in there. This will reset any per-test mocks we introduce later in tests.
+
+```ts filename=vitest.setup.ts add=10-12
+import { setupServer } from 'msw/node'
+import { handlers } from './handlers.js'
+
+const server = setupServer(...handlers)
+
+beforeAll(() => {
+  server.listen()
+})
+
+afterEach(() => {
+  server.resetHandlers()
+})
+
+afterAll(() => {
+  server.close()
+})
+```
+
+> The [`server.resetHandlers()`](https://mswjs.io/docs/api/setup-server/reset-handlers) function removes any request handlers override that were added during the test.

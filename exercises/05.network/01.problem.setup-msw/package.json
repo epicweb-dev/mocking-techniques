@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "name": "exercises__sep__05.network__sep__01.problem.setup-msw",
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
+}

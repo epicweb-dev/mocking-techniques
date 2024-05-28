@@ -4,9 +4,10 @@
     "target": "ES2022",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-		"allowJs": true,
+    "allowJs": true,
     "skipLibCheck": true,
-		"noEmit": true
+    "noEmit": true,
+    "types": ["vitest/globals"]
   },
   "include": ["**/*"]
 }

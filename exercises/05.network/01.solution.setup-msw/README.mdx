@@ -1,0 +1,26 @@
+# Set up MSW
+
+With MSW set up, we can now run `npm test` and see the outgoing request's method and URL printed during the test run:
+
+```txt highlight=7
+$ npm test
+
+> test
+> vitest
+
+stdout | get-auth-token.test.ts > returns the authentication token on successful authentication
+POST https://api.example.com/auth
+
+ ❯ get-auth-token.test.ts (1)
+   × returns the authentication token on successful authentication
+```
+
+This confirms that MSW is able to intercept the request we make in `getAuthToken()`. But the test itself is still failing!
+
+```
+Caused by: Error: getaddrinfo ENOTFOUND api.example.com
+```
+
+Althought the error is caused by use requesting a non-existing hostname, the underlying issue is that we still **allow the test to make the actual request**.
+
+It is time for us to change that by mocking that request with MSW.
