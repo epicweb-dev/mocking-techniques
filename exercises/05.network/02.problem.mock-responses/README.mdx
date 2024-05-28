@@ -1,1 +1,19 @@
 # Mock responses
+
+Our `getAuthToken()` function depends on the response returned from the server quite singificantly. For starters, there's a validation layer to handle error responses:
+
+<CodeFile file="get-auth-token.ts" range="16-22" />
+
+Then, there's a successful, "happy path" scenario handling, where we read the response body as JSON and return it `token` property:
+
+<CodeFile file="get-auth-token.ts" range="24-28" />
+
+And we need to test all of those scenarios!
+
+But let's start from the beginning. Let's start from the happy path.
+
+If the server returns a 200 response, our function will read its body and return some of its properties. _That's_ a great intention to put into test.
+
+For that intention to happen, the `POST https://api.example.com/auth` request must be (1) intercepted; and (2) mocked. Wait, those two steps are precisely what _request handlers_ are for!
+
+👨‍💼 In this exercise, create a new request handler in `handlers.ts` for the request made by the `getAuthToken()` function. Respond to that request with a mocked JSON response containing `{ token: 'abc-123' }` in its body. And, finally, finish the test at <InlineFile file="get-auth-token.test.ts" /> to validate the `getAuthToken()` function returning the right `token` from the received response.

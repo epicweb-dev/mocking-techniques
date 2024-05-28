@@ -1,1 +1,59 @@
 # Mock responses
+
+First, I will delete the `http.all()` request handler in `handlers.ts`:
+
+```ts filename=handlers.ts remove=4-6
+import { http } from 'msw'
+
+export const handlers = [
+  http.all('*', ({ request }) => {
+    console.log(request.method, request.url)
+  }),
+]
+```
+
+It was a great debugging handler to let us see all the outgoing requests in this test, but we will focus on intercepting particular requests right now.
+
+In the same `handler.ts`, I will create a new request handler for a `POST` request to the `https://api.example.com/auth` endpoint, using the same `http` object:
+
+<CodeFile file="handlers.ts" highlight="4-8" />
+
+To mock a response to the intercepted request, I am _returning a Fetch API `Response` instance_ from its response resolver (the second argument of the request handler: `http.post(path, resolver)`).
+
+> `Response.json()` is a static method for shorthand declaration of `application/json` responses on the web!
+
+Now, whenever our test does the matching request, MSW will intercept it and respond to it using the mocked JSON response I've defined. In fact, let's verify that! Let's print whichever result is returned from the `getAuthToken()` function to the console.
+
+```ts filename=get-auth-token.test.ts add=4,8
+import { getAuthToken } from './get-auth-token.js'
+
+test('returns the authentication token on successful authentication', async () => {
+  const result = await getAuthToken({
+    email: 'kody@epicweb.dev',
+    password: 'supersecret123',
+  })
+  console.log(result)
+})
+```
+
+```txt highlight=4
+$ npm test
+
+stdout | get-auth-token.test.ts > returns the authentication token on successful authentication
+{ token: 'abc-123' }
+
+ ✓ get-auth-token.test.ts (1)
+   ✓ returns the authentication token on successful authentication
+```
+
+:tada: Yoo-hoo!
+
+But let's not get too happy too soon. Vitest may report the test as passing but that's only because _it has no assertions_. The test doesn't validate anything and so it will always pass.
+
+To complete this test, I will add an assertion for the `token` value returned from the `getAuthToken()` function to be the exact value we receive from the mocked response:
+
+<CodeFile file="get-auth-token.test.ts" highlight="9" />
+
+> Notice that I've rewritten the entire test to pass the _pending promise_ of `getAuthToken()` to `expect()`, awaiting the assertion itself. By doing so, I'm creating a nicer experience for when this test _fails_. The `await expect().resolves` chaining will print a friendly error message in case `getAuthToken()` rejects, instead of treating it as an unhandled exception in test.
+>
+> **Remember that we write tests to fail, and it matters greatly <u>when</u> and <u>how</u> they fail.**

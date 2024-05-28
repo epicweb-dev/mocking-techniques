@@ -1,8 +1,8 @@
-import { http, HttpResponse } from 'msw'
+import { http } from 'msw'
 
 export const handlers = [
   http.post('https://api.example.com/auth', () => {
-    return HttpResponse.json({
+    return Response.json({
       token: 'abc-123',
     })
   }),
