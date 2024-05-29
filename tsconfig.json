@@ -74,6 +74,12 @@
       "path": "exercises/05.network/02.solution.mock-responses"
     },
     {
+      "path": "exercises/05.network/03.problem.error-responses"
+    },
+    {
+      "path": "exercises/05.network/03.solution.error-responses"
+    },
+    {
       "path": "exercises/06.modules/02.problem.local-modules"
     },
     {

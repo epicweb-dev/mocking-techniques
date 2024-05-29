@@ -1,0 +1,85 @@
+# Error responses
+
+Right now, we are sending the JSON response that the `getAuthToken()` expects from our request handler. That allows us to reproduce and test the happy path behavior of the function.
+
+But there are more behaviors that we intended for this function, and they happened to concern themselves with error handling.
+
+First, there's the logic that throws an error if the server responds with a 401 response (i.e. we are sending invalid user credentials and the authorization fails):
+
+<CodeFile file="get-auth-token.ts" range="16-18" />
+
+There's another check for generic response errors as well:
+
+<CodeFile file="get-auth-token.ts" range="20-22" />
+
+Let's model both of these scenarios with MSW!
+
+The request handlers we write in `handlers.ts` are meant to describe the happy path behaviors. In order to test the error handling that we have, we will utilize something called _runtime handlers_.
+
+In simple terms, a runtime handler is a request handler you can add on runtime. It _extends_ your network description and allows you to add new network behaviors on top of your happy paths from `handlers.ts`.
+
+Runtime handlers can be added using the [`server.use()`](https://mswjs.io/docs/api/setup-server/use) function:
+
+```ts highlight=15-22
+import { http } from 'msw'
+import { setupServer } from 'msw/node'
+
+const server = setupServer(
+  // This is a happy path handler.
+  http.get('http://localhost/resource', () => {
+    return Response.json({ response: 'happy' })
+  }),
+)
+server.listen()
+
+await fetch('http://localhost/resource').then((response) => response.json())
+// {"response":"happy"}
+
+server.use(
+  // This is a runtime handler override. It has the same
+  // predicate (request path) as the happy path handler
+  // but returns a different mocked response.
+  http.get('http://localhost/resource', () => {
+    return Response.json({ response: 'override' })
+  }),
+)
+
+await fetch('http://localhost/resource').then((response) => response.json())
+// {"response":"override"}
+```
+
+> Above is the example of adding a runtime handler for the `GET http://localhost/resource` endpoint. Notice how the response to the `fetch()` call changes based on whether the request has been made before or after the runtime handler has been added.
+
+👨‍💼 It's time you learned to use the power of runtime handlers! Rewrite the <InlineFile file="get-auth-token.test.ts" /> test to add new test cases for the error handling logic of the `getAuthToken()` function.
+
+To achieve that, you'd have to reuse the `server` from <InlineFile file="vitest.setup.ts" /> both for the setup file and the test.
+
+:koala: <InlineFile file="./mocks/node.ts">Click here to create a new `mocks/node.ts` module</InlineFile>
+
+:koala: Move `handlers.ts` to `./mocks` so it becomes `./mocks/handler.ts`.
+
+:koala: Move the `server` setup from <InlineFile file="vitest.setup.ts" /> to the new `mocks/node.ts` module.]
+
+```ts filename=vitest.setup.ts remove=1-4 add=5
+import { setupServer } from 'msw/node'
+import { handlers } from './handlers.js'
+
+const server = setupServer(...handlers)
+import { server } from './mocks/node.js'
+
+beforeAll(() => {
+  server.listen({
+    onUnhandledRequest: 'error',
+  })
+})
+
+afterEach(() => {
+  server.resetHandlers()
+})
+
+afterAll(() => {
+  server.close()
+})
+```
+
+:koala: Then, head to the <InlineFile file="get-auth-token.test.ts" /> file and complete the test cases.

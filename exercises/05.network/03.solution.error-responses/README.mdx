@@ -1,0 +1,53 @@
+# Error responses
+
+I start with restructuring our project a little bit. In order for me to use runtime handlers, I need to have access to the same `server` object created in `vitest.setup.ts`. However, importing from the setup file _is not recommended_.
+
+> :owl: Although Vitest will **cache imports** and not evaluate the global hooks twice if you import from the setup file, it caches imports **per test file**. This works nice in the isolated mode, which Vitest uses by default, but may cause problems if you switch to parallel test runs.
+
+```shell
+/
+  /mocks
+    handlers.ts # Request handlers for happy paths.
+    node.ts # Node.js integration point.
+  get-auth-token.test.ts # import { server } from '...'
+  vitest.setup.ts # import { server } from '...'
+```
+
+With these changes, I can reuse the same `server` object from `./mocks/node.ts` in both `vite.setup.ts` and in the test file as well.
+
+<CodeFile file="vitest.setup.ts" highlight="1" />
+
+<CodeFile file="get-auth-token.test.ts" range="1-5" highlight="2" />
+
+At last, I can prepend request handlers using the [`server.use()`](https://mswjs.io/docs/api/setup-server/use) API to model network scenarios on a per-test basis! The workflow for overriding the network will be the same no matter where I'm going to use it:
+
+1. Go to the test case that needs a different network behavior;
+1. Call `server.use()` with a request handler for the same request but describe a different mocked response;
+1. Execute the tested code (the code that does the request).
+
+Here's how the invalid credentials scenario will look like with the runtuime handler in place:
+
+<CodeFile file="get-auth-token.test.ts" range="14-24" highlight="15-19" />
+
+> `server.use()` **prepends** request handlers so they take higher priority. The prepended handlers will persist until `server.resetHandlers()` is called, which in our case is called in the `afterEach()` hook in `vitest.setup.ts`.
+
+In a similar fashion, I will create a runtime request handler to emulate a generic 500 server error response in a new test case:
+
+<CodeFile file="get-auth-token.test.ts" range="26-36" highlight="27-31" />
+
+Lastly, I will run the tests to make sure everything works as expected:
+
+```
+ ✓ get-auth-token.test.ts (3)
+   ✓ returns the authentication token on successful authentication
+   ✓ throws an error if the user credentials are invalid
+   ✓ throws an error if the server responds with an error
+```
+
+1. Why did we restructure the code? `mocks/node.ts` and `mocks/handlers.ts`.
+1. How did we create runtime handlers?
+1. - mention `afterEach()` reset.
+
+## Further reading
+
+Runtime handlers is a powerful tool when controlling the network. I highly encourage you to read the :scroll: [Network behavior overrides](https://mswjs.io/docs/best-practices/network-behavior-overrides) best practice to learn more how you can utilize it during development and testing.
