@@ -33,7 +33,7 @@ Here's how the invalid credentials scenario will look like with the runtuime han
 
 In a similar fashion, I will create a runtime request handler to emulate a generic 500 server error response in a new test case:
 
-<CodeFile file="get-auth-token.test.ts" range="26-36" highlight="27-31" />
+<CodeFile file="get-auth-token.test.ts" range="29-34" highlight="30-34" />
 
 Lastly, I will run the tests to make sure everything works as expected:
 
@@ -43,10 +43,6 @@ Lastly, I will run the tests to make sure everything works as expected:
    ✓ throws an error if the user credentials are invalid
    ✓ throws an error if the server responds with an error
 ```
-
-1. Why did we restructure the code? `mocks/node.ts` and `mocks/handlers.ts`.
-1. How did we create runtime handlers?
-1. - mention `afterEach()` reset.
 
 ## Further reading
 

@@ -18,9 +18,12 @@ test('throws an error if the user credentials are invalid', async () => {
     }),
   )
 
-  await expect(getAuthToken).rejects.toThrow(
-    'Authentication failed: invalid credentials',
-  )
+  await expect(() =>
+    getAuthToken({
+      email: 'kody@epicweb.dev',
+      password: 'supersecret123',
+    }),
+  ).rejects.toThrow('Authentication failed: invalid credentials')
 })
 
 test('throws an error if the server responds with an error', async () => {
@@ -30,7 +33,10 @@ test('throws an error if the server responds with an error', async () => {
     }),
   )
 
-  await expect(getAuthToken).rejects.toThrow(
-    'Authentication failed: network error',
-  )
+  await expect(() =>
+    getAuthToken({
+      email: 'kody@epicweb.dev',
+      password: 'supersecret123',
+    }),
+  ).rejects.toThrow('Authentication failed: network error')
 })

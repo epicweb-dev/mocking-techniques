@@ -13,8 +13,6 @@ test('returns the authentication token on successful authentication', async () =
   ).resolves.toEqual({ token: 'abc-123' })
 })
 
-//
-
 test('throws an error if the user credentials are invalid', async () => {
   // 🐨 Call `server.use()` and provide it with a runtime handler.
   // In that handler, intercept the same "POST https://api.example.com/auth"
@@ -23,9 +21,12 @@ test('throws an error if the user credentials are invalid', async () => {
   // 💰 http.post(path, resolver)
   // 💰 new Response(null, { status: 401 })
 
-  await expect(getAuthToken).rejects.toThrow(
-    'Authentication failed: invalid credentials',
-  )
+  await expect(() =>
+    getAuthToken({
+      email: 'kody@epicweb.dev',
+      password: 'supersecret123',
+    }),
+  ).rejects.toThrow('Authentication failed: invalid credentials')
 })
 
 test('throws an error if the server responds with an error', async () => {
@@ -33,7 +34,10 @@ test('throws an error if the server responds with an error', async () => {
   // this time responding with a 500 response.
   // 💰 new Response(null, { status: 500 })
 
-  await expect(getAuthToken).rejects.toThrow(
-    'Authentication failed: network error',
-  )
+  await expect(() =>
+    getAuthToken({
+      email: 'kody@epicweb.dev',
+      password: 'supersecret123',
+    }),
+  ).rejects.toThrow('Authentication failed: network error')
 })
