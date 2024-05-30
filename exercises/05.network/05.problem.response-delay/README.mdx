@@ -1,1 +1,29 @@
 # Response delay
+
+Let's conclude this exercise block with another improvement to the `getAuthToken()` function.
+
+Right now, we've accounted for the successful and error responses, and also for the network errors. However, network connectivity is tricky. What if the response _never arrives_ at all and just hangs? This can easily happen if the server is overloaded or the network is just slow.
+
+It would be great to introduce a timeout logic in the `getAuthToken()` function that would reject the pending request if it takes too long to complete. But even if we added that logic, we would have to find some means to reproduce that long-pending request . . .
+
+Yes, of course, I'm talking about MSW.
+
+You can control the response timing using the [`delay()`](https://mswjs.io/docs/api/delay) function exported from the `msw` package:
+
+```ts highlight=1,4
+import { http, delay } from 'msw'
+
+http.get('/resource', async () => {
+  await delay(2000)
+})
+```
+
+> Apart from accepting an explicit delay duration in milliseconds, you call `delay()` without any arguments to emulate a random realistic server response time, or provide it with a delay mode, like `'infinite'` to make the delay last forever.
+
+This is really handy when developing mock-first to simulate the real-world response timings. But you can also use the `delay()` function to mock a hanging request.
+
+👨‍💼 In this one, create a brand new test case in <InlineFile file="get-auth-token.test.ts" /> for the request timeout, and complete it using `server.use()` and the `delay()` function.
+
+<callout-info>Keep in mind: you are working with _time_ and _timers_ here! :wink:</callout-info>
+
+:owl: I've already added the request timeout handling to <InlineFile file="get-auth-token.ts" /> so make sure to check out what's the intention there!

@@ -1,6 +1,14 @@
-import { http } from 'msw'
+import { http, delay } from 'msw'
 import { server } from './mocks/node.js'
 import { getAuthToken } from './get-auth-token.js'
+
+beforeAll(() => {
+  vi.useFakeTimers()
+})
+
+afterAll(() => {
+  vi.useRealTimers()
+})
 
 test('returns the authentication token on successful authentication', async () => {
   await expect(
@@ -56,15 +64,21 @@ test('handles network errors', async () => {
   ).rejects.toThrow('Authentication failed: network error')
 })
 
-// 🐨 Create a new test case to check how the `getAuthToken` function
-// handler the request timeout.
-// 💰 test(title, callback)
+test('handles the request timeout', async () => {
+  server.use(
+    http.post('https://api.example.com/auth', async () => {
+      await delay('infinite')
+    }),
+  )
 
-// 🐨 In the new test case, add a runtime handler for the auth token
-// endpoint and respond to the request with the `delay` function.
-// Use `delay('infinite')` to make the request pend forever.
-// 💰 server.use(handler)
+  const tokenPromise = getAuthToken({
+    email: 'kody@epicweb.dev',
+    password: 'supersecret123',
+  })
 
-// 🐨 Next, complete the test by calling the `getAuthToken`
-// and writing the assertion around the correct rejection error.
-// 💰 You may want to mock *time* here.
+  vi.advanceTimersByTime(3000)
+
+  await expect(tokenPromise).rejects.toThrow(
+    'Authentication failed: request timed out',
+  )
+})
