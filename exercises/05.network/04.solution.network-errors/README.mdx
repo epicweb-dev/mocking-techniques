@@ -1,0 +1,21 @@
+# Network errors
+
+I will start from implementing the error handling for network errors in `get-auth-token.ts` module.
+
+Unlike error responses, network errors will _reject the `fetch` promise_. This means that I can react to those errors in the `catch` callback attached to that promise:
+
+<CodeFile file="get-auth-token.ts" range="8-16" highlight="14-16" />
+
+> I am storing the original `error` as the `cause` property of the consumer-facing error for debugging purposes.
+
+Next, let's mock the network error in the test.
+
+In the `get-auth-token.test.ts`, I will head to the new empty test case and add a runtime handler that will respond with a network error:
+
+<CodeFile file="get-auth-token.test.ts" range="38-43" highlight="39-43" />
+
+> With this request handler, _any_ request to the `POST https://api.example.com/auth` endpoint within this test will result in a network error. Note that I'm not trying to make the responses input-dependent, and instead model a reliable scenario that represents the one I want to test.
+
+Finally, I will add an assertion for the `getAuthToken()` promise to verify that it rejects with the correct error message:
+
+<CodeFile file="get-auth-token.test.ts" range="45-47" />

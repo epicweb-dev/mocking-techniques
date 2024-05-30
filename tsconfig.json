@@ -80,6 +80,18 @@
       "path": "exercises/05.network/03.solution.error-responses"
     },
     {
+      "path": "exercises/05.network/04.problem.network-errors"
+    },
+    {
+      "path": "exercises/05.network/04.solution.network-errors"
+    },
+    {
+      "path": "exercises/05.network/05.problem.response-delay"
+    },
+    {
+      "path": "exercises/05.network/05.solution.response-delay"
+    },
+    {
       "path": "exercises/06.modules/02.problem.local-modules"
     },
     {

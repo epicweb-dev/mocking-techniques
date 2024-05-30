@@ -1,0 +1,11 @@
+{
+  "type": "module",
+  "name": "exercises__sep__05.network__sep__04.problem.network-errors",
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "msw": "^2.3.0",
+    "vitest": "^1.6.0"
+  }
+}
