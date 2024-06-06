@@ -18,7 +18,7 @@ vi.mock('./path/to/module.js', factory)
 
 It consists of two parts:
 
-1. A path to the module to mock;
+1. A path to the module to mock (local or third party);
 1. A factory function of the mock implementation. This function is called every time this module is imported in the test, and whatever it returns is used as the exports of that module.
 
 The call to the `vi.mock()` function is _hoisted_, which means it's always moved to the top of the test file, no matter where it's called. This is crucial because module mocking is generally sensitive to import order.
