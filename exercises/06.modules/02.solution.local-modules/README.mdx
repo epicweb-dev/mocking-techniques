@@ -1,1 +1,48 @@
 # Local modules
+
+I start by analyzing the exports of the module I wish to mock (`./logger.js`):
+
+<CodeFile file="logger.ts" highlight="15" />
+
+It exports a single object called `logger` with methods `info()`, `warn()`, and `error()`. Since the tested `handleRequest()` function calls those methods, they have to exist in the mock as well. I will keep that in mind when mocking this module.
+
+Now, to the actual mock!
+
+I will call the `vi.mock()` function and provide it with two arguments:
+
+1. Path to the module to mock: `./logger.js`.
+1. A factory function that implements that module.
+
+```ts
+vi.mock('./logger.js', () => {
+  return {}
+})
+```
+
+> Note that although the source module is `logger.ts` (the `.ts` extension) because the test has to _compile_ first before it's run. Once it compiles. `*.ts` becomes `*.js` and the import path becomes valid.
+
+To keep the mock module implementation in-sync with the actual module, I'm using the `satisfies` keyword in TypeScript to ensure that the mock I return matches the actual module's exports perfectly:
+
+```ts highlight=2
+vi.mock('./logger.js', () => {
+  return {} satisfies typeof import('./logger.js')
+})
+```
+
+Once I do that, TypeScript will start screaming at me about the missing exports, and that's exactly what I want to hear! I can go ahead and add the mock implementation for the `logger` object and its methods:
+
+<CodeFile file="handle-request.test.ts" range="3-11" highlight="5-9" />
+
+> I'm using empty functions as the values for the `info`, `warn`, and `error` methods in the mock factory. I could also replace them with spy functions (`vi.fn()`) if I ever need to record their calls.
+
+Now, whenever Vitest encounters an import to `./logger.js`, it will replace that module with the mock implementation returned from the factory. This allows me to test the logic in the `handleRequest` function excluding the logging.
+
+```
+npm test
+```
+
+```
+ ✓ handle-request.test.ts (2)
+   ✓ returns the successful response for an authorized request
+   ✓ throws an error for an unauthorized request
+```
