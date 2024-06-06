@@ -1,0 +1,21 @@
+# Auto-mocking
+
+I will call the `vi.mock()` function and provide it only with the path to the module I wish to mock.
+
+<CodeFile file="handle-request.test.ts" range="3" />
+
+> Note that although the source module is `logger.ts` (the `.ts` extension) because the test has to _compile_ first before it's run. Once it compiles. `*.ts` becomes `*.js` and the import path becomes valid.
+
+I don't have to explicitly describe the module's exports in the `factory` argument, and can instead rely on Vitest auto-mocking everything the `./logger.js` module exports for me.
+
+Now, whenever Vitest encounters an import to `./logger.js`, it will replace that module with the mock implementation returned from the factory. This allows me to test the logic in the `handleRequest` function excluding the logging.
+
+```
+npm test
+```
+
+```
+ ✓ handle-request.test.ts (2)
+   ✓ returns the successful response for an authorized request
+   ✓ throws an error for an unauthorized request
+```

@@ -2,3 +2,4 @@
 
 - Mocking modules should be a last resort. This sets the boundary quite far (?). In most situations, you are far betteer off with mocking inputs or side effects, not modules.
 - The problem with mocking modules is that most of the times you lose nothing by letting the dependency execute. You are really interested in mocking/controlling the values/behaviors, not the entire module.
+- Another problem with module mocking: it introduces tighter coupling between the code and the test. Suddenly, your test now knows what your code imports. That's not ideal, and **only makes sense for developer-oriented code**.
