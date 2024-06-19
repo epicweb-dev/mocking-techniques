@@ -1,1 +1,39 @@
 # Fakes
+
+I will start from creating a fake `EmailService` class in the test:
+
+<CodeFile file="notification-service.test.ts" range="1,4-9" />
+
+Here, I'm implementing an actual class that always stays compatible with the original `EmailService` class due to the usage of the `implements` keywords in TypeScript.
+
+<callout-info>
+  Using `implements` creates an _empty_ child class that must be type-compatible
+  with the parent class. Using `extends` actually inherits the parent class'
+  behaviors alongside the types.
+</callout-info>
+
+Now, I can use `MockEmailService` to model various behaviors in the `NotificationService` test!
+
+I will create a new `MockEmailService` instance for the test case where the email must not be sent (the user didn't give their permission to receive emails):
+
+<CodeFile file="notification-service.test.ts" range="11-21" highlight="12" />
+
+> Note that I am not configuring any behaviors on the mocked class because _they are irrelevant for this particular test_. By taking the `EmailService` out of the testing equation, I am focusing this test strictly on the logic within `NotificationService.prototype.sendEmail` method (checking `this.preferences.email`):
+
+<CodeFile file="notification-service.ts" range="9-17" highlight="10-12" />
+
+In order to test the successful sending of the email, I would have to mock the return value of the `.send()` method on the respective `MockEmailService` instance:
+
+<CodeFile file="notification-service.test.ts" range="23-40" highlight="24-27" />
+
+## When to use fakes?
+
+I can recommend using fakes if your code is already designed to support dependency injection. In that case, fakes are simple input value mocks, not that different than constructing a mocked object or a `Response` instance in tests.
+
+However, I would _not_ rewrite my code to support dependency injection _just for testing_. That is a dangerous mental model to have.
+
+<callout-info class="important">You write code for _users_, not tests.</callout-info>
+
+Thus, the design decisions behind your code must be based on the intention you are implementing. Rewriting the code does not improve its testability. It simply creates a different code that now requires a different test.
+
+> :scroll: I write about code testability in [Good Code, Testable Code](https://www.epicweb.dev/good-code-testable-code). Consider reading it!

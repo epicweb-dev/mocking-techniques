@@ -1,42 +1,30 @@
 # Fakes
 
-1. Fakes (with Dependency injection). Don't focus on DI because it's _not_ exclusively a testing technique. We can still showcase how it helps with testing.
+One of the ways to manage dependencies is by using _fakes_.
 
-- 📜 **Article: Good Code Is Testable Code**.
+A fake is a simplified version of a dependency. Fakes don't have any behaviors and simply act as a placeholder for the real dependency. You can use fakes to _remove_ the dependency from the testing equation, thus focusing your test on particular scenarios and behaviors.
 
-```ts
-// Use "implements" for type-safety and compatibility
-// with the actual class we are trying to fake.
-class FakeDatabase implements Database {
-  users: Array<string> = []
+The most straightforward example of a fake is an input object:
 
-  // Implement one of the Database methods
-  // but make it simpler. Same behavior, different
-  // implementation.
-  public addUser(email: string) {
-    if (!this.users.includes(emails)) {
-      this.users.push(email)
-    }
-  }
-}
-
-test('sends an email', () => {
-  // Create a fake database and provide it to the
-  // email service so it's used in the test.
-  // The email service calls "db.addUser()" internally.
-  const database = new FakeDatabase()
-  const emailService = new EmailService(database)
-
-  const result = await emailService.sendEmail({
-    to: 'kody@epicweb.dev',
-    subject: 'Hello!',
-  })
-
-  // Must send the email.
-  expect(result.sent).toBe(true)
-  // Must store the recepient's email address.
-  expect(database.users).toEqual(['kody@epicweb.dev'])
+```ts lines=2
+test('returns the first name for the given user', () => {
+  const user = { firstName: 'Kody' } satisfies User
+  await expect(getFirstName(user)).resolves.toBeUndefined()
 })
 ```
 
-> NOTE: We mustn't assert that `database.addUser()` has been called! That's an implementation detail. Instead, assert on the database state, which is `database.users`.
+The `user` object above is a _fake_ object. The real application may be pulling the user from a database or relying on the `User` class to create them. None of that is necessary to test the `getFirstName()` functionality. If it can accept the user as an argument, we can mock that argument in the test.
+
+Now, let's look at some real code.
+
+Here we have a `NotificationService` class that has the `sendEmail()` method that should send an email to the user:
+
+<CodeFile file="notification-service.ts" />
+
+It so happened that the constructor of the `NotificationService` accepts an instance of the `EmailService` as an argument:
+
+<CodeFile file="notification-service.ts" range="4-7" highlight="5" />
+
+👨‍💼 In this exercise, complete the tests for the <InlineFile file="notification-service.test.ts" /> by constructing a fake `EmailService` and using it as an argument to test different notification scenarios.
+
+Once you are done, run `npm test` to make sure that all the tests are passing.

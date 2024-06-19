@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "name": "exercises__sep__06.modules__sep__01.solution.fakes",
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
+}
