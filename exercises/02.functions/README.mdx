@@ -1,6 +1,19 @@
 # Functions
 
-> Beware not to introduce _implenentation-detail testing_! Spying can lead you off track in no time. Teach what's okay to spy on and what's not.
+Functions is the heart and soul of any logic in JavaScript. Event handlers, callbacks, utilities—you have likely worked with functions before. Whenever you want your code to _do_ something you reach out to a function because it represents _action_.
 
-- Functions are common because they represent action.
-- The kinds of mocks for functions: spying, replacing, mocking/controlling implementation.
+Ideally, testing functions should come down to the I/O (input/output) testing. You provide a function with the right input and assert the expected output. That kind of testing is extremely apparent in unit testing and it truly shines with pure functions.
+
+But the thing is, functions, much like the intentions behind them, can be different. Not all functions you will write will be pure. Some will have side effects, some will be asynchronous, the others will introduce dependencies or non-deterministic behaviors. There may also be times when the function itself wouldn't matter, and instead you would want to test if it's being called or not.
+
+There are plenty of cases to reach out to mocking when testing functions, and it's time you learned how to do it.
+
+## Mocking functions
+
+Mocking imbues your functions with superpowers. There are multiple techniques of mocking functions, and they all come down to the following points:
+
+1. Recording the calls;
+1. Substituting the implementation;
+1. Creating "dummies" for the tested code's arguments.
+
+In this exercise, you will learn how to wield all three and also see the use cases for different kinds of function mocks.
