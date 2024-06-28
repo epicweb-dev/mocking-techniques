@@ -3,3 +3,43 @@
 - Explain why you would want to mock the network requests while testing.
 - Briefly touch on how API mocking works in general (can reference my Egghead series).
 - Explain why we are choosing MSW for this workshop.
+
+---
+
+Network is the most common reason to introduce mocking to your test suite. Because that's also the most common thing you find in every application. You build products so they _do_ something, and on the web it takes the client and the server to achieve that. No wonder that many developers when told about mocking imagine API mocking, specifically.
+
+## Why you should mock the network
+
+The reasons to mock network requests are quite similar to mocking anything else: to rule the network out of the testing equation. To make it stop affecting the test results.
+
+But why? Your application does those requests in production, shouldn't you keep the behavior the same in tests?
+
+Yes and no. To help me explain this, I will reach out to the :scroll: [Golden Rule of Assertions](https://www.epicweb.dev/the-golden-rule-of-assertions):
+
+> A test must fail if, and only if, the intention behind the system is not met.
+
+Effectively, this means that the things that affect the test result must directly relate to the intention behind the test. Making the request itself is never the intention. The network is the protocol to _do_ something. You always have the actual logic surrounding the request to achieve that.
+
+For example, you may be fetching the user object to render a personalized message in the UI:
+
+```tsx
+async function Greet({ id }: { id: string }) {
+  // Beware: pseudo-code ahead!
+  const response = await fetch(`/users/${id}`)
+  const user = await response.json()
+
+  return <p>Hello, {user.firstName}!</p>
+}
+```
+
+Indeed, making the `GET /users/:id` request is a part of the implementation but that's not the purpose of the `Greet` component. The purpose is to _render_ the received data. Often, it is also to handle request or response errors gracefully so they wouldn't disrupt the user experience.
+
+But think about what happens if you leave that request as-is in tests. First, it's going to take time to communicate with the server. But a far more important thing is that _the server response becomes directly responsible for the test result_.
+
+You aren't testing the server though. If talking about the integration level testing, the server has nothing to do with your `Greet` component. It's simply another variable part of the testing equation, much like date and time!
+
+**If your component is functioning correctly, the test must pass**. And you use mocking to control the network, allowing you to respond to the same request in different ways so you can test corner cases and error handling.
+
+## How does API mocking work?
+
+[...]
