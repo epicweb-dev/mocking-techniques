@@ -1,11 +1,5 @@
 # Network
 
-- Explain why you would want to mock the network requests while testing.
-- Briefly touch on how API mocking works in general (can reference my Egghead series).
-- Explain why we are choosing MSW for this workshop.
-
----
-
 Network is the most common reason to introduce mocking to your test suite. Because that's also the most common thing you find in every application. You build products so they _do_ something, and on the web it takes the client and the server to achieve that. No wonder that many developers when told about mocking imagine API mocking, specifically.
 
 ## Why you should mock the network
@@ -42,4 +36,14 @@ You aren't testing the server though. If talking about the integration level tes
 
 ## How does API mocking work?
 
-[...]
+Whether you are using a third-party request client, like `got` or `axios`, or relying on plain `fetch`, mocking a network request often comes down to _patching_ the global APIs responsible for it. In the browser, those are `fetch` and `XMLHttpRequest`, and in Node.js it may be `http.ClientRequest` or `net.Socket`. In that regard, mocking the network is not much different than mocking globals, which you already know how to do.
+
+Which means you already know about the dangers of patching globals too. Those dangers manifest greatly in network mocking because it often _throws away the network code_. While you don't want the actual request to happen during tests, the "later" you establish the interception, the better. You wouldn't want GET requests with a body to be treated with mock responses, would you?
+
+> If you would like to dive deeper into the request interception in JavaScript, I have written a series of articles on API mocking. The best place to start is from :scroll: [The Request Journey](https://egghead.io/blog/understanding-api-mocking-the-http-request-journey).
+
+Mocking is deviating, so you naturally want to deviate your tested code as little as possible from its behavior in production. There are multiple API mocking solutions out there, and I encourage you to explore them all, but some tend to deviate your code more than others.
+
+That is why in this workshop we will be using [Mock Service Worker](https://mswjs.io/). It builds on top of the web standards, like the Service Worker and the Fetch API, and provides one of the least intrusive interception algorithms in JavaScript, allowing to run as much of the actual network code as possible.
+
+It's time for you to see it in action!
