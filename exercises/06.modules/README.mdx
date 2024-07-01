@@ -21,7 +21,7 @@ export async function fetchUser(userId: string) {
 
 What is proposed is to mock the `axios` dependency in a test in order to remove the actual HTTP request and gain control over the response returned.
 
-```ts filename=fetch-user.test.ts highlight=3,14-16
+```ts filename=fetch-user.test.ts highlight=4,15-17
 import axios from 'axios'
 import { fetchUser } from './fetch-user.js'
 
