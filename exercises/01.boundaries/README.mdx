@@ -1,12 +1,5 @@
 # Boundaries
 
-TODO
-
-- You use mocking for two things: to _exclude_ irrelevant things (A depends on B, and I just want to test A), and to _control_ things that are unpredictable (network requests, time, etc).
-- When you want to control things, you want to control two types of things: _values_ and _behaviors_ (I treat states as either: observable state is a value; non-observable state is a behavior).
-
----
-
 There has been almost two decades since mocks (originally called "_test doubles_") were first defined. If you go and search for "mocks" online right now, you will find a plethora of technical explanations and usage examples on how to substitute, spy, stub, replace, fake, and do all sorts of things with the tested code. Most of those resources put emphasis on different ways to mock but, somehow, fail to explain to you what _is_ a mock, _when_ would you reach out for one, and _what_ it actually does to your code.
 
 ## What is mocking?
@@ -81,7 +74,7 @@ Mocking in tests can be used for various different reasons:
 - To focus the test on certain behaviors;
 - To control and spy on dependencies.
 
-But no matter the purpose, mocking is always about introducing a test boundary (or a few) and reaping the benefits and drawbacks of it. While you may hear that mocking should be discouraged in testing, rest assured, it's a tremendously useful tool in your arsenal as long as you know how to wield it.
+All of the above can be split into either mocking _values_ or mocking _behaviors_. But no matter the purpose, mocking is always about introducing a test boundary (or a few) and reaping the benefits and drawbacks of it. While you may hear that mocking should be discouraged in testing, rest assured, it's a tremendously useful tool in your arsenal as long as you know how to wield it.
 
 > It's absolutely crucial you think of mocking as a tool that helps you achieve something.
 
