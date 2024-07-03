@@ -1,6 +1,45 @@
 # Mocking Techniques
 
-TODO
+Hey! :wave: Welcome to the Mocking Techniques workshop!
 
-- You use mocking for two things: to _exlcude_ irrelevant things (A depends on B, and I just want to test A), and to _control_ things that are unpredicatble (network requests, time, etc).
-- When you want to control things, you want to control two types of things: _values_ and _behaviors_ (I treat states as either: observable state is a value; non-observable state is a behavior).
+My name is Artem and over the course of the next hours I will make sure that you become a mocking ninja. It just so happened I am deeply involved in the developer tooling around mocking in JavaScript. I've built open source libraries to help developers with mocking that have become the standard of testing. I've learned a lot over the years of working on those projects, and it's finally time I helped you understand mocking.
+
+Despite the name, this workshop will be as much about the mocking techniques as it will be about _when_ to use them (or not!). Mocking is a powerful tool and it must be used with thought. I am here to see you understand both the practical and theoretical applications of mocking to make your tests rock-solid.
+
+## Exercises
+
+This workshop is split into six sections, each focusing on a particular type of data you may want to mock while testing. Let's go briefly through them all.
+
+### Boundaries
+
+You will start from the most important part: what is mocking and how it affects your code. You will learn that mocking is a tool to establish _test boundaries_. In other words, it lets you control where your tested code ends in test. You will learn that by using an interactive application to insert different mocks on different levels in code, and see how your decisions affect what is being tested in the end.
+
+### Functions
+
+Next, you will dive into mocking functions. Most of the logic you write in your code is functions. Components, event listeners, fetchers, callbacks—functions can take many forms but are all mocked in the same way. In fact, in _three_ ways, and you will learn them all in this exercises.
+
+### Date and time
+
+In this section, you will become the magician who bends date and time to their will. You will practice mocking dates, intervals and timeouts, and also event loop ticks to learn how to make those variable, unpredictable parts of your code to be deterministic.
+
+### Globals
+
+Sometimes you have to test the things you don't own. Like the global `console` object. How do you know when your code prints something to the console? How to listen to when that happens and assert that the behavior is correct?
+
+You will get the answers to those questions by exploring three different ways to mock a global—monkey patching, proxying, and spying. On top of that, you will understand the dangers of mocking globals and see firsthand how those three approaches differ in practice (and when you should use each, if ever).
+
+### Network
+
+The applications you build are likely fetching, manipulating, and displaying some data. On the web, they do so by performing HTTP requests. But the thing is, you don't want those requests to happen when testing your components.
+
+Learn why allowing the network in tests leads to brittle tests, and also perfect the techniques of intercepting any request, mocking successful and error responses, network errors, and controlling the server response time. All by using the library called Mock Service Worker.
+
+### Modules
+
+You will finish off with mocking modules. See when you really need to resort to this mocking technique, as well as find out about the different ways you can mock a module in Vitest.
+
+## Going through the workshop
+
+This is an EpicWeb workshop, which means that all exercises consist of the problem and the solution. You will solve the former to arrive at the latter, using the same tools you already use to write your code. The workshop app will help you track your progress and analyze the solutions to the exercises at hand.
+
+There is a ginormous amount of material ahead of you. But don't fret—anything complex is ultimately made by the simple. Ready your mind, stretch your fingers, and let's go!
