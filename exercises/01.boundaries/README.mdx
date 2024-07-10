@@ -4,7 +4,7 @@ There has been almost two decades since mocks (originally called "_test doubles_
 
 ## What is mocking?
 
-Mocking is a technique to establish _test boundaries_.
+Mocking is a technique to establish :scroll: [_test boundaries_](https://www.epicweb.dev/what-is-a-test-boundary).
 
 Take a look at this `one()` function:
 
@@ -89,15 +89,11 @@ But also, perhaps the most important question: What does mocking do to my code?
 
 ## What mocking does to your code?
 
-Mocking is an essential tool for testing. It can be your lever to transition between different testing levels, handle dependencies, model behaviors, and focus on particular logic (not to mention various mocking applications outside of the realm of testing!). But beware: when mocking, **you are modifying your code**.
-
-Any mock you introduce creates a tiny alternative universe where the code you are testing is mostly the same but not quite. Those "not quite"s can be desired and manageable, but they can also decrease the quality of your tests and make you trust them less. Like any tool, mocking has to be handled with purpose and care.
-
-you will testing nothing at all.
+Mocking is an essential tool for testing. It can be your lever to transition between different testing levels, handle dependencies, model required behaviors, and focus on particular logic (not to mention various mocking applications outside of the realm of testing!). But beware: when mocking, **you are modifying your code**.
 
 > The more you alter the system under test, the more you are testing a different system.
 
-> **TODO: Link to the Rule of Deviation article.**
+Any mock you introduce creates a tiny alternative universe where the code you are testing is mostly the same but not quite. Those "not quite"s can be desired and controllable, but they can also decrease the quality of your tests and make you trust them less. Like any tool, mocking has to be handled with purpose and care.
 
 You don't want to end up in the state where you are running tests against mocks alone. If that happens, you aren't testing anything and should take a good dozen of steps back to reconsider your testing strategy.
 
