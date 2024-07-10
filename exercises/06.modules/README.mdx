@@ -1,6 +1,6 @@
 # Modules
 
-Mocking modules should be your last resort. As we've previously covered, mocking focuses on either _values_ or _behaviors_. When mocking a module, you are throwing away both, and leave it up to your mock to fill in the gaps in the best way possible.
+Mocking modules should be your last resort because it's the most intrusive mocking technique out there. As we've previously covered, mocking focuses on either _values_ or _behaviors_. When mocking a module, you are throwing away both, and leave it up to your mock to fill in the gaps in the best way possible.
 
 In practice, mocking modules harms more than it helps. You rarely want to mock a _module_. You are problably thinking of a particular value or a behavior introduced by that module, and you should be mocking that instead.
 
