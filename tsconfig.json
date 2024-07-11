@@ -92,6 +92,12 @@
       "path": "exercises/05.network/05.solution.response-delay"
     },
     {
+      "path": "exercises/06.modules/01.problem.fakes"
+    },
+    {
+      "path": "exercises/06.modules/01.solution.fakes"
+    },
+    {
       "path": "exercises/06.modules/02.problem.auto-mocking"
     },
     {
