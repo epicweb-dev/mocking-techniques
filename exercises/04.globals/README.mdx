@@ -23,5 +23,3 @@ Globals are also not limited to built-in native APIs, as you can create your own
 Mocking globals, however, can be quite dangerous. That is mostly due to the fact that globals are often the things _you do not own_. You don't own the `console` or the `process` object. You haven't defined them, have no access to their implementation, and aren't aware of countless intricacies they may have with other globals.
 
 You should only worry about a subset of dangers since you will be mocking globals only within your test suite. That does not mean you are entirely safe, and that is why knowing different mocking techniques (and their downsides!) is crucial.
-
-> :scroll: If you'd like to learn more about the dangerous of mocking, check out the [Why Patching Globals is Harmful](https://kettanaito.com/blog/why-patching-globals-is-harmful) article. It's written for open-source library maintainers but it contains a lot of useful examples and points as to what dangers surface once you modify the things you do not own.
