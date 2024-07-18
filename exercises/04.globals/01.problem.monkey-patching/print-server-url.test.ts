@@ -6,6 +6,11 @@ import { printServerUrl } from './print-server-url.js'
 // 🐨 Next, create a mock function valled "consoleLogSpy".
 // 💰 const consoleLogSpy = vi.fn()
 
+// 🐨 Add the "beforeAll" hook where you will replace the
+// original `globalThis.console.log` with the created spy.
+// 💰 beforeAll(callback)
+// 💰 globalThis.console.log = spyFn
+
 // 🐨 Add the "afterEach" hook that will reset the value of the
 // "consoleLogSpy" spy function between each test.
 // 💰 afterEach(callback)
