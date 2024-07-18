@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "name": "exercises__sep__03.date-and-time__sep__03.problem.ticks-and-tasks",
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
+}
