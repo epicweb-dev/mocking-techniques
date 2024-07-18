@@ -10,7 +10,7 @@ Here's a basic example of using Proxy:
 // This is the original object "user".
 const user = { name: 'John', age: 32 }
 
-// Creaet a proxy over the "user" object.
+// Create a proxy over the "user" object.
 const proxyUser = new Proxy(user, {
   get(target, propertyName) {
     // If getting a property which name is "name"...
@@ -33,7 +33,7 @@ proxyUser.age // 32
 
 Even from this example you may notice that `Proxy` doesn't replace the `user`, it creates a _new_, proxied object that wraps around the original one. It doesn't do the "replace" part, only the "control" part. That's really handy when debugging, for example, as you can pass the `proxyUser` strategically to some consumers and see what properties they access or methods they call.
 
-When mocking globals, that "replace" part is quite important. Although we can creaet a `consoleProxy` object, we wouldn't be able to instruct our tested code to use the proxy instead of the global `console`.
+When mocking globals, that "replace" part is quite important. Although we can create a `consoleProxy` object, we wouldn't be able to instruct our tested code to use the proxy instead of the global `console`.
 
 That being said, proxying objects still has tremendous benefits compared to monkey patching.
 

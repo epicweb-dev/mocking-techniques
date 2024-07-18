@@ -3,7 +3,7 @@ import { printServerUrl } from './print-server-url.js'
 // 🐨 First, start from storing the original value of
 // `globalThis.console.log` in a variable called `originalConsoleLog`.
 
-// 🐨 Next, creaet a mock function valled "consoleLogSpy".
+// 🐨 Next, create a mock function valled "consoleLogSpy".
 // 💰 const consoleLogSpy = vi.fn()
 
 // 🐨 Add the "afterEach" hook that will reset the value of the
