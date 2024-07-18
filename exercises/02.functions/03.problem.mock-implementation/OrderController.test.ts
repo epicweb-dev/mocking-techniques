@@ -4,10 +4,10 @@ import { OrderController, Order, Cart } from './OrderController.js'
 // and assign it to a variable named "isItemInStock".
 // 💰 const isItemInStock = vi.spyOn(object, method)
 
-// 🐨 Add an "afterEach" hook that will clear the "isItemInStock" mock
-// function (i.e. reset the recorded calls information).
+// 🐨 Add an "afterEach" hook that will reset the "isItemInStock" mock
+// function (i.e. clear the recorded call information).
 // 💰 afterEach(callback)
-// 💰 <mock>.mockClear()
+// 💰 <mock>.mockReset()
 
 // 🐨 Add an "afterAll" hook to restore all mocks in the test.
 // 💰 afterAll(callback)

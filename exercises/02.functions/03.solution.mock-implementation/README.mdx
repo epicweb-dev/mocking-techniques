@@ -8,7 +8,7 @@ This means that whenever an order controller instance is created in this test, a
 
 Before we do any of that, let's remember the rule of thumb of mocks, which is to always clean up after oneself.
 
-I will add the `afterEach()` test hook that will call the [`.mockClear()`](https://vitest.dev/api/mock.html#mockclear) method on the `isItemInStock` mock function:
+I will add the `afterEach()` test hook that will call the [`.mockReset()`](https://vitest.dev/api/mock.html#mockreset) method on the `isItemInStock` mock function:
 
 <CodeFile file="OrderController.test.ts" range="5-7" />
 
@@ -18,7 +18,7 @@ Following this, I will use the `afterAll()` hook to restore any mocks and spies 
 
 <CodeFile file="OrderController.test.ts" range="9-11" />
 
-> Note that `.mockClear()` is called on **individual mock functions** while `vi.restoreAllMocks()` is called on the global `vi` object.
+> Note that `.mockReset()` is called on **individual mock functions** while `vi.restoreAllMocks()` is called on the global `vi` object.
 
 With the setup phase covered, let's dive into writing some tests!
 

@@ -3,7 +3,7 @@ import { OrderController, Order, Cart } from './OrderController.js'
 const isItemInStock = vi.spyOn(OrderController.prototype, 'isItemInStock')
 
 afterEach(() => {
-  isItemInStock.mockClear()
+  isItemInStock.mockReset()
 })
 
 afterAll(() => {
