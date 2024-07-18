@@ -27,14 +27,15 @@ test('debounces the callback until the timeout passes since the last call', () =
   const debouncedFn = debounce(fn, 250)
 
   // 🐨 Start this test case similarly to the previous one:
-  // call the "debouncedFn" with 1 as the argument and assert
+  // call the "debouncedFn" with "one" as the argument and assert
   // that it has not been called.
+  // 💰 debouncedFn('one')
 
   // 🐨 Then, advance the timers by 100ms to emulate that some
   // time has passed but not enough to trigger the debounce.
   // 💰 vi.advanceTimersByTime(duration)
 
-  // 🐨 Now, call the "debouncedFn" function again, passing 2
+  // 🐨 Now, call the "debouncedFn" function again, passing "two"
   // as the argument. Assert that the "fn" has not been called.
 
   // 🐨 Advance the timers by 250ms (the duration of debounce).

@@ -9,32 +9,32 @@ afterAll(() => {
 })
 
 test('executes the callback after the debounce timeout passes', () => {
-  const fn = vi.fn<[number]>()
+  const fn = vi.fn<[string]>()
   const debouncedFn = debounce(fn, 250)
 
-  debouncedFn(1)
+  debouncedFn('one')
   expect(fn).not.toHaveBeenCalled()
 
   vi.advanceTimersByTime(250)
 
   expect(fn).toHaveBeenCalledOnce()
-  expect(fn).toHaveBeenCalledWith(1)
+  expect(fn).toHaveBeenCalledWith('one')
 })
 
 test('debounces the callback until the timeout passes since the last call', () => {
-  const fn = vi.fn<[number]>()
+  const fn = vi.fn<[string]>()
   const debouncedFn = debounce(fn, 250)
 
-  debouncedFn(1)
+  debouncedFn('one')
   expect(fn).not.toHaveBeenCalled()
 
   vi.advanceTimersByTime(100)
 
-  debouncedFn(2)
+  debouncedFn('two')
   expect(fn).not.toHaveBeenCalled()
 
   vi.advanceTimersByTime(250)
 
   expect(fn).toHaveBeenCalledOnce()
-  expect(fn).toHaveBeenCalledWith(2)
+  expect(fn).toHaveBeenCalledWith('two')
 })
