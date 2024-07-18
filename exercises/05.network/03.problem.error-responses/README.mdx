@@ -58,7 +58,7 @@ To achieve that, you'd have to reuse the `server` from <InlineFile file="vitest.
 
 :koala: Move `handlers.ts` to `./mocks` so it becomes `./mocks/handler.ts`.
 
-:koala: Move the `server` setup from <InlineFile file="vitest.setup.ts" /> to the new `mocks/node.ts` module.]
+:koala: Move the `server` setup from <InlineFile file="vitest.setup.ts" /> to the new `mocks/node.ts` module.
 
 ```ts filename=vitest.setup.ts remove=1-4 add=5
 import { setupServer } from 'msw/node'
