@@ -35,6 +35,6 @@ The rest of the test suite stays the same.
 
 The `Proxy` API is immensely powerful. You are unlikely to use it in product development but it can come in handy when debugging your code or creating libraries. In fact, libraries like Immer use `Proxy` to implement the concept of "draft" objects, allowing you to mutate things in an immutable way.
 
-> :scroll: I have also written on how I use proxies when debugging in [Debugging Like A Pro-xy](https://kettanaito.com/blog/debugging-like-a-pro-xy). It's a really neat technique when you know what the problematic surface is but you don't know (or don't have access) to where it's defined.
+> :scroll: I have also written an article about how you can use proxies for debugging called [Debugging Like A Pro-xy](https://kettanaito.com/blog/debugging-like-a-pro-xy). It's a really neat technique when you know what the problematic surface is but you don't know (or don't have access) to where it's defined.
 
 Although our test setup has got better, it still relies on monkey patching. I think it's time to finally change that!
