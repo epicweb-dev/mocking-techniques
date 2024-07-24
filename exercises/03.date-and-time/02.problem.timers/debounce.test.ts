@@ -7,10 +7,10 @@ import { debounce } from './debounce.js'
 // 💰 afterAll(callback)
 
 test('executes the callback after the debounce timeout passes', () => {
-  const fn = vi.fn<[number]>()
+  const fn = vi.fn<[string]>()
   const debouncedFn = debounce(fn, 250)
 
-  // 🐨 First, call the "debounceFn" with 1 as the argument
+  // 🐨 First, call the "debounceFn" with "one" as the argument
   // and assert that the "fn" has not been called.
   // 💰 expect(fn).not.toHaveBeenCalled()
 
