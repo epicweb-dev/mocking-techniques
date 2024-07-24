@@ -3,6 +3,7 @@
   "private": true,
   "epicshop": {
     "title": "Mocking Techniques",
+    "epicWorkshopSlug": "mocking-techniques",
     "githubRoot": "https://github.com/epicweb-dev/mocking-techniques",
     "forms": {
       "exercise": "https://docs.google.com/forms/d/e/1FAIpQLSf8xpntKQzPYYO9H1OvMcxEa224PqmhVeYfUSj_MotHy-fSUQ/viewform?usp=pp_url&entry.1709952199={workshopTitle}&entry.1597352702={exerciseTitle}",
