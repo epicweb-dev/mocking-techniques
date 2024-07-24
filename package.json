@@ -3,6 +3,7 @@
   "private": true,
   "epicshop": {
     "title": "Mocking Techniques",
+    "subtitle": "Everything to know about mocking in JavaScript",
     "epicWorkshopSlug": "mocking-techniques",
     "githubRoot": "https://github.com/epicweb-dev/mocking-techniques",
     "forms": {
