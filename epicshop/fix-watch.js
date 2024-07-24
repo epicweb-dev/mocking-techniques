@@ -10,56 +10,56 @@ const workshopRoot = here('..')
 
 const watchPath = path.join(workshopRoot, './exercises/*')
 const watcher = chokidar.watch(watchPath, {
-	ignored: /(^|[\/\\])\../, // ignore dotfiles
-	persistent: true,
-	ignoreInitial: true,
-	depth: 2,
+  ignored: /(^|[\/\\])\../, // ignore dotfiles
+  persistent: true,
+  ignoreInitial: true,
+  depth: 2,
 })
 
 const debouncedRun = debounce(run, 200)
 
 // Add event listeners.
 watcher
-	.on('addDir', path => {
-		debouncedRun()
-	})
-	.on('unlinkDir', path => {
-		// Only act if path contains two slashes (excluding the leading `./`)
-		debouncedRun()
-	})
-	.on('error', error => console.log(`Watcher error: ${error}`))
+  .on('addDir', (path) => {
+    debouncedRun()
+  })
+  .on('unlinkDir', (path) => {
+    // Only act if path contains two slashes (excluding the leading `./`)
+    debouncedRun()
+  })
+  .on('error', (error) => console.log(`Watcher error: ${error}`))
 
 /**
  * Simple debounce implementation
  */
 function debounce(fn, delay) {
-	let timer = null
-	return (...args) => {
-		if (timer) clearTimeout(timer)
-		timer = setTimeout(() => {
-			fn(...args)
-		}, delay)
-	}
+  let timer = null
+  return (...args) => {
+    if (timer) clearTimeout(timer)
+    timer = setTimeout(() => {
+      fn(...args)
+    }, delay)
+  }
 }
 
 let running = false
 
 async function run() {
-	if (running) {
-		console.log('still running...')
-		return
-	}
-	running = true
-	try {
-		await $({
-			stdio: 'inherit',
-			cwd: workshopRoot,
-		})`node ./scripts/fix.js`
-	} catch (error) {
-		throw error
-	} finally {
-		running = false
-	}
+  if (running) {
+    console.log('still running...')
+    return
+  }
+  running = true
+  try {
+    await $({
+      stdio: 'inherit',
+      cwd: workshopRoot,
+    })`node ./epicshop/fix.js`
+  } catch (error) {
+    throw error
+  } finally {
+    running = false
+  }
 }
 
 console.log(`watching ${watchPath}`)
@@ -68,7 +68,7 @@ console.log(`watching ${watchPath}`)
 // to figure out why 🙃
 console.log('Polling...')
 setInterval(() => {
-	run()
+  run()
 }, 1000)
 
 console.log('running fix to start...')
