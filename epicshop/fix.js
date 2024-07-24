@@ -67,11 +67,24 @@ async function updatePkgNames() {
   }
 }
 
+function onlyWithTsConfig(exercisePath) {
+  if (fs.existsSync(path.join(exercisePath, '.gitignore'))) {
+    const gitIgnore = fs.readFileSync(
+      path.join(exercisePath, '.gitignore'),
+      'utf8',
+    )
+    return !gitIgnore.includes('tsconfig.json')
+  }
+
+  return true
+}
+
 async function updateRootTsConfig() {
+  const targetExercises = appsWithPkgJson.filter(onlyWithTsConfig)
   const tsconfig = {
     files: [],
     exclude: ['node_modules'],
-    references: appsWithPkgJson.map((a) => ({
+    references: targetExercises.map((a) => ({
       path: relativeToWorkshopRoot(a).replace(/\\/g, '/'),
     })),
   }
@@ -100,13 +113,17 @@ async function copyExerciseTsConfigs() {
     return
   }
 
+  // Ignore exercises that MUST NOT have a "tsconfig.json" file.
+  // For example, the exercises with no TypeScript modules.
+  const targetExercises = exercisesWithoutTsCongif.filter(onlyWithTsConfig)
+
   const tsConfigTemplate = await fs.promises.readFile(
     here('./tsconfig.json'),
     'utf8',
   )
 
   await Promise.all(
-    exercisesWithoutTsCongif.map((exercisePath) => {
+    targetExercises.map((exercisePath) => {
       const tsConfigPath = path.resolve(exercisePath, 'tsconfig.json')
       return fs.promises.writeFile(tsConfigPath, tsConfigTemplate)
     }),

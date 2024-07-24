@@ -5,12 +5,6 @@
   ],
   "references": [
     {
-      "path": "exercises/01.boundaries/01.problem.boundaries"
-    },
-    {
-      "path": "exercises/01.boundaries/01.solution.boundaries"
-    },
-    {
       "path": "exercises/02.functions/01.problem.mock-functions"
     },
     {
