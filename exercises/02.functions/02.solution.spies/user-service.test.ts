@@ -3,7 +3,7 @@ import { UserService } from './user-service.js'
 
 test('logs out the "createUser" event when creating a new user', async () => {
   const logger = new Logger()
-  vi.spyOn(logger, 'log').mockImplementation(() => {})
+  vi.spyOn(logger, 'log')
   const service = new UserService(logger)
 
   await service.createUser({

@@ -12,8 +12,6 @@ vi.spyOn(target, method)
 
 > 📝 The reason behind this call signature is how `.spyOn()` works under the hood. It redefines the `method` on the `target` object with a spied version of that method! You can think of it as `target[method] = methodSpy`.
 
-In addition to spying on `logger.log()`, I am also _overriding its behavior_ by adding the `.mockImplementation()` part to the spy. By doing that, I'm telling my test that I want to focus on the `UserService` class using the `logger` instance correctly, and not on what the logger instance does in its `.log()` method.
-
 Now that we have the spy ready and recording, I can write an assertion on that method being called with the correct arguments using the `.toHaveBeenCalledWith()` assertion:
 
 <CodeFile file="user-service.test.ts" range="14" />

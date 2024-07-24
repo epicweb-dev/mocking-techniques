@@ -5,8 +5,7 @@ test('logs out the "createUser" event when creating a new user', async () => {
   const logger = new Logger()
 
   // 🐨 Spy on the `logger.log` method using the `vi.spyOn()` API.
-  // Mock the implementation of `logger.log` to never run it in test.
-  // 💰 vi.spyOn(target, method).mockImplementation(() => {})
+  // 💰 vi.spyOn(target, method)
 
   const service = new UserService(logger)
 
