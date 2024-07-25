@@ -13,7 +13,10 @@
     "instructor": {
       "name": "Artem Zakharchenko",
       "avatar": "/images/instructor.png",
-      "𝕏": "kettanaito"
+      "xHandle": "kettanaito"
+    },
+    "testTab": {
+      "enabled": false
     }
   },
   "type": "module",
@@ -58,8 +61,8 @@
     "git": ">=2.18.0"
   },
   "dependencies": {
-    "@epic-web/workshop-app": "^4.12.5",
-    "@epic-web/workshop-utils": "^4.12.5"
+    "@epic-web/workshop-app": "^4.13.0",
+    "@epic-web/workshop-utils": "^4.13.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.6",
