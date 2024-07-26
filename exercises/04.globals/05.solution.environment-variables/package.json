@@ -1,0 +1,9 @@
+{
+  "name": "exercises__sep__04.globals__sep__05.problem.stub-env",
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
+}
