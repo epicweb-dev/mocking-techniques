@@ -1,0 +1,21 @@
+# Stubbing values
+
+`vi.spyOn()` is a great way to mock and control global methods. However, when your code depends on global _values_, you need to employ a different approach.
+
+In this exercise, we are testing the `toAbsoluteUrl()` function that looks like this:
+
+<CodeFile file="to-absolute-url.ts" />
+
+The purpose of this function is to ensure the `url` we provided to it is returned as an absolute URL. If the `url` is absolute from the start, it's returned as-is. But if it is a relative URL (i.e. a pathname), it must be resolved against the current `location.href`.
+
+Because of the dependency on `location`, we will be testing the `toAbsoluteUrl()` function in the `happy-dom` environment, which polyfills the global `location` object.
+
+<CodeFile file="vitest.config.ts" highlight="6" />
+
+By default, `location.href` in HappyDOM is set to `http://localhost:3000/`. However, for our new test to comply with the [Golden Rule of Assertions](https://www.epicweb.dev/the-golden-rule-of-assertions), the value of the `location.href` must be set on the test's level. Otherwise, a change in Vitest configuration can result in different absolute URLs being produced, thus failing the test prematurely.
+
+While we can monkey-patch the global `location` object for this test, there is a much more versatile API provided natively from Vitest. It's called :scroll: [`vi.stubGlobal()`](https://vitest.dev/api/vi.html#vi-stubglobal).
+
+👨‍💼 In this exercise, use the `vi.stubGlobal` API to mock the value of the global `location` object in the <InlineFile file="to-absolute-url.test.ts" /> test suite.
+
+> 🦉 Note that `location` inherits from `URL`, which means it can be partially mocked by using a `URL` instance as its value.

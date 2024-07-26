@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "name": "exercises__sep__04.globals__sep__04.problem.stubbing-global",
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
+}

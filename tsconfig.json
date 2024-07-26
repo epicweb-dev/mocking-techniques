@@ -59,6 +59,15 @@
       "path": "exercises/04.globals/03.solution.spies"
     },
     {
+      "path": "exercises/04.globals/04.problem.stubbing-global"
+    },
+    {
+      "path": "exercises/04.globals/04.solution.stubbing-globals"
+    },
+    {
+      "path": "exercises/04.globals/05.problem.stub-env"
+    },
+    {
       "path": "exercises/05.network/01.problem.setup-msw"
     },
     {

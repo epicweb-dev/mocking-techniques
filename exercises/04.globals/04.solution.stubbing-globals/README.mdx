@@ -1,0 +1,24 @@
+# Stubbing values
+
+I will start from getting the test setup ready, which includes the introduction of both `beforeAll` and `afterAll` hooks to the test suite.
+
+<CodeFile file="to-absolute-url.test.ts" range="3-9" highlight="4,8" />
+
+In the `beforeAll` hook, I'm using the `vi.stubGlobal()` function to replace the value of the global property `location` with a mocked `URL` instance. I intentionally provide a mock URL with a path (`/base/`) to make sure that the `toAbsoluteUrl()` function handles relative paths correctly.
+
+Now, to the test cases!
+
+The first one is about the scenario where an absolute URL provided to the tested function is returned as-is. That's precisely what I will do:
+
+<CodeFile file="to-absolute-url.test.ts" range="11-13" highlight="12" />
+
+The next scenario involves handling relative URLs that only include paths. In itself, it can be split into two use cases:
+
+- When an _absolute_ path is provided (e.g. `/abc`);
+- When a _relative_ path is provided (e.g. `./abc`; notice the dot `.`).
+
+While both being rebased against the mocked `location.href`, these two scenarios will yield different URLs, which I make sure to cover in tests:
+
+<CodeFile file="to-absolute-url.test.ts" range="15-18" highlight="16-17" />
+
+By mocking the value of `location` in this test suite, I have isolated it. Everything that affects the test results of the `toAbsoluteUrl()` function is now contained within this single test file.
