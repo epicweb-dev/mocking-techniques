@@ -1,5 +1,6 @@
 {
-  "name": "exercises__sep__04.globals__sep__05.problem.stub-env",
+  "type": "module",
+  "name": "exercises__sep__04.globals__sep__05.solution.environment-variables",
   "scripts": {
     "test": "vitest"
   },

@@ -1,1 +1,41 @@
 # Environment variables
+
+As it often happens with mocking, I will start from the test setup. There are multiple mocks working together in this test suite, so I make sure to establish them (and their cleanup) accordingly:
+
+<CodeFile file="emitter.test.ts" range="3-14" highlight="9" />
+
+I'm using `vi.spyOn(console, 'log')` to be able to assert on `console.log` calls in test, but the most important part is that I'm clearing any environment variable mocks by adding `vi.unstubAllEnvs()` to the `afterEach()` hook.
+
+> I'm using the `afterEach()` hook here so that individual test cases could have different values for environment variables.
+
+In the first test suite, the intention is to make sure that our `Emitter` class prints messages to the console when `process.env.NODE_ENV` is `"development"`. I will mock the value of that environment variable using `vi.stubEnv()` as the first thing in the test:
+
+<CodeFile file="emitter.test.ts" range="27-29" highlight="28" />
+
+> Note that it's possible (and sometimes even beneficial) to have a combination of both global (the `before*` and `after*` hooks) and local test setups, like we have here with the `vi.stubEnv()` function.
+
+You can imagine the `vi.stubEnv` function doing the following:
+
+```ts
+function stubEnv(variableName, value) {
+  process.env[variableName] = value
+}
+```
+
+However, unlike this simplified example, the actual function also allows you to _restore_ the mocked variables without having to keep track of their original values.
+
+With that, this test case is configured, and the only thing remaining is to act and assert:
+
+<CodeFile file="emitter.test.ts" range="27-42" highlight="33-36,38-41" />
+
+Here, I'm adding new event listeners and emitting events, following those actions with assertions to make sure `console.log` is called appropriately in both cases.
+
+The second test case will be quite similar:
+
+1. Mock the value of `process.env.NODE_ENV`;
+1. Add listeners/emit events;
+1. Assert that `console.log` has **NOT** been called.
+
+<CodeFile file="emitter.test.ts" range="44-56" highlight="45,50-51,53-54" />
+
+> Although this test case will pass even if you omit the `vi.stubEnv()` setup, that won't be correct. It passes because Vitest sets `process.env.NODE_ENV` to `"test"` by default, but your intention is not to test how `Emitter` behaves in test. It is to check how it behaves in **production**.
