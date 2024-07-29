@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "exercises__sep__04.globals__sep__01.solution.monkey-patching",
+  "name": "exercises__sep__04.globals__sep__02.problem.global-values",
   "scripts": {
     "test": "vitest"
   },

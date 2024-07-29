@@ -41,31 +41,22 @@
       "path": "exercises/03.date-and-time/03.solution.ticks-and-tasks"
     },
     {
-      "path": "exercises/04.globals/01.problem.monkey-patching"
+      "path": "exercises/04.globals/01.problem.global-methods"
     },
     {
-      "path": "exercises/04.globals/01.solution.monkey-patching"
+      "path": "exercises/04.globals/01.solution.global-methods"
     },
     {
-      "path": "exercises/04.globals/02.problem.proxy"
+      "path": "exercises/04.globals/02.problem.global-values"
     },
     {
-      "path": "exercises/04.globals/02.solution.proxy"
+      "path": "exercises/04.globals/02.solution.global-values"
     },
     {
-      "path": "exercises/04.globals/03.problem.spies"
+      "path": "exercises/04.globals/03.problem.environment-variables"
     },
     {
-      "path": "exercises/04.globals/03.solution.spies"
-    },
-    {
-      "path": "exercises/04.globals/04.problem.stubbing-global"
-    },
-    {
-      "path": "exercises/04.globals/04.solution.stubbing-globals"
-    },
-    {
-      "path": "exercises/04.globals/05.problem.stub-env"
+      "path": "exercises/04.globals/03.solution.environment-variables"
     },
     {
       "path": "exercises/05.network/01.problem.setup-msw"

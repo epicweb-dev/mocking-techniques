@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "exercises__sep__04.globals__sep__02.problem.proxy",
+  "name": "exercises__sep__04.globals__sep__01.problem.global-methods",
   "scripts": {
     "test": "vitest"
   },

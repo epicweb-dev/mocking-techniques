@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "exercises__sep__04.globals__sep__05.problem.environment-variables",
+  "name": "exercises__sep__04.globals__sep__03.problem.environment-variables",
   "scripts": {
     "test": "vitest"
   },
