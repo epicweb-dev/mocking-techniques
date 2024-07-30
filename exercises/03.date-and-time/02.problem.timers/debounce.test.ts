@@ -7,7 +7,7 @@ import { debounce } from './debounce.js'
 // 💰 afterAll(callback)
 
 test('executes the callback after the debounce timeout passes', () => {
-  const fn = vi.fn<[string]>()
+  const fn = vi.fn<(input: string) => void>()
   const debouncedFn = debounce(fn, 250)
 
   // 🐨 First, call the "debounceFn" with "one" as the argument
@@ -23,7 +23,7 @@ test('executes the callback after the debounce timeout passes', () => {
 })
 
 test('debounces the callback until the timeout passes since the last call', () => {
-  const fn = vi.fn<[number]>()
+  const fn = vi.fn<(input: string) => void>()
   const debouncedFn = debounce(fn, 250)
 
   // 🐨 Start this test case similarly to the previous one:

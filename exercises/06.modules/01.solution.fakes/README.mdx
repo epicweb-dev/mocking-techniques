@@ -1,8 +1,8 @@
 # Fakes
 
-I will start from creating a fake `EmailService` class in the test:
+I will start by creating a fake `EmailService` class in the test:
 
-<CodeFile file="notification-service.test.ts" range="1,4-9" />
+<CodeFile file="notification-service.test.ts" range="1,4-7" />
 
 Here, I'm implementing an actual class that always stays compatible with the original `EmailService` class due to the usage of the `implements` keywords in TypeScript.
 
@@ -16,7 +16,7 @@ Now, I can use `MockEmailService` to model various behaviors in the `Notificatio
 
 I will create a new `MockEmailService` instance for the test case where the email must not be sent (the user didn't give their permission to receive emails):
 
-<CodeFile file="notification-service.test.ts" range="11-21" highlight="12" />
+<CodeFile file="notification-service.test.ts" range="9-19" highlight="9" />
 
 > Note that I am not configuring any behaviors on the mocked class because _they are irrelevant for this particular test_. By taking the `EmailService` out of the testing equation, I am focusing this test strictly on the logic within `NotificationService.prototype.sendEmail` method (checking `this.preferences.email`):
 
@@ -24,7 +24,7 @@ I will create a new `MockEmailService` instance for the test case where the emai
 
 In order to test the successful sending of the email, I would have to mock the return value of the `.send()` method on the respective `MockEmailService` instance:
 
-<CodeFile file="notification-service.test.ts" range="23-40" highlight="24-27" />
+<CodeFile file="notification-service.test.ts" range="21-38" highlight="22-24" />
 
 ## When to use fakes?
 

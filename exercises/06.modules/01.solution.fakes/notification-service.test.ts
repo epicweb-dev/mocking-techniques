@@ -2,10 +2,7 @@ import { EmailService } from './email-service.js'
 import { NotificationService } from './notification-service.js'
 
 class MockEmailService implements EmailService {
-  send = vi.fn<
-    Parameters<typeof EmailService.prototype.send>,
-    ReturnType<typeof EmailService.prototype.send>
-  >()
+  send = vi.fn<typeof EmailService.prototype.send>()
 }
 
 test('returns null if the user does not want to receive emails', async () => {

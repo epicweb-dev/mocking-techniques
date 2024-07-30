@@ -12,28 +12,28 @@ The intention behind the `debounce()` function is to accept a `callback` and kee
 // Create a debounced function of "foo"
 // with the debounce duration of 250ms.
 const bar = debounce(foo, 250)
-bar(1)
-bar(2)
-bar(3)
+bar('one')
+bar('two')
+bar('three')
 ```
 
 Here, the `bar()` function is just a debounced wrapped over `foo()`. Not all calls to `bar()` will translate to the calls of `foo()` (hence, the whole point of debouncing). Here's what's happening in the example above:
 
-- `bar(1)` gets called, starting a 250ms timer for `foo(1)`.
-- `bar(2)` gets called, cancelling the previous timer and starting a new one for `foo(2)`.
-- `bar(3)` gets called, cancelling the previous timer and starting a new one for `foo(3)`.
-- 250ms passes without any calls to `bar()`, and the `foo(3)` finally gets called.
+- `bar('one')` gets called, starting a 250ms timer for `foo('one')`.
+- `bar('two')` gets called, cancelling the previous timer and starting a new one for `foo('two')`.
+- `bar('three')` gets called, cancelling the previous timer and starting a new one for `foo('three')`.
+- 250ms passes without any calls to `bar()`, and the `foo('three')` finally gets called.
 
 Let's try writing this very use case in an automated test:
 
 ```ts filename=debounce.test.ts
 test('executes the callback after the debounce timeout', () => {
-  const foo = vi.fn<[number]>()
+  const foo = vi.fn<(input: string) => void>()
   const bar = debounce(foo, 250)
 
-  bar(1)
-  bar(2)
-  bar(3)
+  bar('one')
+  bar('two')
+  bar('three')
 
   expect(foo).toHaveBeenCalledOnce()
   expect(foo).toHaveBeenCalledWith(3)

@@ -9,7 +9,7 @@ afterAll(() => {
 })
 
 test('executes the callback after the debounce timeout passes', () => {
-  const fn = vi.fn<[string]>()
+  const fn = vi.fn<(input: string) => void>()
   const debouncedFn = debounce(fn, 250)
 
   debouncedFn('one')
@@ -22,7 +22,7 @@ test('executes the callback after the debounce timeout passes', () => {
 })
 
 test('debounces the callback until the timeout passes since the last call', () => {
-  const fn = vi.fn<[string]>()
+  const fn = vi.fn<(input: string) => void>()
   const debouncedFn = debounce(fn, 250)
 
   debouncedFn('one')

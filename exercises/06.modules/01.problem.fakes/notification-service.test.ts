@@ -10,7 +10,7 @@ import { NotificationService } from './notification-service.js'
 // Provide the correct types for the `send` method's
 // parameters and return type.
 // 💰 class MockEmailService implements EmailService {
-//  send = vi.fn<Parameters, ReturnType>()
+//  send = vi.fn<FunctionType>()
 // }
 
 test('returns null if the user does not want to receive emails', async () => {

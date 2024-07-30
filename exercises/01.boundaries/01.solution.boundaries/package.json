@@ -1,4 +1,7 @@
 {
   "name": "exercises__sep__01.boundaries__sep__01.solution.boundaries",
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "vitest": "^2.0.4"
+  }
 }
