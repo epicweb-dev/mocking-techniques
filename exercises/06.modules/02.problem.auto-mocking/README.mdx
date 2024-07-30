@@ -13,13 +13,15 @@ We can do that by mocking the entire dependency on the `./logger.js` module.
 In Vitest, there are multiple ways to mock a module. In this exercise, we will be using the [`vi.mock()`](https://vitest.dev/api/vi.html#vi-mock) function, which looks like this:
 
 ```ts
-vi.mock('./path/to/module.js', factory)
+vi.mock(import('./path/to/module.js'), factory)
 ```
 
 It consists of two parts:
 
-1. A path to the module to mock (local or third party);
+1. An import of the actual module (local or third party);
 1. A factory function of the mock implementation. This function is called every time this module is imported in the test, and whatever it returns is used as the exports of that module.
+
+> :owl: Although you can provide a literal path to the module directly, like `vi.mock('./module.js')`, I highly recommend using the dynamic import call instead, like `vi.mock(import('./module.js'))`. Using dynamic import gives you automatic module path validation and will also update your test if the mocked module gets renamed or deleted.
 
 The call to the `vi.mock()` function is _hoisted_, which means it's always moved to the top of the test file, no matter where it's called. This is crucial because module mocking is generally sensitive to import order.
 

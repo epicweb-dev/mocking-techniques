@@ -1,6 +1,6 @@
 import { handleRequest } from './handle-request.js'
 
-vi.mock('./logger.js')
+vi.mock(import('./logger.js'))
 
 test('returns the successful response for an authorized request', async () => {
   const response = await handleRequest(
