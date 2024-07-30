@@ -24,7 +24,7 @@ If you write an automated test for this function, it would run both `one()` and 
 ```ts filename=one.test.ts highlight=4
 import { one } from './one.js'
 
-it('doubles what "two" returns', () => {
+test('doubles what "two" returns', () => {
   expect(one()).toBe(expected)
 })
 ```
@@ -43,7 +43,7 @@ Following our previous example, you can define a test boundary by mocking the `t
 import { one } from './one.js'
 import { two } from './two.js'
 
-it('doubles what "two" returns', () => {
+test('doubles what "two" returns', () => {
   // Mock the "two" function to
   // always return a fixed number.
   mock(two, () => 5)
