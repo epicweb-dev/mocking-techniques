@@ -4,7 +4,7 @@ In our application, we need to display a relative time label, like "1 minute ago
 
 <CodeFile file="get-relative-time.ts" />
 
-> We are also using the standard [`Intl.NumberFormat()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) API to help us format the time: "1 minute ago" but "5 minute<u>s</u> ago". Give it a read if you're not familiar with it!
+> We are also using the standard [`Intl.RelativeTimeFormat()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat) API to help us format the time: "1 minute ago" but "5 minute<u>s</u> ago". Give it a read if you're not familiar with it!
 
 Date and time are one of the most common variables you may encounter when testing. Both date and time are constantly moving, and, in fact, have changed even since you've started reading this sentence. If we preserve their variable nature, we will be introducing flakiness to our test suite.
 
