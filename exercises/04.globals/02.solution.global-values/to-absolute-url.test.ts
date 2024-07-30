@@ -9,7 +9,7 @@ afterAll(() => {
 })
 
 test('returns an absolute url as-is', () => {
-  expect(toAbsoluteUrl('https://example.com')).toBe('https://example.com')
+  expect(toAbsoluteUrl('https://example.com/')).toBe('https://example.com/')
 })
 
 test('resolves a relative url against the current location', () => {

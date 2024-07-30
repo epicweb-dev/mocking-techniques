@@ -14,7 +14,7 @@ import { toAbsoluteUrl } from './to-absolute-url'
 test('returns an absolute url as-is', () => {
   // 🐨 Call the `toAbsoluteUrl` function with an absolute URL as the argument
   // and assert that URL is returned as-is.
-  // 💰 expect(toAbsoluteUrl('https://example.com')).toBe(expected)
+  // 💰 expect(toAbsoluteUrl('https://example.com/')).toBe(expected)
 })
 
 test('resolves a relative url against the current location', () => {
