@@ -2,22 +2,22 @@ import { printServerUrl } from './print-server-url.js'
 
 // 💣 Delete the `originalConsoleLog` variable.
 // We don't have to store the original implementation of `console.log` anymore.
-const originalConsoleLog = globalThis.console.log
+const originalConsoleLog = console.log
 
 // 💣 Delete the empty spy as well.
 // Vitest will create a spy automatically inside `vi.spyOn()`.
 const consoleLogSpy = vi.fn()
 
 beforeAll(() => {
-  // 💣 Delete the reassignment of `globalThis.console.log`.
-  globalThis.console.log = new Proxy(globalThis.console.log, {
+  // 💣 Delete the reassignment of `console.log`.
+  console.log = new Proxy(console.log, {
     apply(target, thisArg, args) {
       consoleLogSpy.apply(thisArg, args)
       // return Reflect.apply(target, thisArg, args)
     },
   })
 
-  // 🐨 Create a spy over `globalThis.console.log` using `vi.spyOn()`.
+  // 🐨 Create a spy over `console.log` using `vi.spyOn()`.
   // You can call `.mockImplementation(() => {})` on the spy to silence
   // the `console.log` calls.
   // 💰 vi.spyOn(target, methodName)
@@ -31,8 +31,8 @@ afterEach(() => {
 })
 
 afterAll(() => {
-  // 💣 Delete the manual restoration of `globalThis.console.log`.
-  globalThis.console.log = originalConsoleLog
+  // 💣 Delete the manual restoration of `console.log`.
+  console.log = originalConsoleLog
 
   // 🐨 Restore all mocked globals by calling `vi.restoreAllMocks()`.
 })

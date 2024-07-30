@@ -5,7 +5,7 @@
 // kind of setup in your project.
 
 beforeAll(() => {
-  vi.spyOn(globalThis.console, 'log')
+  vi.spyOn(console, 'log')
 })
 
 afterEach(() => {

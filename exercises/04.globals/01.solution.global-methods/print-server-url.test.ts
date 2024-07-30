@@ -1,7 +1,7 @@
 import { printServerUrl } from './print-server-url.js'
 
 beforeAll(() => {
-  vi.spyOn(globalThis.console, 'log').mockImplementation(() => {})
+  vi.spyOn(console, 'log').mockImplementation(() => {})
 })
 
 afterEach(() => {

@@ -10,7 +10,7 @@ Date and time are one of the most common variables you may encounter when testin
 
 It is through mocking that we become magicians who can bend time and space! Well, maybe just time, for now. Vitest comes with a built-in [`vi.useFakeTimers()`](https://vitest.dev/api/vi.html#vi-usefaketimers) method to make otherwise unpredictable date and time fixed and given.
 
-> 📝 Under the hood, using the "fake" timers means that Vitest mocks the implementation of the `Date` constructor (much like you've mocked the implementation of the `.isItemInStock()` method in the previous exercise). In fact, you can achieve the same result using the `.mockImplementation()` on the `globalThis.Date` object!
+> 📝 Under the hood, using the "fake" timers means that Vitest mocks the implementation of the `Date` constructor (much like you've mocked the implementation of the `.isItemInStock()` method in the previous exercise). In fact, you can achieve the same result using the `.mockImplementation()` on the `Date` object!
 
 Since mocking date and time is such a common use case, Vitest gives you a more comfortable API to work with while also allowing to toggle between the "fake" and the "real" date whenever you need.
 
