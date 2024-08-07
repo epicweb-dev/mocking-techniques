@@ -4,11 +4,11 @@ As a rule of thumb, you should always strive toward mocking at the lowest possib
 
 I am going to utilize that power to both exclude the telemetry side effect and mock the implementation of the `queryTable` function exported from `@workshop/epic-sdk`.
 
-In the `beforeAll` hook, I will use [`vi.doMock()`](https://vitest.dev/api/vi.html#vi-domock) function to mock a module.
+In the `beforeAll` hook, I will use [`vi.mock()`](https://vitest.dev/api/vi.html#vi-mock) function to mock a module.
 
-<CodeFile file="authorize.test.ts" range="5-11" highlight="6" />
+<CodeFile file="authorize.test.ts" range="5-10" highlight="5" />
 
-The `vi.doMock()` function accepts two arguments:
+The `vi.mock()` function accepts two arguments:
 
 - The module import to mock (`import('@workshop/epic-sdk')`).;
 - An optional factory function to implement the module.
@@ -17,17 +17,23 @@ The `vi.doMock()` function accepts two arguments:
 
 I will also provide the _factory function_ to control the exact exports returned from the mocked module. In this case, I will swap the actual `queryTable` function with the `queryTableMock` introduced earlier:
 
-<CodeFile file="authorize.test.ts" range="1-11" highlight="3,8" />
+<CodeFile file="authorize.test.ts" range="1-9" highlight="3,7" />
 
-And since I am using a mock function, I need to make sure its call information and implementation are reset between tests:
+:owl: Since `vi.mock()` function is _hoisted_ (gets evaluated as the first thing no matter where it's defined), it won't be able to reference any values in the test's scope, like the `queryTableMock` function. To solve this, I am wrapping the mock function in the [`vi.hoisted()`](https://vitest.dev/api/vi.html#vi-hoisted):
 
-<CodeFile file="authorize.test.ts" range="13-15" highlight="14" />
+<CodeFile file="authorize.test.ts" range="3" />
+
+This will expose the `queryTableMock` function to the `vi.mock()` factory correctly so it could use it as the value of the `queryTable` export.
+
+And since I am using a mock function, to begin with, I need to make sure its call information and implementation are reset between tests:
+
+<CodeFile file="authorize.test.ts" range="11-13" highlight="12" />
 
 By mocking the entire `@workshop/epic-sdk` module, my test becomes in full control over its exports, but also over what gets evaluated at its root level (which, in this case, is nothing). This gives me two for the price of one: I am mocking the behavior I need (`queryTable`) while also excluding the side effects I don't (telemetry).
 
 From this point on, the rest of the test is not much different from using mock functions you've practiced earlier. Through `.mockResolvedValue` and `.mockRejectedValue()` built-in methods in Vitest, I will model different behavior scenarios of the `queryTable` function to test my `authorize()` function:
 
-<CodeFile file="authorize.test.ts" range="17-44" highlight="19-22,32,39" />
+<CodeFile file="authorize.test.ts" range="15-39" highlight="16-19,28,34" />
 
 ## `vi.mock()` vs `vi.doMock()`
 
