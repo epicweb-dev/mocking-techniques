@@ -1,0 +1,5 @@
+{
+  "type": "module",
+  "name": "epic-sdk",
+  "main": "./index.ts"
+}

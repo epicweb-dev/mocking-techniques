@@ -1,12 +1,10 @@
 # Auto-mocking
 
-The reasons to mock a module are few but never zero.
-
-Like our `handleRequest` function that depends on the `./logger.js` module to log things while handling a request:
+Sometimes mocking a module is necessary to exclude it from the testing equation altogether. Like our `handleRequest` function that depends on the `./logger.js` module to log things while handling a request:
 
 <CodeFile file="handle-request.ts" highlight="1,4,7,14" />
 
-While logging is a part of this function, it's not integral to the main intention behdin it—to handle a given request. We may as well exclude the logging from it altogether during the test, bringing our focus closer to the intention at hand.
+While logging is a part of this function, it's not integral to the main intention behind it—to handle a given request. We may as well exclude the logging from it altogether during the test, bringing our focus closer to the intention at hand.
 
 We can do that by mocking the entire dependency on the `./logger.js` module.
 

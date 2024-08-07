@@ -3,11 +3,10 @@ import type { User } from './authorize.js'
 const queryTableMock = vi.fn<() => Promise<User>>()
 
 beforeAll(() => {
-  vi.doMock(import('@workshop/epic-sdk'), async (importOriginal) => {
-    const original = await importOriginal()
-    original.api.queryTable<User> = queryTableMock
-
-    return original
+  vi.doMock(import('@workshop/epic-sdk'), async () => {
+    return {
+      queryTable: queryTableMock,
+    }
   })
 })
 

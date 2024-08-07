@@ -101,7 +101,10 @@
       "path": "exercises/06.modules/02.solution.auto-mocking"
     },
     {
-      "path": "exercises/06.modules/03.solution.foo"
+      "path": "exercises/06.modules/03.problem.mocking-behaviors"
+    },
+    {
+      "path": "exercises/06.modules/03.solution.mocking-behaviors"
     }
   ]
 }

@@ -1,0 +1,28 @@
+# Mocking behaviors
+
+There are cases when a third-party module may introduce root-level side effects that must be excluded during the test run.
+
+Take a look at the `authorize` function below. It accepts a `userId` and queries that user in a database, using a made-up `@workshop/epic-sdk` package.
+
+<CodeFile file="authorize.ts" highlight="1,12" />
+
+Naturally, you would want to exclude the actual querying logic of `queryTable` from test, gaining control over that functions implementation. In any other situation, you would use `vi.spyOn()` for that task. But there's a catch...
+
+The `@workshop/epic-sdk` package has an internal side-effect that executes once you _import_ that package:
+
+<CodeFile file="@workshop/epic-sdk/index.ts" highlight="3,4,9" />
+
+You must not allow this telemetry logic to run during your tests. It may introduce all sorts of variables to your test results, from establishing HTTP connections to simply chipping away at your test performance. But the most important reason—_it has nothing to do with the intention you are aiming to test_.
+
+You have to mock it.
+
+The telemetry itself is not a part of that package's public API, so you cannot even access it to try mock its implementation. Even if it was, its indirect relationship with the `queryTable` function means you would be leaking implementation details of `@workshop/epic-sdk` into your tests, making them brittle.
+
+This is a good case to mock that entire module.
+
+👨‍💼 In this exercise, complete the <InlineFile file="authorize.test.ts" /> test suite by establishing two kinds of mocks:
+
+1. Mock the `queryTable` implementation by using `vi.fn()`;
+1. Mock the `@workshop/epic-sdk` module by using `vi.doMock()`.
+
+> Although these two mocks have different goals, their implementation may not be as different as you think!

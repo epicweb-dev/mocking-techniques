@@ -1,6 +1,83 @@
 # Mocking behaviors
 
-## TODO
+As a rule of thumb, you should always strive toward mocking at the lowest possible level. Module mocking, however, lies on the higher spectrum of things. But that's not a bad thing in itself. In fact, if module mocking is justified, it gives you _full control over that module's values and behaviors_.
 
-- Showcase a dependency on an SDK (imagine third party). It's too complex to mock its side effects directly, and that alone may leak more implementation detail than the module name.
-- Use Vitest to _control_ the SDK's behavior (i.e. make its method return predictable results).
+I am going to utilize that power to both exclude the telemetry side effect and mock the implementation of the `queryTable` function exported from `@workshop/epic-sdk`.
+
+In the `beforeAll` hook, I will use [`vi.doMock()`](https://vitest.dev/api/vi.html#vi-domock) function to mock a module.
+
+<CodeFile file="authorize.test.ts" range="5-11" highlight="6" />
+
+The `vi.doMock()` function accepts two arguments:
+
+- The module import to mock (`import('@workshop/epic-sdk')`).;
+- An optional factory function to implement the module.
+
+> Using a dynamic `import()` here allows proper type inference from the mocked module as well as making the import proof to module renaming.
+
+I will also provide the _factory function_ to control the exact exports returned from the mocked module. In this case, I will swap the actual `queryTable` function with the `queryTableMock` introduced earlier:
+
+<CodeFile file="authorize.test.ts" range="1-11" highlight="3,8" />
+
+And since I am using a mock function, I need to make sure its call information and implementation are reset between tests:
+
+<CodeFile file="authorize.test.ts" range="13-15" highlight="14" />
+
+By mocking the entire `@workshop/epic-sdk` module, my test becomes in full control over its exports, but also over what gets evaluated at its root level (which, in this case, is nothing). This gives me two for the price of one: I am mocking the behavior I need (`queryTable`) while also excluding the side effects I don't (telemetry).
+
+From this point on, the rest of the test is not much different from using mock functions you've practiced earlier. Through `.mockResolvedValue` and `.mockRejectedValue()` built-in methods in Vitest, I will model different behavior scenarios of the `queryTable` function to test my `authorize()` function:
+
+<CodeFile file="authorize.test.ts" range="17-44" highlight="19-22,32,39" />
+
+## `vi.mock()` vs `vi.doMock()`
+
+Vitest ships two main APIs to mock modules:
+
+- [`vi.mock()`](https://vitest.dev/api/vi.html#vi-mock)
+- [`vi.doMock()`](https://vitest.dev/api/vi.html#vi-domock)
+
+They may look similar on the surface, but the way they behave is drastically different.
+
+### `vi.mock()`
+
+`vi.mock()` function is _hoisted_. It means that no matter where you write it in your test file, it will _always be evaluated as the first thing in that test module_. This makes it useful for mocking module dependencies of the code you import in test, since imports are also hoisted, and would otherwise be subjected to import order issues:
+
+```ts lines=4
+import { something } from 'dependency'
+import { behavior } './tested-code'
+
+vi.mock(import('dependency'))
+```
+
+> Despite the `vi.mock()` call happening after the import to `dependency` (visually), it actually appears before it (hoisted) so the mock could take effect.
+
+This affects any dependencies `vi.mock()` itself has as well. For example, if you wish to reference a variable in the `vi.mock()` factory function, you have to wrap that variable in `vi.hoisted()`, otherwise it will not be defined by the moment your factory runs.
+
+### `vi.doMock()`
+
+`vi.doMock()` is the unhoisted alternative to `vi.mock()`. Unlike its sibling, `vi.doMock()` calls _are not hoisted_, which ...
+
+```ts lines=4
+import { something } from 'dependency'
+// `something` has the original value here.
+
+vi.doMock(import('dependency'))
+
+import { something } from 'dependency'
+// `something` has the mocked value from now on.
+```
+
+This gives you more control over the import order in exchange for requiring you to import your tested code _dynamically_ to circumvent the standard imports hoisting and have the module mock take effect.
+
+```ts lines=9
+beforeAll(() => {
+  vi.doMock(import('dependency'))
+})
+
+test('validates the behavior', () => {
+  // The "./tested-code" MUST be imported dynamically in the test's scope
+  // because otherwise it will be hoisted to the top of the file,
+  // evaluating BEFORE `vi.doMock()` takes effect.
+  const { behavior } = await import('./tested-code')
+})
+```
