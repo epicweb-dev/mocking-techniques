@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "exercises__sep__06.modules__sep__01.problem.fakes",
+  "name": "exercises__sep__06.modules__sep__01.solution.dependency-injection",
   "scripts": {
     "test": "vitest"
   },

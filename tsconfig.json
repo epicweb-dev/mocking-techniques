@@ -89,22 +89,16 @@
       "path": "exercises/05.network/05.solution.response-delay"
     },
     {
-      "path": "exercises/06.modules/01.problem.fakes"
+      "path": "exercises/06.modules/01.problem.dependency-injection"
     },
     {
-      "path": "exercises/06.modules/01.solution.fakes"
+      "path": "exercises/06.modules/01.solution.dependency-injection"
     },
     {
-      "path": "exercises/06.modules/02.problem.auto-mocking"
+      "path": "exercises/06.modules/03.problem.private-side-effects"
     },
     {
-      "path": "exercises/06.modules/02.solution.auto-mocking"
-    },
-    {
-      "path": "exercises/06.modules/03.problem.mocking-behaviors"
-    },
-    {
-      "path": "exercises/06.modules/03.solution.mocking-behaviors"
+      "path": "exercises/06.modules/03.solution.private-side-effects"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "exercises__sep__06.modules__sep__03.solution.mocking-behaviors",
+  "name": "exercises__sep__06.modules__sep__03.problem.private-side-effects",
   "scripts": {
     "test": "vitest"
   },
