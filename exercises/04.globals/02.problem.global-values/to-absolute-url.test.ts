@@ -1,4 +1,4 @@
-import { toAbsoluteUrl } from './to-absolute-url'
+import { toAbsoluteUrl } from './to-absolute-url.js'
 
 // 🐨 Add the `beforeAll` hook and call the `vi.stubGlobal` function there.
 // As the first argument, provide it with the string "location", indicating

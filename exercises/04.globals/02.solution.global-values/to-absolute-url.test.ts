@@ -1,4 +1,4 @@
-import { toAbsoluteUrl } from './to-absolute-url'
+import { toAbsoluteUrl } from './to-absolute-url.js'
 
 beforeAll(() => {
   vi.stubGlobal('location', new URL('http://localhost/base/'))
