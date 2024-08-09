@@ -12,11 +12,11 @@ Yes and no. To help me explain this, I will reach out to the :scroll: [Golden Ru
 
 > A test must fail if, and only if, the intention behind the system is not met.
 
-Effectively, this means that the things that affect the test result must directly relate to the intention behind the test. Making the request itself is never the intention. The network is the protocol to _do_ something. You always have the actual logic surrounding the request to achieve that.
+Effectively, this means that the things that affect the test results must be directly related to the intention behind that test. Making the request itself is never the intention. The network is the protocol to _do_ something. You always have the actual logic surrounding the request to achieve that.
 
 For example, you may be fetching the user object to render a personalized message in the UI:
 
-```tsx
+```tsx highlight=3,6
 async function Greet({ id }: { id: string }) {
   // Beware: pseudo-code ahead!
   const response = await fetch(`/users/${id}`)
@@ -26,24 +26,26 @@ async function Greet({ id }: { id: string }) {
 }
 ```
 
-Indeed, making the `GET /users/:id` request is a part of the implementation but that's not the purpose of the `Greet` component. The purpose is to _render_ the received data. Often, it is also to handle request or response errors gracefully so they wouldn't disrupt the user experience.
+Indeed, making the `GET /users/:id` request is a part of the implementation, but that's not the purpose of the `Greet` component. The purpose is to _render_ the received data. Often, it is also to handle request or response errors gracefully so they wouldn't disrupt the user experience.
 
 But think about what happens if you leave that request as-is in tests. First, it's going to take time to communicate with the server. But a far more important thing is that _the server response becomes directly responsible for the test result_.
 
 You aren't testing the server though. If talking about the integration level testing, the server has nothing to do with your `Greet` component. It's simply another variable part of the testing equation, much like date and time!
 
-**If your component is functioning correctly, the test must pass**. And you use mocking to control the network, allowing you to respond to the same request in different ways so you can test corner cases and error handling.
+<callout-info class="important">If your system is functioning correctly, the tests must pass.</callout-info>
+
+And you can use API mocking to control the network, allowing you to respond to the same request in different ways so you can test edge cases and error handling.
 
 ## How does API mocking work?
 
-Whether you are using a third-party request client, like `got` or `axios`, or relying on plain `fetch`, mocking a network request often comes down to _patching_ the global APIs responsible for it. In the browser, those are `fetch` and `XMLHttpRequest`, and in Node.js it may be `http.ClientRequest` or `net.Socket`. In that regard, mocking the network is not much different than mocking globals, which you already know how to do.
+Whether you are using a third-party request client, like `got` or `axios`, or relying on plain `fetch`, mocking a network request often comes down to _patching_ the global APIs responsible for it. In the browser, those are `fetch` and `XMLHttpRequest`, and in Node.js it may be `http.ClientRequest` or `net.Socket` (or the same global `fetch` in modern versions of Node.js). In that regard, mocking the network is not much different than mocking globals, which you already know how to do.
 
-Which means you already know about the dangers of patching globals too. Those dangers manifest greatly in network mocking because it often _throws away the network code_. While you don't want the actual request to happen during tests, the "later" you establish the interception, the better. You wouldn't want GET requests with a body to be treated with mock responses, would you?
+That also means you already know about the dangers of patching globals too. Those dangers manifest greatly in network mocking because it often _throws away the network code_. While you don't want the actual request to happen during tests, the "later" you establish the interception, the better. You wouldn't want GET requests with a body to be treated with mock responses, would you?
 
-> If you would like to dive deeper into the request interception in JavaScript, I have written a series of articles on API mocking. The best place to start is from :scroll: [The Request Journey](https://egghead.io/blog/understanding-api-mocking-the-http-request-journey).
+> If you would like to dive deeper into the request interception in JavaScript, I have written a series of articles on API mocking. The best place to start is by reading :scroll: [The Request Journey](https://egghead.io/blog/understanding-api-mocking-the-http-request-journey).
 
 Mocking is deviating, so you naturally want to deviate your tested code as little as possible from its behavior in production. There are multiple API mocking solutions out there, and I encourage you to explore them all, but some tend to deviate your code more than others.
 
-That is why in this workshop we will be using [Mock Service Worker](https://mswjs.io/). It builds on top of the web standards, like the Service Worker and the Fetch API, and provides one of the least intrusive interception algorithms in JavaScript, allowing to run as much of the actual network code as possible.
+That is why in this workshop we will be using [Mock Service Worker](https://mswjs.io/). It builds on top of the web standards, like the Service Worker and the Fetch API, and provides one of the least intrusive interception algorithms in JavaScript, allowing your tests to run as much of the actual network code as possible.
 
 It's time for you to see it in action!

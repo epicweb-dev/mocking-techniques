@@ -2,27 +2,32 @@
 
 ## Timeout handling
 
-First, let's take a look at how the request timeout handling is implemented in the `getAuthToken()` function. Handling timeouts often comes down to introducing a _race condition_ between the asynchronous operation you wish to complete and the timeout itself.
+First, let's take a look at how the request timeout handling is implemented in the `getAuthToken()` function. Handling timeouts often comes down to introducing a _race condition_ between the asynchronous operation in question and the timeout itself.
 
 To start, I will drop the `await` from the `fetch()` call and instead store the pending response promise in a new variable called `responsePromise`:
 
 <CodeFile file="get-auth-token.ts" range="10" />
 
-This will allow the event loop to continue while the response is pending in the background.
+<callout-info>
+  This will allow the event loop to continue while the response is pending in
+  the background.
+</callout-info>
 
-I do want it to continue, because the next thing I'm going to do is to introduce a `timeoutPromise`:
+I do want it to continue, because the next thing I'm going to do is introduce a `timeoutPromise`:
 
 <CodeFile file="get-auth-token.ts" range="20-26" />
 
 This is a plain promise that always rejects after a certain period of time (i.e. the timeout).
 
-And, finally, I will create a race condition between the `responsePromise` and the `timeoutPromise` using the `Promise.race()` API in JavaScript:
+> :owl: Note that annotating the resolved type of the promise as `Promise<never>` I'm making sure that my code understands that this promise _never_ resolves, only rejects.
+
+And, finally, I will create a race condition between the `responsePromise` and the `timeoutPromise` using the [`Promise.race()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race) API in JavaScript:
 
 <CodeFile file="get-auth-token.ts" range="31" />
 
 > Using `Promise.race()` will resolve or reject whenever any of the given promises resolves or rejects. This basically means that whichever of the two promises is faster wins (either the response promise or the timeout promise).
 
-The important part from the logic is that I've set the 3000 milliseconds to be the timeout duration. We'd need to keep that duration in mind to write a proper test. Speaking of which . . .
+The important part from the logic is that I've set the 3000 milliseconds to be the timeout duration. I'd need to keep that duration in mind to write a proper test. Speaking of which...
 
 ## Test
 
@@ -30,15 +35,15 @@ In the `get-auth-token.test.ts` module, I will import the `delay` function from 
 
 <CodeFile file="get-auth-token.test.ts" range="1" />
 
-I will add a new test case called `'handles the request timeout'` where I'll add a new runtime handler for the same `POST https://api.example.com/auth` endpoint. In the response resolver, I will await the `delay()` function which I called with the `'infinite'` delay mode as an argument:
+I will add a new test case called `'handles the request timeout'` where I'll add a new runtime handler for the same `POST https://api.example.com/auth` endpoint, using `server.use()`. In the response resolver, I will await the `delay()` function which I called with the `'infinite'` delay mode as an argument:
 
 <CodeFile file="get-auth-token.test.ts" range="67-72" highlight="68-72" />
 
-> Using the `'infinite'` delay mode is great to simulate an infinitely pending request.
+> The `'infinite'` delay mode simulates an infinitely pending request.
 
-The next thing would be to call the `getAuthToken()` function. But if I do a similar action to the other test cases, the request timeout test _would have to wait_ for the timeout period to pass in order to catch the promise rejection. That's needless time spent waiting.
+The next thing would be to call the `getAuthToken()` function. If I call it straight away, it will reject as expected, but the test would have to wait the entire 3000 milliseconds before that happens. That is a rather needless overhead!
 
-Instead, I will _mock_ that time, using the same old `vi.useFameTimers()!
+Instead, I will _mock_ that time, using the same old `vi.useFameTimers()` utility!
 
 <CodeFile file="get-auth-token.test.ts" range="5-11" highlight="6,10" />
 
@@ -46,12 +51,12 @@ While using the fake timers, the time and space is frozen in this test until I d
 
 <CodeFile file="get-auth-token.test.ts" range="67-77" highlight="74-77" />
 
-And right after that, I will advance the time by the timeout duration (3 seconds):
+And right after that, I will advance the time by the timeout duration (3000 milliseconds):
 
 <CodeFile file="get-auth-token.test.ts" range="67-79" highlight="79" />
 
-This will skip to the part where the `timeoutPromise` rejects, which I then assert in the test:
+This will skip right to the part where the `timeoutPromise` rejects, which I then assert in the test:
 
 <CodeFile file="get-auth-token.test.ts" range="81-83" />
 
-> Since I have not provided any mocked response to the `/auth/token` request and use the `delay()` instead, the `responsePromise` will pend forever, and the `timeoutPromise` will reject once the timeout duration has "passed".
+> Since I have not provided any mocked response to the `/auth/token` request and used the `delay()` instead, the `responsePromise` will pend forever, and the `timeoutPromise` will reject once the timeout duration has "passed" (the fake timers have advanced).

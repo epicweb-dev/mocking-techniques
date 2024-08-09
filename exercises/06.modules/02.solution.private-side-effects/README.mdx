@@ -4,7 +4,7 @@ As a rule of thumb, you should always strive toward mocking at the lowest possib
 
 I am going to utilize that power to both exclude the telemetry side effect and mock the implementation of the `queryTable` function exported from `@workshop/epic-sdk`.
 
-In the `beforeAll` hook, I will use [`vi.mock()`](https://vitest.dev/api/vi.html#vi-mock) function to mock a module.
+In the `beforeAll()` hook, I will use [`vi.mock()`](https://vitest.dev/api/vi.html#vi-mock) function to mock a module.
 
 <CodeFile file="authorize.test.ts" range="5-10" highlight="5" />
 

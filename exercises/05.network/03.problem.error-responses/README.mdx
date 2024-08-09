@@ -1,6 +1,6 @@
 # Error responses
 
-Right now, we are sending the JSON response that the `getAuthToken()` expects from our request handler. That allows us to reproduce and test the happy path behavior of the function.
+Right now, we are sending the exact successful JSON response that the `getAuthToken()` expects. That allows us to reproduce and test the happy path behavior.
 
 But there are more behaviors that we intended for this function, and they happened to concern themselves with error handling.
 
@@ -8,15 +8,15 @@ First, there's the logic that throws an error if the server responds with a 401 
 
 <CodeFile file="get-auth-token.ts" range="16-18" />
 
-There's another check for generic response errors as well:
+Then, there's another check for generic response errors as well:
 
 <CodeFile file="get-auth-token.ts" range="20-22" />
 
-Let's model both of these scenarios with MSW!
+Let's model both of these scenarios in tests with MSW!
 
-The request handlers we write in `handlers.ts` are meant to describe the happy path behaviors. In order to test the error handling that we have, we will utilize something called _runtime handlers_.
+The request handlers we write in `handlers.ts` are meant to describe the happy path behaviors. In order to test the error handling that we have, we will utilize something called _runtime request handlers_.
 
-In simple terms, a runtime handler is a request handler you can add on runtime. It _extends_ your network description and allows you to add new network behaviors on top of your happy paths from `handlers.ts`.
+In simple terms, a runtime handler is a request handler you can add on runtime. It _extends_ your network description and allows you to prepend new network behaviors to your happy paths from `handlers.ts`.
 
 Runtime handlers can be added using the [`server.use()`](https://mswjs.io/docs/api/setup-server/use) function:
 
@@ -82,4 +82,4 @@ afterAll(() => {
 })
 ```
 
-:koala: Then, head to the <InlineFile file="get-auth-token.test.ts" /> file and complete the test cases.
+:koala: Then, head to the <InlineFile file="get-auth-token.test.ts" /> file and complete the new test cases.

@@ -13,7 +13,7 @@ I start with restructuring our project a little bit. In order for me to use runt
   vitest.setup.ts # import { server } from '...'
 ```
 
-With these changes, I can reuse the same `server` object from `./mocks/node.ts` in both `vite.setup.ts` and in the test file as well.
+With these changes, I can reuse the same `server` object from `./mocks/node.ts` in both `vite.setup.ts` and in the test suite as well.
 
 <CodeFile file="vitest.setup.ts" highlight="1" />
 
@@ -29,9 +29,9 @@ Here's how the invalid credentials scenario will look like with the runtuime han
 
 <CodeFile file="get-auth-token.test.ts" range="14-24" highlight="15-19" />
 
-> `server.use()` **prepends** request handlers so they take higher priority. The prepended handlers will persist until `server.resetHandlers()` is called, which in our case is called in the `afterEach()` hook in `vitest.setup.ts`.
+> `server.use()` **prepends** request handlers so they take higher priority. The prepended handlers will persist until `server.resetHandlers()` function is called, which in our case is called in the `afterEach()` hook in `vitest.setup.ts`.
 
-In a similar fashion, I will create a runtime request handler to emulate a generic 500 server error response in a new test case:
+In a similar fashion, I will create a runtime request handler to emulate a generic 500 server error response in another test case:
 
 <CodeFile file="get-auth-token.test.ts" range="29-34" highlight="30-34" />
 
@@ -46,4 +46,4 @@ Lastly, I will run the tests to make sure everything works as expected:
 
 ## Further reading
 
-Runtime handlers is a powerful tool when controlling the network. I highly encourage you to read the :scroll: [Network behavior overrides](https://mswjs.io/docs/best-practices/network-behavior-overrides) best practice to learn more how you can utilize it during development and testing.
+Runtime request handlers is a powerful way to describe dynamic network behaviors. I highly recommend you to read the :scroll: [Network behavior overrides](https://mswjs.io/docs/best-practices/network-behavior-overrides) best practice to learn more how you can utilize it during developing and testing your projects.

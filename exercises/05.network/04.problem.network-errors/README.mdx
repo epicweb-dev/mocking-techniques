@@ -2,15 +2,15 @@
 
 It's time to use API mocking to help us discover blind spots in our `getAuthToken()` function!
 
-One of the common mistakes when dealing with the network is missing network error handling. Now, I'm not talking about error responses (we've handled those in the previous exercise) but about the scenarios when the _request fails altogether_.
+One of the common mistakes when dealing with the network is forgetting about network error handling. Now, I'm not talking about error responses (we've handled those in the previous exercise) but about the scenarios when the _request fails altogether_.
 
-Here's a few examples of when that can happen:
+Here's a few examples of network errors:
 
 - The requested server is down;
-- The client goes offline;
+- The client goes offline or the server connection is interrupted;
 - The client performs an invalid request.
 
-These errors have nothing to do with the server response but rather with the network connectivity. Despite that, we can model those scenarios using MSW.
+These errors have nothing to do with the server response but rather with the network connectivity. Despite that, we can still model those scenarios using Mock Service Worker!
 
 ```ts highlight=3
 http.post('/endpoint', () => {
@@ -23,6 +23,6 @@ http.post('/endpoint', () => {
 
 In the request handler above, MSW will respond to `POST /endpoint` requests with a network error. That, in turn, will [reject the response promise](https://kettanaito.com/blog/why-fetch-promise-doesnt-reject-on-error-responses) and allow us to test how well we handle that scenario in code.
 
-👨‍💼 Use what you've learned about the runtime handlers (`server.use()`) to complete the network error handling test case in <InlineFile file="get-auth-token.test.ts" />.
+👨‍💼 Use what you've learned about the runtime request handlers (`server.use()`) to complete the network error handling test case in <InlineFile file="get-auth-token.test.ts" />.
 
-👨‍💼 Once you can reproduce the network error in the test, implement the error handling in <InlineFile file="get-auth-token.ts" /> (handle the `fetch()` promise rejections) and add the respective assertions in the new test.
+👨‍💼 Once you can reproduce the network error in the test, implement the error handling in <InlineFile file="get-auth-token.ts" /> (handle the `fetch()` promise rejections) and add the respective assertions in the new test case.

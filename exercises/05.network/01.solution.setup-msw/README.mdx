@@ -21,6 +21,8 @@ This confirms that MSW is able to intercept the request we make in `getAuthToken
 Caused by: Error: getaddrinfo ENOTFOUND api.example.com
 ```
 
-Althought the error is caused by use requesting a non-existing hostname, the underlying issue is that we still **allow the test to make the actual request**.
+Althought the error is caused by us requesting a non-existing URL, the underlying issue is that we still **allow the test to make the actual request**.
 
-It is time for us to change that by mocking that request with MSW.
+> That's right, MSW is **transparent** by default, and will allow all the intercepted requests to pass through unless you instruct it otherwise.
+
+It is time for us to change that by mocking that request with MSW!

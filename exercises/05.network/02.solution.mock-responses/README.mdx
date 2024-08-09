@@ -14,15 +14,15 @@ export const handlers = [
 
 It was a great debugging handler to let us see all the outgoing requests in this test, but we will focus on intercepting particular requests right now.
 
-In the same `handler.ts`, I will create a new request handler for a `POST` request to the `https://api.example.com/auth` endpoint, using the same `http` object:
+In the same `handler.ts` module, I will create a new request handler for a `POST` request to the `https://api.example.com/auth` endpoint, using the `http.post()` function:
 
 <CodeFile file="handlers.ts" highlight="4-8" />
 
 To mock a response to the intercepted request, I am _returning a Fetch API `Response` instance_ from its response resolver (the second argument of the request handler: `http.post(path, resolver)`).
 
-> `Response.json()` is a static method for shorthand declaration of `application/json` responses on the web!
+> :owl: [`Response.json()`](https://developer.mozilla.org/en-US/docs/Web/API/Response/json_static) is a static method for shorthand declaration of `application/json` responses on the web!
 
-Now, whenever our test does the matching request, MSW will intercept it and respond to it using the mocked JSON response I've defined. In fact, let's verify that! Let's print whichever result is returned from the `getAuthToken()` function to the console.
+Now, whenever my test does the matching request, MSW will intercept it and respond to it using the mocked JSON response I've defined. In fact, let's verify that! Let's print whichever result is returned from the `getAuthToken()` function to the console.
 
 ```ts filename=get-auth-token.test.ts add=4,8
 import { getAuthToken } from './get-auth-token.js'
@@ -50,7 +50,7 @@ stdout | get-auth-token.test.ts > returns the authentication token on successful
 
 But let's not get too happy too soon. Vitest may report the test as passing but that's only because _it has no assertions_. The test doesn't validate anything and so it will always pass.
 
-To complete this test, I will add an assertion for the `token` value returned from the `getAuthToken()` function to be the exact value we receive from the mocked response:
+To complete this test, I will add an assertion for the `token` value returned from the `getAuthToken()` function to be the exact value I've provided in the mocked response:
 
 <CodeFile file="get-auth-token.test.ts" highlight="9" />
 

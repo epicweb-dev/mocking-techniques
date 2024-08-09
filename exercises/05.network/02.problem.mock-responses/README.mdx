@@ -4,9 +4,9 @@ Our `getAuthToken()` function depends on the response returned from the server q
 
 <CodeFile file="get-auth-token.ts" range="16-22" />
 
-Then, there's a successful, "happy path" scenario handling, where we read the response body as JSON and return it `token` property:
+Then, there's a successful, "happy path" scenario handling, where we read the response body as JSON and return the `token` property from the response body:
 
-<CodeFile file="get-auth-token.ts" range="24-28" />
+<CodeFile file="get-auth-token.ts" range="24-28" highlight="27" />
 
 And we need to test all of those scenarios!
 

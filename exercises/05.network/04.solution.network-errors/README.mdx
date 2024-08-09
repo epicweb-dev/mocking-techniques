@@ -2,19 +2,19 @@
 
 I will start from implementing the error handling for network errors in `get-auth-token.ts` module.
 
-Unlike error responses, network errors will _reject the `fetch` promise_. This means that I can react to those errors in the `catch` callback attached to that promise:
+Unlike error responses, network errors will [reject the `fetch` promise](https://kettanaito.com/blog/why-fetch-promise-doesnt-reject-on-error-responses). This means that I can handle those errors in the `catch` callback attached to that promise:
 
 <CodeFile file="get-auth-token.ts" range="8-16" highlight="14-16" />
 
-> I am storing the original `error` as the `cause` property of the consumer-facing error for debugging purposes.
+> :owl: I am setting the original `error` as the `cause` property of the consumer-facing error for debugging purposes.
 
 Next, let's mock the network error in the test.
 
-In the `get-auth-token.test.ts`, I will head to the new empty test case and add a runtime handler that will respond with a network error:
+In the `get-auth-token.test.ts`, I will head to the new empty test case and add a runtime handler that will always respond with a network error:
 
 <CodeFile file="get-auth-token.test.ts" range="44-49" highlight="45-49" />
 
-> With this request handler, _any_ request to the `POST https://api.example.com/auth` endpoint within this test will result in a network error. Note that I'm not trying to make the responses input-dependent, and instead model a reliable scenario that represents the one I want to test.
+With this request handler, any request to the `POST https://api.example.com/auth` endpoint within this test will result in a network error. Note that I'm not trying to make the responses input-dependent, and instead introducing behavior-driven test cases to provide clarity and isolation for the tested code.
 
 Finally, I will add an assertion for the `getAuthToken()` promise to verify that it rejects with the correct error message:
 
