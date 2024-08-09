@@ -1,30 +1,77 @@
 # Dependency injection
 
-One of the ways to manage dependencies is by using _fakes_.
+First, let's take a look at the alternative you can use to module mocking called _dependency injection_.
 
-A fake is a simplified version of a dependency. Fakes don't have any behaviors and simply act as a placeholder for the real dependency. You can use fakes to _remove_ the dependency from the testing equation, thus focusing your test on particular scenarios and behaviors.
+Dependency injection (short, DI) is a software design technique that reserves the dependency relation, making the system a function of a dependency.
 
-The most straightforward example of a fake is an input object:
+Consider this implementation of a `NotificationService` class:
 
-```ts lines=2
-test('returns the first name for the given user', () => {
-  const user = { firstName: 'Kody' } satisfies User
-  await expect(getFirstName(user)).resolves.toBeUndefined()
-})
+```ts
+import { EmailService } from './email-service.js'
+
+export class NotificationService {
+  constructor() {
+    this.emailService = new EmailService()
+  }
+
+  public async sendEmail(options: SendEmailOptions) {
+    this.emailService.send(options)
+  }
+}
 ```
 
-The `user` object above is a _fake_ object. The real application may be pulling the user from a database or relying on the `User` class to create them. None of that is necessary to test the `getFirstName()` functionality. If it can accept the user as an argument, we can mock that argument in the test.
+To implement its `.sendEmail()` method, the class creates an internal `EmailService` instance and uses it to send emails. The `NotificationService -> EmailService` dependency is _internal_, which means that the consumer of the class doesn't know that such a dependency exists.
 
-Now, let's look at some real code.
+Because of this internal nature, the two classes become tightly coupled. If you wished to exclude the `EmailService` behaviors from a `NotificationService` test, you would have to leak the fact of their dependency into the test suite. That is not ideal and must be avoided.
 
-Here we have a `NotificationService` class that has the `sendEmail()` method that should send an email to the user:
+You can avoid it by rewriting the `NotificationService` class to _accept_ an instance of the `EmailService` class as an argument:
 
-<CodeFile file="notification-service.ts" />
+```ts add=4 remove=5
+import { EmailService } from './email-service.js'
 
-It so happened that the constructor of the `NotificationService` accepts an instance of the `EmailService` as an argument:
+export class NotificationService {
+  constructor(private emailService: EmailService) {
+    this.emailService = new EmailService()
+  }
 
-<CodeFile file="notification-service.ts" range="4-7" highlight="5" />
+  public async sendEmail(options: SendEmailOptions) {
+    this.emailService.send(options)
+  }
+}
+```
 
-👨‍💼 In this exercise, complete the tests for the <InlineFile file="notification-service.test.ts" /> by constructing a fake `EmailService` and using it as an argument to test different notification scenarios.
+This act of "lifting the dependency up" allows the consumer to provide an instance of the email service when creating a notification service class:
+
+```ts highlight=2
+const emailService = new EmailService()
+const notifications = new NotificationService(emailService)
+```
+
+Dependency injection transforms a `NotificationService -> EmailService` dependency into a notification service class being a _function of the email service_ (`NotificationService = fn(EmailService)`).
+
+That is also rather handy when testing!
+
+Since the `NotificationService` accepts its dependency as an argument now, that dependency is no longer an internal implementation detail but rather a part of its public API. And since it's public, you can exclude that dependency altogether by constructing a _matching object_ in its stead, thus isolating the notifications manager's behavior in the test.
+
+```ts
+const mockEmailService = new MockEmailService()
+const notifications = new NotificationService(new MockEmailService())
+```
+
+The `MockEmailService` in this example is also known as a _fake_ object. In this exercise, you will learn how to construct such fake objects and use them to model different scenarios of the tested system. But first, I have to give you a warning...
+
+## :warning: When to use Dependency injection
+
+**Dependency injection is a software design technique, not a testing technique**. I find it extremely harmful to base your design decisions around how your system is going to be tested. You are creating APIs for your _consumers_, and as such, you must have the consumer's best interest in mind when crafting those APIs. Sometimes that will mean more complexity for you to tackle in tests, and that is perfectly fine.
+
+In other words, be cautious not to rewrite your code for the sake of easier testing experience. This workshop alone gives you enough tools to tackle any complexity your system may introduce. **Let it not sway you from the correct API decisions**.
+
+<callout-info class="important">Design your software for the _user_, not the tests.</callout-info>
+
+## Your task
+
+In this exercise, the `NotificationService` class happened to be written with the dependency injection pattern in mind, and you will certainly use that to your advantage when testing it!
+
+👨‍💼 Complete the tests for the <InlineFile file="notification-service.test.ts" /> by constructing a fake `EmailService` and using it as an argument to test different notification scenarios.
 
 Once you are done, run `npm test` to make sure that all the tests are passing.

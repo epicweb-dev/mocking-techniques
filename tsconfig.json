@@ -95,10 +95,10 @@
       "path": "exercises/06.modules/01.solution.dependency-injection"
     },
     {
-      "path": "exercises/06.modules/03.problem.private-side-effects"
+      "path": "exercises/06.modules/02.problem.private-side-effects"
     },
     {
-      "path": "exercises/06.modules/03.solution.private-side-effects"
+      "path": "exercises/06.modules/02.solution.private-side-effects"
     }
   ]
 }

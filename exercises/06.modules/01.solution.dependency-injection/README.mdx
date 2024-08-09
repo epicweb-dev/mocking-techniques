@@ -30,9 +30,7 @@ In order to test the successful sending of the email, I would have to mock the r
 
 I can recommend using fakes if your code is already designed to support dependency injection. In that case, fakes are simple input value mocks, not that different than constructing a mocked object or a `Response` instance in tests.
 
-However, I would _not_ rewrite my code to support dependency injection _just for testing_. That is a dangerous mental model to have.
-
-<callout-info class="important">You write code for _users_, not tests.</callout-info>
+However, as I said before, I would _not_ rewrite my code to support dependency injection _just for testing_. That is a dangerous mental model to adopt.
 
 Thus, the design decisions behind your code must be based on the intention you are implementing. Rewriting the code does not improve its testability. It simply creates a different code that now requires a different test.
 

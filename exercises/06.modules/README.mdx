@@ -2,11 +2,11 @@
 
 Mocking modules should be your last resort because it's the most intrusive mocking technique out there. As we've previously covered, mocking focuses on either _values_ or _behaviors_. When mocking a module, you are throwing away both, and leave it up to your mock to fill in the gaps in the best way possible.
 
-In practice, mocking modules harms more than it helps. You rarely want to mock a _module_. You are problably thinking of a particular value or a behavior introduced by that module, and you should be mocking that instead.
+In practice, mocking modules may harm more than it may help. You rarely want to mock an _entire module_. You are problably thinking of a particular value or a behavior introduced by that module, and you should be mocking that instead, using the techniques you've already learned at this point.
 
 ## Case study: Mocking Axios
 
-A common example of module mocking is mocking `axios`. Let's take a look at how that works, what problems that has, and **why it's a bad idea**.
+A common example of module mockingin the wild is mocking request clients, like `axios`. Let's take a look at how that works, what problems that has, and why it may not be the best idea.
 
 Here's a `fetchUser()` function that depends on `axios` to get the user by ID:
 
@@ -19,7 +19,7 @@ export async function fetchUser(userId: string) {
 }
 ```
 
-What is proposed is to mock the `axios` dependency in a test in order to remove the actual HTTP request and gain control over the response returned.
+What is often proposed is to mock the `axios` dependency in a test in order to remove the actual HTTP request from the testing equation and gain control over the returned response.
 
 ```ts filename=fetch-user.test.ts highlight=4,15-17
 import axios from 'axios'
@@ -49,17 +49,17 @@ test('returns the user by ID', async () => {
 
 The implications of mocking the `axios` module in this test are as big as they are unapparent:
 
-1. **Tight coupling**. If the `axios.get` is renamed to `axios.request()` tomorrow, our test will fail. This is a by-the-book example of a brittle test that violates the [Golden Rule of Assertions](https://www.epicweb.dev/the-golden-rule-of-assertions).
-1. **Black-box testing**. By mocking the entire `axios` import, we are throwing away _everything that Axios does_. Granted, we _do_ want to throw away some things, like actually making the request. But there's a lot of logic going on around the request that we really want to preserve in test—request validation, response normalization, etc.
+1. **Tight coupling**. If the tested code switches from `axios.get()` to (imaginary) `axios.request()` tomorrow, the test will fail. This is a by-the-book example of a brittle test that violates the [Golden Rule of Assertions](https://www.epicweb.dev/the-golden-rule-of-assertions).
+1. **Black-box testing**. By mocking the entire `axios` package, we are throwing away _everything that Axios does_. Granted, we _do_ want to throw away some of those things, like actually making the request, but there's a lot of logic going on around the request that we really want to preserve in a test—request validation, response normalization, etc.
 
-This is enough reason to scrap this test and start over.
+**Those are enough reasons to scrap this test and start over**.
 
-You know what the purpose of mocking is now, so you can take a step back and ask yourself a question: What is it I _really_ need to mock in this test? The answer will be twofold:
+Now that you know what is the true purpose of mocking, you can take a step back and ask yourself a question: What is it I _really_ need to mock in this test? The answer will be twofold:
 
 1. Remove the HTTP request from the test (i.e. behavior);
 1. Control what response is returned from the server (i.e. value).
 
-The correct approach to orchestrating the test for the `fetchUser()` function is to _mock the HTTP request_ and leave the `axios` out of the picture entirely. Your users don't know what you are using Axios, and neither should your tests.
+The correct approach to orchestrating such a test for the `fetchUser()` function is to _mock the HTTP request_ and leave the `axios` out of the picture entirely. Your users don't know that you depend on Axios, and neither should your tests.
 
 Compare the previous example with a test that uses API mocking instead:
 
@@ -95,8 +95,8 @@ test('returns the user by ID', async () => {
 })
 ```
 
-> The test no longer knows about `axios`, doesn't couple itself with the `{ data: T }` format `axios.get()` has to resolve with, and, most importantly, runs the rest of Axios code intact.
+> This test no longer knows about `axios`, doesn't couple itself with the `{ data: T }` format `axios.get()` has to resolve with, and, most importantly, <u>runs the rest of Axios code intact</u>.
 
-## The Argument for Module Mocking
+## The argument for module mocking
 
-That being said, mocking modules is still a technique you need to know. Mostly, to know of its dangers, but also because there are cases when mocking a module is preferrable. Once again, this is your last resort but it's nice to know it if that resort ever comes.
+That being said, mocking modules is still a technique you need to know. Mostly, to know of its dangers, but also because there are cases when mocking a module is a preferrable or, sometimes, even the only suitable approach. Let's dive into those cases!

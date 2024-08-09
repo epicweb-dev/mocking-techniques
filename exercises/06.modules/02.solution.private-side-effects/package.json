@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "exercises__sep__06.modules__sep__03.solution.private-side-effects",
+  "name": "exercises__sep__06.modules__sep__02.solution.private-side-effects",
   "scripts": {
     "test": "vitest"
   },
