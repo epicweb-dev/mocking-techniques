@@ -1,16 +1,18 @@
 # Date and time
 
-You may be noticing a pattern here. I'm trying to keep mock definitions contained and use the hooks like `beforeAll` and `afterAll` to make sure no mocks are left once the tests are done (and, often, even between the tests).
+You may be noticing a pattern here. I'm trying to keep mock definitions contained and use the hooks like `beforeAll()` and `afterAll()` to make sure no mocks are left once the tests are done (and, often, even between the tests).
 
-The `getRelativeTime()` function have here will be no exception:
+Testing the `getRelativeTime()` function will be no exception:
 
 <CodeFile file="get-relative-time.test.ts" range="3-9" highlight="4,8" />
+
+Calling `vi.useFakeTimers()` detached this test from the real flow of time, and makes it rely on the internal fake date Vitest has. Correspondingly, the `vi.useRealTimers()` utility undoes that.
 
 To fix date and time in test, I will call `vi.useSystemTime()` function and provide it with the date that I want to be treated as `Date.now()`:
 
 <CodeFile file="get-relative-time.test.ts" range="11-12" highlight="12" />
 
-> 📜 `vi.useSystemTime()` works in conjunction with `vi.useFakeTimers()`.
+> :owl: `vi.useSystemTime()` only works in conjunction with `vi.useFakeTimers()`.
 
 In order to model the "Just now" scenario, the delta between the current time and the start time has to be 60 seconds or less. In this test, I will pass the exact same date to the `getRelativeTime()` function as the system time:
 
