@@ -1,18 +1,23 @@
 # Environment variables
 
-As it often happens with mocking, I will start from the test setup. There are multiple mocks working together in this test suite, so I make sure to establish them (and their cleanup) accordingly:
+There are multiple mocks working together in this test suite, so I make sure to establish them (and their cleanup) accordingly:
 
-<CodeFile file="emitter.test.ts" range="3-14" highlight="9" />
+<CodeFile file="emitter.test.ts" range="3-14" highlight="4,8-9,13" />
 
 I'm using `vi.spyOn(console, 'log')` to be able to assert on `console.log` calls in test, but the most important part is that I'm clearing any environment variable mocks by adding `vi.unstubAllEnvs()` to the `afterEach()` hook.
 
-> I'm using the `afterEach()` hook here so that individual test cases could have different values for environment variables.
+> I'm using the `afterEach()` hook here so that individual test cases could have different values for the same environment variables.
 
 In the first test suite, the intention is to make sure that our `Emitter` class prints messages to the console when `process.env.NODE_ENV` is `"development"`. I will mock the value of that environment variable using `vi.stubEnv()` as the first thing in the test:
 
 <CodeFile file="emitter.test.ts" range="27-29" highlight="28" />
 
-> Note that it's possible (and sometimes even beneficial) to have a combination of both global (the `before*` and `after*` hooks) and local test setups, like we have here with the `vi.stubEnv()` function.
+> Note that it's possible (and sometimes even beneficial) to have a combination of both global (the `before*` and `after*` hooks) and local test setups, like we have here with the `vi.stubEnv()` function insise this test.
+
+The `vi.stubEnv()` utility accepts two arguments:
+
+- A variable name to stub (e.g. `NODE_ENV`);
+- A mock value.
 
 You can imagine the `vi.stubEnv` function doing the following:
 
@@ -22,7 +27,7 @@ function stubEnv(variableName, value) {
 }
 ```
 
-However, unlike this simplified example, the actual function also allows you to _restore_ the mocked variables without having to keep track of their original values.
+However, unlike this simplified example, the actual function also allows you to _restore_ the mocked variables without having to manually keep track of their original values.
 
 With that, this test case is configured, and the only thing remaining is to act and assert:
 

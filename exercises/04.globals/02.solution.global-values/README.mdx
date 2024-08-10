@@ -1,10 +1,14 @@
 # Global values
 
-I will start from getting the test setup ready, which includes the introduction of both `beforeAll` and `afterAll` hooks to the test suite.
+As it often does, the test begins from the setup. In this case, the setup includes the introduction of both `beforeAll` and `afterAll` hooks to the test suite.
 
-<CodeFile file="to-absolute-url.test.ts" range="3-9" highlight="4,8" />
+<CodeFile file="to-absolute-url.test.ts" range="3-5" highlight="4" />
 
-In the `beforeAll` hook, I'm using the `vi.stubGlobal()` function to replace the value of the global property `location` with a mocked `URL` instance. I intentionally provide a mock URL with a path (`/base/`) to make sure that the `toAbsoluteUrl()` function handles relative paths correctly.
+In the `beforeAll()` hook, I'm using the `vi.stubGlobal()` function to replace the value of the global property `location` with a mocked `URL` instance. I intentionally provide a mock URL with a path (`/base/`) to make sure that the `toAbsoluteUrl()` function handles relative paths correctly.
+
+And, of course, I am making sure that the global `location` object is unstubbed by calling `vi.unstubAllGlobals()` in the `afterAll()` hook.
+
+<CodeFile file="to-absolute-url.test.ts" range="7-9" highlight="8" />
 
 Now, to the test cases!
 
