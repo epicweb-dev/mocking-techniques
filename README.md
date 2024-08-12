@@ -1,7 +1,7 @@
 <div>
   <h1 align="center">Mocking Techniques</h1>
   <strong>
-    Perfect the mocking techniques in Vitest.
+    Everything to know about mocking in JavaScript.
   </strong>
 </div>
 
