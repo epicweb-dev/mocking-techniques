@@ -1,12 +1,14 @@
 # Timers
 
-For once, let's take a "break" and work on some utility functions. Something that would make our developer lives easier while being much more scoped and managed.
+[Debounce and throttle](https://kettanaito.com/blog/debounce-vs-throttle) have to be some of my favorite utility functions, and they both happened to rely on timers to work. Let's study them in more detail and also see how we would test them.
 
-Something like a `debounce()` function!
+Take a look at the `debounce` function implementation below:
 
 <CodeFile file="debounce.ts" />
 
-The intention behind the `debounce()` function is to accept a `callback` and keep delaying its execution until a certain time `duration` has passed since its last call. For example, consider this usage scenario:
+The intention behind the `debounce()` function is to accept a `callback` and keep delaying its execution until a certain time `duration` has passed since its last call.
+
+For example, consider this usage scenario:
 
 ```ts
 // Create a debounced function of "foo"
@@ -22,9 +24,9 @@ Here, the `bar()` function is just a debounced wrapped over `foo()`. Not all cal
 - `bar('one')` gets called, starting a 250ms timer for `foo('one')`.
 - `bar('two')` gets called, cancelling the previous timer and starting a new one for `foo('two')`.
 - `bar('three')` gets called, cancelling the previous timer and starting a new one for `foo('three')`.
-- 250ms passes without any calls to `bar()`, and the `foo('three')` finally gets called.
+- After 250ms pass without any calls to `bar()`, the `foo('three')` finally gets called.
 
-Let's try writing this very use case in an automated test:
+Let's try putting this very use case into an automated test:
 
 ```ts filename=debounce.test.ts
 test('executes the callback after the debounce timeout', () => {
@@ -53,7 +55,7 @@ AssertionError: expected "spy" to be called once, but got 0 times
 
 The `foo()` function is not called at all!
 
-Our assertions throw because they run _immediately_ after the debounced calls. We aren't taking the timeouts each debounce call create into account at all. I think it's time we did.
+Our assertions throw because they run _immediately_ after the debounced calls. We aren't taking the debounce timeout (250ms) into account at all. I think it's time we did.
 
 You already know how to mock date and time using the `vi.useFakeTimers()` and `vi.setSystemTime()` methods, but this exercise doesn't just require you to mock them, it requires you to _advance_ the time.
 
