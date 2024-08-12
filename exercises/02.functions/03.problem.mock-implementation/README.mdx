@@ -9,12 +9,12 @@ The `.createOrder()` method relies on another `.isItemInStock()` method of the s
 
 <CodeFile file="OrderController.ts" range="21-39" highlight="23" />
 
-The data for the item availability itself comes from the `stock.json` file that Peter the Project Manager does a faithful job of updating on a daily basis.
+The data for the item availability itself comes from the `stock.json` file that 👨‍💼 Peter the Project Manager does a faithful job of updating on a daily basis (think of this JSON file as any source of data—e.g. a database).
 
 <CodeFile file="OrderController.ts" range="1,44-51" highlight="45" />
 
 That's the responsibility Peter bestowed upon himself.
 
-Your responsbility is to test the `.createOrder()` method on the `OrderController` class. There are couple of ways you can use mocking to help you with that.
+Your responsbility, however, is to test the `.createOrder()` method on the `OrderController` class. There are couple of ways you can use mocking to help you with that, especially when it comes to modeling different item availability states.
 
-👨‍💼 Write automated tests for _both_ of the expectations toward the `.createOrder()` method by using [`.mockReturnValue()`](https://vitest.dev/api/mock.html#mockreturnvalue) and [`.mockImplementation()`](https://vitest.dev/api/mock.html#mockimplementation) Vitest APIs to control the behavior of the `.isItemInStock()` method. By the end of the exercise, `npm test` must pass!
+👨‍💼 Write automated tests for _both_ of the expectations toward the `.createOrder()` method by using [`.mockReturnValue()`](https://vitest.dev/api/mock.html#mockreturnvalue) and [`.mockImplementation()`](https://vitest.dev/api/mock.html#mockimplementation) utilities in Vitest to control the behavior of the `.isItemInStock()` method. By the end of the exercise, `npm test` must pass!

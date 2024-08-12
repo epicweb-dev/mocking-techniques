@@ -1,16 +1,16 @@
 # Mock functions
 
-In the `emitter.test.ts`, I will start from creating the `listener` function but it won't be a regular JavaScript function. Instead, I will use the `vi.fn()` API from Vitest, which creates a _special_ function.
+In the `emitter.test.ts`, I will start from creating the `listener` function but it won't be a regular JavaScript function. Instead, I will use the `vi.fn()` API from Vitest, which creates a _special_ kind of function.
 
 <CodeFile file="emitter.test.ts" range="5" />
 
 > 📜 Learn more about [`vi.fn()`](https://vitest.dev/api/vi.html#vi-fn) from the Vitest documentation.
 
-The return of `vi.fn()` is a function imbued with superpowers, one of which is the ability to know when and how it is being called!
+Calling `vi.fn()` returns a function imbued with superpowers, one of which is the ability to know when and how it is being called!
 
-> Note that for this test, I will create an _empty_ mock function because what the listener itself does is irrelevant to the point of the test.
+> Note that for this test, I will create an _empty_ mock function because what the listener itself does is irrelevant to the point of the test (asserting that it has been called).
 
-Now that the mock function is ready, I will use it as a listener for the `hello` event:
+Now that the mock function is ready, I will use it as a listener argument for the `hello` event:
 
 <CodeFile file="emitter.test.ts" range="7" />
 
@@ -23,14 +23,14 @@ I expect two things to happen once the `hello` event is emitted:
 1. The `listener` function gets called, and gets called _once_;
 1. The `listener` function gets called with the right data—the `'John'` string.
 
-The `expect()` function from Vitest comes with handy assertions to describe both expectations!
+The `expect()` function from Vitest comes with handy assertions to describe both of those expectations!
 
 First, I will use the `.toHaveBeenCalledOnce()` assertion:
 
 <CodeFile file="emitter.test.ts" range="10" />
 
-This will only pass if the `listener` function has been called exactly once. if it gets called any other number of times, it's a bug!
+This will only pass if the `listener` function has been called exactly once. If it gets called any other number of times, it's a bug, and the test will fail.
 
-In the same fashion, I will apply the `.toHaveBeenCalledWith()` assertion to check that the `listener` function gets called with the right data:
+In the same fashion, I will apply the [`.toHaveBeenCalledWith()`](https://vitest.dev/api/expect.html#tohavebeencalledwith) assertion to check that the `listener` function gets called with the right data:
 
 <CodeFile file="emitter.test.ts" range="11" />

@@ -1,6 +1,6 @@
 # Spies
 
-Let's start by creating a _spy_ for the `logger.log()` method using the `vi.spyOn()` function from Vitest.
+Let's start by creating a _spy_ for the `logger.log()` method using the [`vi.spyOn()`](https://vitest.dev/api/vi.html#vi-spyon) function from Vitest:
 
 <CodeFile file="user-service.test.ts" range="5-7" highlight="6" />
 
@@ -10,9 +10,9 @@ The `spyOn()` function has a bit of unusual call signature since it _will not_ a
 vi.spyOn(target, method)
 ```
 
-> 📝 The reason behind this call signature is how `.spyOn()` works under the hood. It redefines the `method` on the `target` object with a spied version of that method! You can think of it as `target[method] = methodSpy`.
+> :owl: The reason behind this call signature is how `.spyOn()` works under the hood. It redefines the `method` on the `target` object with a spied version of that method! You can think of it as `target[method] = methodSpy`.
 
-Now that we have the spy ready and recording, I can write an assertion on that method being called with the correct arguments using the `.toHaveBeenCalledWith()` assertion:
+Now that I have the spy ready and recording, I can write an assertion on that method being called with the correct arguments using the [`.toHaveBeenCalledWith()`](https://vitest.dev/api/expect.html#tohavebeencalledwith) assertion:
 
 <CodeFile file="user-service.test.ts" range="14" />
 
