@@ -1,9 +1,11 @@
-<div>
-  <h1 align="center">Mocking Techniques</h1>
+<div align="center">
+  <h1>Mocking Techniques</h1>
   <strong>
     Everything to know about mocking in JavaScript.
   </strong>
 </div>
+
+<br />
 
 <div align="center">
   <a
