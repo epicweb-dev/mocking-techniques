@@ -2,7 +2,7 @@
 
 You will be testing all sorts of code in the wild. Some of it will be simple and self-contained, and some will be tangled with dependencies and side effects. Test boundaries is what helps you to untangle more complex code, focusing on the exact [intention](https://www.epicweb.dev/the-true-purpose-of-testing) you wish to test.
 
-To help you visualize what mocking does to your tested code I built a little app called [How Mocking Works?](https://howmocking.works). Let's explore it together as a part of this exercise.
+To help you visualize what mocking does to your tested code I built a little app called [How Mocking Works](https://howmocking.works). Let's explore it together as a part of this exercise.
 
 ![How Mocking Works?](https://howmocking.works/og.jpg)
 
@@ -10,7 +10,7 @@ To help you visualize what mocking does to your tested code I built a little app
 
 In the app, I represented various JavaScript modules, like `one.js` and `two.js` with geometric shapes, while the dependencies between them with colored lines. The graph that you see represents the extent of the tested code if you are writing a test for the `one.js` module.
 
-By default, _all of the `one.js` dependencies run in the test_. By clicking on the links (lines) between various modules and their methods you can "cut off" everything that goes past that link.
+By default, _all of the `one.js` dependencies run in the test_. By clicking on the links (lines) between various modules and their methods you can "cut off" (or mock) everything that goes past that link.
 
 The orange double-line injected into the dependency link represents a _mock_. It can be anything, from intercepting an HTTP call to mocking the method or the entire module. Those are the technical details of the mock. No matter what mocking technique you use, it ends up trimming your dependency tree to the scope you need in your test.
 
@@ -24,7 +24,7 @@ There are a couple of rules to keep your mocking superpowers at bay:
 
 If you are testing what happens when the user clicks a button, you mustn't mock that button's behavior. If you do, your test will be testing your mock, and that's not what you want.
 
-> You can reproduce this scenario visually by putting a mock between the `one.js` module and its dependency on the `a()` method. Nothing will be tested if you do.
+> You can reproduce this scenario visually by putting a mock between the `one.js` module and its dependency on the `a()` method. Nothing will be tested if you do!
 
 It may not always be as obvious to determine what's related to the tested intention and what's not. For example, when testing your `Emitter.prototype.emit` method to make sure it calls the previously added listeners, it may be tempting to assume that the listener that's being called is related to the intention.
 
