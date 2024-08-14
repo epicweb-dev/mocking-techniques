@@ -15,7 +15,7 @@ test('logs out the "createUser" event when creating a new user', async () => {
   })
 
   // 🐨 Write an assertion that `logger.log` has been called with the
-  // "createUser" event and the { id: 'abc-123' } metadata.
+  // "createUser" event and the { id: 'abc-123' } object as metadata.
   // 💰 expect(spy).toHaveBeenCalledWith(arg1, arg2)
 
   // 🐨 Write another assertion that `logger.log` has been called once.

@@ -9,7 +9,7 @@ import { OrderController, Order, Cart } from './OrderController.js'
 // 💰 afterEach(callback)
 // 💰 <mock>.mockReset()
 
-// 🐨 Add an "afterAll" hook to restore all mocks in the test.
+// 🐨 Add an "afterAll" hook to restore all mocks after the test is done.
 // 💰 afterAll(callback)
 // 💰 vi.restoreAllMocks()
 

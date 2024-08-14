@@ -1,17 +1,17 @@
 import { Emitter } from './emitter.js'
 
-// 🐨 Add the `beforeAll` hook and mock the `console.log` in there.
+// 🐨 Add the `beforeAll()` hook and mock the `console.log` in there.
 // Mock the implementation of the `console.log` method to be an empty function.
 // Use the previous exercise in "Globals, Global methods" for reference!
 // 💰 beforeAll(callback)
 // 💰 vi.spyOn(target, method).mockImplementation(implementation)
 
-// 🐨 Add the `afterEach` hook that does two things:
+// 🐨 Add the `afterEach()` hook that does two things:
 // 1. Reset any introduced mock functions via `vi.resetAllMocks()`.
 // 2. Unstubs any stubbed environment variables via `vi.unstubAllEnvs()`.
 // 💰 afterEach(callback)
 
-// 🐨 Complete the setup by adding the `afterAll` hook
+// 🐨 Complete the setup by adding the `afterAll()` hook
 // and restoring any mocks after the tests are done via `vi.restoreAllMocks()`.
 // 💰 afterAll(callback)
 
@@ -36,7 +36,7 @@ test('logs debugging messages when run in development', () => {
   const emitter = new Emitter<{ hello: [firstName: string] }>()
   const listener = vi.fn()
 
-  // 🐨 Add the `listener` to the "hello" event.
+  // 🐨 Add the `listener` mock function as the listener to the "hello" event.
   // 💰 emitter.on(event, listener)
 
   // 🐨 Write an assertion that the `console.log` has been called

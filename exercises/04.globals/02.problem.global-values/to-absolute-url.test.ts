@@ -1,6 +1,6 @@
 import { toAbsoluteUrl } from './to-absolute-url.js'
 
-// 🐨 Add the `beforeAll` hook and call the `vi.stubGlobal` function there.
+// 🐨 Add the `beforeAll()` hook and call the `vi.stubGlobal()` utility there.
 // As the first argument, provide it with the string "location", indicating
 // what global object to mock. As the second argument, provide a mock URL
 // "http://localhost/base/" representing the location you want.
@@ -8,7 +8,7 @@ import { toAbsoluteUrl } from './to-absolute-url.js'
 // 💰 vi.stubGlobal(property, value)
 // 💰 new URL('http://localhost/base/')
 
-// 🐨 Add the `afterAll` hook and call the `vi.unstubAllGlobals` function
+// 🐨 Add the `afterAll()` hook and call the `vi.unstubAllGlobals()` function
 // to restore the patched global values and clean up after yourself.
 
 test('returns an absolute url as-is', () => {

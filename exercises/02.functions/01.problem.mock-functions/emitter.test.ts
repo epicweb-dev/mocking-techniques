@@ -5,10 +5,12 @@ test('invokes the listener whenever a matching event is emitted', () => {
   // accepting a "firstName" string as the event data.
   const emitter = new Emitter<{ hello: [firstName: string] }>()
 
-  // 🐨 Create a mock function called "listener" using "vi.fn()".
+  // 🐨 Create a variable called "listener" and assign it
+  // the result of calling the `vi.fn()` utility. This will
+  // create a mock function!
 
-  // 🐨 Add a listener for the "hello" event using the mock function
-  // as the listener.
+  // 🐨 Add a listener for the "hello" event using the mock "listener"
+  // function as the argument.
   // 💰 emitter.on(event, listener)
 
   // 🐨 Emit the "hello" event with the name "John" as an argument.

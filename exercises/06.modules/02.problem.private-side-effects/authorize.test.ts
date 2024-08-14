@@ -21,7 +21,7 @@ const queryTableMock = vi.hoisted(() => vi.fn<() => Promise<User>>())
 // mock function you've defined earlier.
 // 💰 { queryTable: mockFunction }
 
-// 🐨 Add the `afterEach` hook and reset all mock functions there.
+// 🐨 Add the `afterEach()` hook and reset all mock functions there.
 // 💰 afterEach(callback)
 // 💰 vi.resetAllMocks()
 

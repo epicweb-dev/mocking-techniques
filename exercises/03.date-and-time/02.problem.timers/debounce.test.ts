@@ -1,6 +1,6 @@
 import { debounce } from './debounce.js'
 
-// 🐨 Add the "beforeAll" and "afterAll" hooks that
+// 🐨 Add the `beforeAll()` and `afterAll()` hooks that
 // mock the date using `vi.useFakeTimers()` and
 // `vi.useRealTimers()` respectively.
 // 💰 beforeAll(callback)
