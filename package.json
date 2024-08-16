@@ -21,6 +21,7 @@
   },
   "type": "module",
   "scripts": {
+    "postinstall": "cd ./epicshop && npm install",
     "build": "npm run build --if-present --workspaces",
     "start": "epicshop start",
     "dev": "epicshop start",
@@ -60,15 +61,10 @@
     "npm": ">=8.16.0",
     "git": ">=2.18.0"
   },
-  "dependencies": {
-    "@epic-web/workshop-app": "^4.13.0",
-    "@epic-web/workshop-utils": "^4.13.0"
-  },
   "devDependencies": {
     "@types/node": "^20.11.6",
     "@typescript-eslint/parser": "^7.1.0",
     "eslint": "^8.57.0",
-    "execa": "^8.0.1",
     "fs-extra": "^11.1.1",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
