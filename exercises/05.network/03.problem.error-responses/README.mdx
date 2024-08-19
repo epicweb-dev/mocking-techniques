@@ -28,7 +28,7 @@ const server = setupServer(
   // This is a happy path handler.
   http.get('http://localhost/resource', () => {
     return Response.json({ response: 'happy' })
-  }),
+  })
 )
 server.listen()
 
@@ -41,7 +41,7 @@ server.use(
   // but returns a different mocked response.
   http.get('http://localhost/resource', () => {
     return Response.json({ response: 'override' })
-  }),
+  })
 )
 
 await fetch('http://localhost/resource').then((response) => response.json())
@@ -82,4 +82,4 @@ afterAll(() => {
 })
 ```
 
-:koala: Then, head to the <InlineFile file="get-auth-token.test.ts" /> file and complete the new test cases.
+:koala: Then, head to the <InlineFile file="get-auth-token.test.ts" /> file and complete the new test cases. Verify your solution by running `npm test`.

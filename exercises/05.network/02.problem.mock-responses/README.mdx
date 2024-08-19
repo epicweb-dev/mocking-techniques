@@ -16,4 +16,4 @@ If the server returns a 200 response, our function will read its body and return
 
 For that intention to happen, the `POST https://api.example.com/auth` request must be (1) intercepted; and (2) mocked. Wait, those two steps are precisely what _request handlers_ are for!
 
-👨‍💼 In this exercise, create a new request handler in `handlers.ts` for the request made by the `getAuthToken()` function. Respond to that request with a mocked JSON response containing `{ token: 'abc-123' }` in its body. And, finally, finish the test at <InlineFile file="get-auth-token.test.ts" /> to validate the `getAuthToken()` function returning the right `token` from the received response.
+👨‍💼 In this exercise, create a new request handler in `handlers.ts` for the request made by the `getAuthToken()` function. Respond to that request with a mocked JSON response containing `{ token: 'abc-123' }` in its body. And, finally, finish the test at <InlineFile file="get-auth-token.test.ts" /> to validate the `getAuthToken()` function returning the right `token` from the received response. Verify your solution by running `npm test`.

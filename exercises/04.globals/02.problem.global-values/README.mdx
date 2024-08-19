@@ -18,6 +18,6 @@ Moreover, bringing the actual `location.href` value to the test level will give 
 
 **For that, we are going to use the [`vi.stubGlobal()`](https://vitest.dev/api/vi.html#vi-stubglobal) utility**.
 
-👨‍💼 In this exercise, use the `vi.stubGlobal` API to mock the value of the global `location` object in the <InlineFile file="to-absolute-url.test.ts" /> test suite.
+👨‍💼 In this exercise, use the `vi.stubGlobal` API to mock the value of the global `location` object in the <InlineFile file="to-absolute-url.test.ts" /> test suite. Verify your solution by running `npm test`.
 
 > 🦉 Note that `location` inherits from `URL`, which means it can be partially mocked by using a `URL` instance as its value.
