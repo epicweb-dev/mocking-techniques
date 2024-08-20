@@ -4,7 +4,7 @@ Let's start by creating a `isItemInStock` mock function using the `vi.spyOn()` m
 
 <CodeFile file="OrderController.test.ts" range="3" />
 
-> Notice that I am spying on the prototype itself, which means that any `OrderController` instances created will automatically have the spy around the `.isItemInStock()` method.
+<callout-info>Notice that I am spying on the entire `OrderController` prototype, which means that any controller instances created will automatically have the spy around the `.isItemInStock()` method. You can also use `vi.spyOn()` on individual controller instances in test to the same effect.</callout-info>
 
 I will add the `afterEach()` hook with the [`.mockReset()`](https://vitest.dev/api/mock.html#mockreset) utility to reset any recorded information about the spied method between the tests:
 
