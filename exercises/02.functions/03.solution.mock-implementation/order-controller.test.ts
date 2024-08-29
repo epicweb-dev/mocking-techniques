@@ -1,4 +1,4 @@
-import { OrderController, Order, Cart } from './OrderController.js'
+import { OrderController, Order, Cart } from './order-controller.js'
 
 const isItemInStock = vi.spyOn(OrderController.prototype, 'isItemInStock')
 
