@@ -38,7 +38,7 @@ test('executes the callback after the debounce timeout', () => {
   bar('three')
 
   expect(foo).toHaveBeenCalledOnce()
-  expect(foo).toHaveBeenCalledWith(3)
+  expect(foo).toHaveBeenCalledWith('three')
 })
 ```
 
@@ -48,7 +48,7 @@ Running this test, however, will produce something _unexpected_:
  FAIL  debounce.test.ts > executes the callback after the debounce timeout
 AssertionError: expected "spy" to be called once, but got 0 times
  ❯ debounce.test.ts:19:15
-     7|   bar(3)
+     7|   bar('three')
      8|
      9|   expect(foo).toHaveBeenCalledOnce()
 ```
