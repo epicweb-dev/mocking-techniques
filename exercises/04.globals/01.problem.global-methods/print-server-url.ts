@@ -10,5 +10,5 @@ export function printServerUrl(server: Server) {
   const url = new URL(`http://${server.host}`)
   url.port = server.port?.toString() || ''
 
-  console.log(`Sever is listening at ${url.href}`)
+  console.log(`Server is listening at ${url.href}`)
 }
