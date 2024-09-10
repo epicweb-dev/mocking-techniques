@@ -1,24 +1,12 @@
 import { OrderController, Order, Cart } from './order-controller.js'
 
-// 🐨 Create a spy on the "OrderController.prototype.isItemInStock" method
-// and assign it to a variable named "isItemInStock".
-// 💰 const isItemInStock = vi.spyOn(object, method)
-
-// 🐨 Add an "afterEach" hook that will reset the "isItemInStock" mock
-// function (i.e. clear the recorded call information).
-// 💰 afterEach(callback)
-// 💰 <mock>.mockReset()
-
-// 🐨 Add an "afterAll" hook to restore all mocks after the test is done.
-// 💰 afterAll(callback)
-// 💰 vi.restoreAllMocks()
-
 test('creates an order when all items are in stock', () => {
-  // 🐨 Mock the return value of the "isItemInStock" mock function
-  // to always return true.
+  const controller = new OrderController()
+
+  // 🐨 Spy on the `controller.isItemInStock` method and mock its
+  // implementation to always return true in this test.
   // 💰 <mock>.mockReturnValue(true)
 
-  const controller = new OrderController()
   const cart: Cart = [
     {
       id: 4,
@@ -34,11 +22,12 @@ test('creates an order when all items are in stock', () => {
 })
 
 test('throws an error when one of the items is out of stock', () => {
-  // 🐨 Mock the implementation of the "isItemInStock" mock function
-  // to only return true if the "item.id" equals 4.
+  const controller = new OrderController()
+
+  // 🐨 Spy on the `controller.isItemInStock` method and mock its
+  // implementation to only return true if the checked "item.id" equals 4.
   // 💰 <mock>.mockImplementation(item => {})
 
-  const controller = new OrderController()
   const cart: Cart = [
     {
       id: 4,

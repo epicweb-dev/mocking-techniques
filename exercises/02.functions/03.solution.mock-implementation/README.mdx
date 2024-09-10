@@ -1,57 +1,27 @@
 # Mock implementation
 
-Let's start by creating a `isItemInStock` mock function using the `vi.spyOn()` method to spy on `OrderController.prototype.isItemInStock` method:
+Let's start by going to the first test case for our `OrderController` and spying on the `isItemInStock` method of the created `controller` instance:
 
-<CodeFile file="OrderController.test.ts" range="3" />
+<CodeFile file="order-controller.test.ts" range="3-6" highlight="6" />
 
-<callout-info>Notice that I am spying on the entire `OrderController` prototype, which means that any controller instances created will automatically have the spy around the `.isItemInStock()` method. You can also use `vi.spyOn()` on individual controller instances in test to the same effect.</callout-info>
+<callout-info>Since the object I'm spying on (`controller`) is scoped to this particular test, there's no need to introduce any test setup to reset the mock.</callout-info>
 
-I will add the `afterEach()` hook with the [`.mockReset()`](https://vitest.dev/api/mock.html#mockreset) utility to reset any recorded information about the spied method between the tests:
+By using [`.mockReturnValue()`](https://vitest.dev/api/mock.html#mockreturnvalue), I am forcing the `.isItemInStock()` method to always return true when run in this test. With that behavior fixed, I can write the assertions around how the new order should be created:
 
-<CodeFile file="OrderController.test.ts" range="5-7" />
+<CodeFile file="order-controller.test.ts" range="3-26" highlight="17-25" />
 
-Resetting the mock guarantees that none of the recorded calls of `.isItemInStock()` will leak to irrelevant tests.
+> I prefer keeping my assertions explicit so I _repeat_ the entire `cart` object within my `expect()` statement.
 
-Following this, I will use the `afterAll()` hook to restore any mocks and spies introduced in this test by calling [`vi.restoreAllMocks()`](https://vitest.dev/api/vi.html#vi-restoreallmocks):
+In the next test case, I'd like to do things a little differently. I will still spy on the `.isItemInStock()` method, but instead of mocking its return value, I will _mock that method's implementation_.
 
-<CodeFile file="OrderController.test.ts" range="9-11" />
+<CodeFile file="order-controller.test.ts" range="28-33" highlight="31-33" />
 
-> Note that `.mockReset()` is called on **individual mock functions** while `vi.restoreAllMocks()` is called on the global `vi` object.
+By mocking the implementation, I am creating a mock with conditional behavior. It will behave differently based on the cart `item` that's being checked. Only the item with `id` that equals `4` will be considered in stock. This way, I am able to reproduce the error throwing logic as well as assert on the `controller` class including the right item IDs in the error message.
 
-With the setup phase covered, let's dive into writing some tests!
-
-First, I will describe the happy path scenario when all the cart items are in stock and the order is created without any issues. For that to happen, the `.isItemInStock()` method must return `true`. Up until this point, I've only established a _spy_ on the method but now it's time to _override its implementation_ to model the behavior I need for this test case.
-
-I will call the [`.mockReturnValue()`](https://vitest.dev/api/mock.html#mockreturnvalue) method on the `isItemInStock` mock function to make it always return `true`:
-
-<CodeFile file="OrderController.test.ts" range="13-14" highlight="14" />
-
-What's left for this test is to write the assertion that the `order` returned matches the object we expect:
-
-<CodeFile file="OrderController.test.ts" range="25-34" />
-
-> Note that I'm _repeating_ the contents of the `cart` instead of referencing the existing `cart` variable created in the test. Keeping tests explicit and clear is the key to long-lasting tests!
-
-Now, to testing the error scenario.
-
-The `.createOrder()` method should throw an error if any of the cart items is out of stock. In other words, if the `isItemInStock` mock function returns `false`. For this test case, I will use the [`.mockImplementation()`](https://vitest.dev/api/mock.html#mockimplementation) helper from Vitest instead of mocking the return value. This will allow me to also test the correct error message containing only the items that were out of stock.
-
-<CodeFile file="OrderController.test.ts" range="37-40" highlight="38-40" />
-
-> Using `.mockImplementation()` allows me to control how the mock function behaves. It will still be called, and it will still receive the actual `cart` as the argument, but it will be my mock implementation deciding what happens next.
-
-Right now, only the cart item with id `4` will be considered in stock. Since the test `cart` object contains items `4`, `5`, and `6`, I can write an assertion that expects the thrown error message to contain the out-of-stock items `5` and `6`:
-
-<CodeFile
-  file="OrderController.test.ts"
-  range="43-63"
-  highlight="50,55,61-63"
-/>
-
-The reason I am using an actual mock implementation and not `.mockReturnValue()` is to be able to model a mixed scenario where some cart items will be in stock while others won't. That information is then reflected in the error message and, respectively, in the assertion I write for it.
+<CodeFile file="order-controller.test.ts" range="28-56" highlight="53-55" />
 
 ## Alternative approach
 
-Because we are mocking the `.isItemInStock()` method entirely in this test, we focus our the logic of the `.createOrder()` method. That's where we've established the boundary.
+Because we are mocking the `.isItemInStock()` method entirely in this test, we focus our the logic of the `.createOrder()` method of the `OrderController` class. That is where we are establishing the test boundary.
 
-Alternatively, we could've mocked the dependency on `stock.json` to decide which items are in stock on the data level. Notice how that would've yielded a different test that would also include the functionality of the `.isItemInStock()` method (the filtering). You will learn more about module mocking later in this workshop.
+Alternatively, we could also mock the dependency on `stock.json` to decide which items are in stock on the data level. Notice how that would've yielded a different test that would also include the functionality of the `.isItemInStock()` method (the filtering). You will learn more about module mocking later in this workshop.

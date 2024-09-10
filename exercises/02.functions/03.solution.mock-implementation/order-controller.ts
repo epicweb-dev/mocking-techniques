@@ -1,7 +1,6 @@
 import stockJson from './stock.json'
 
 export interface Order {
-  createdAt: Date
   cart: Cart
 }
 
@@ -33,7 +32,6 @@ export class OrderController {
     }
 
     return {
-      createdAt: new Date(),
       cart: args.cart,
     }
   }
