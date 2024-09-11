@@ -28,7 +28,7 @@ test('returns the authorized user', async () => {
   // to resolve with a user object.
   // 💰 mockFunction.mockResolvedValue(value)
   // You may use the following object as the mock user object:
-  // 💰 { id: 'abc-123', name: 'Kody Koala" }
+  // 💰 { id: 'abc-123', name: 'Kody Koala' }
   //
   // 🐨 Write an assertion on the `authorize` function call
   // to ensure that it resolves to the mock user object correctly.
