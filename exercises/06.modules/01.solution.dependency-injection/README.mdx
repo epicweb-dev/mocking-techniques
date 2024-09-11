@@ -12,9 +12,9 @@ Here, I'm implementing an actual class that always stays compatible with the ori
   behaviors alongside the types.
 </callout-info>
 
-Now, I can use `MockEmailService` to model various behaviors in the `NotificationService` test!
+Now, I can use `EmailServiceMock` to model various behaviors in the `NotificationService` test!
 
-I will create a new `MockEmailService` instance for the test case where the email must not be sent (the user didn't give their permission to receive emails):
+I will create a new `EmailServiceMock` instance for the test case where the email must not be sent (the user didn't give their permission to receive emails):
 
 <CodeFile file="notification-service.test.ts" range="9-19" highlight="9" />
 
@@ -22,7 +22,7 @@ I will create a new `MockEmailService` instance for the test case where the emai
 
 <CodeFile file="notification-service.ts" range="9-17" highlight="10-12" />
 
-In order to test the successful sending of the email, I would have to mock the return value of the `.send()` method on the respective `MockEmailService` instance:
+In order to test the successful sending of the email, I would have to mock the return value of the `.send()` method on the respective `EmailServiceMock` instance:
 
 <CodeFile file="notification-service.test.ts" range="21-38" highlight="22-24" />
 

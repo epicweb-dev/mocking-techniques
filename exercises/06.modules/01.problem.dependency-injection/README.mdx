@@ -1,66 +1,76 @@
 # Dependency injection
 
-First, let's take a look at the alternative you can use to module mocking called _dependency injection_.
+First, let's see how you can use _dependency injection_ as an alternative to module mocking. We've already touched on dependency injection when mocking functions, but now, let's how a proper introduction to it.
 
-Dependency injection (short, DI) is a software design technique that reserves the dependency relation, making the system a function of a dependency.
+## What is dependency injection?
 
-Consider this implementation of a `NotificationService` class:
+Dependency injection (short, DI) is a software design technique that reverses the dependency relation, making the system a function of a dependency.
+
+Consider this implementation of an `UploadService` class:
 
 ```ts
-import { EmailService } from './email-service.js'
+import { FileStorage } from './file-storage.js'
 
-export class NotificationService {
+export class UploadService {
+  private storage: FileStorage
+
   constructor() {
-    this.emailService = new EmailService()
+    this.storage = new FileStorage()
   }
 
-  public async sendEmail(options: SendEmailOptions) {
-    this.emailService.send(options)
+  public async upload(file: File) {
+    await this.storage.setItem(file.name, await file.arrayBuffer())
   }
 }
 ```
 
-To implement its `.sendEmail()` method, the class creates an internal `EmailService` instance and uses it to send emails. The `NotificationService -> EmailService` dependency is _internal_, which means that the consumer of the class doesn't know that such a dependency exists.
+The purpose of this class is to upload files via the `.upload()` method. Internally, the upload service relies on the `FileStorage` to provision actual file upload and retrieval. The file storage is available as `this.storage` because the `UploadService` creates an instance of that storage whenever it's constructed.
 
-Because of this internal nature, the two classes become tightly coupled. If you wished to exclude the `EmailService` behaviors from a `NotificationService` test, you would have to leak the fact of their dependency into the test suite. That is not ideal and must be avoided.
+This means that the `UploadService -> FileStorage` dependency is _implicit_. Nobody using the upload service knows about it, and that includes our tests!
 
-You can avoid it by rewriting the `NotificationService` class to _accept_ an instance of the `EmailService` class as an argument:
+Because of this implicit dependency, the two classes become tightly coupled. If you would want to exclude the behaviors of the `FileStorage` class while testing the `UploadService` class, you would have to expose the implementation detail of that dependency to the test. That will make the test brittle, failing if you restructure your classes.
+
+You can avoid this tight coupling by refactoring the `UploadService` class to _accept_ an instance of a `FileStorage` as an argument (i.e. explicit dependency):
 
 ```ts add=4 remove=5
-import { EmailService } from './email-service.js'
+import { FileStorage } from './file-storage.js'
 
-export class NotificationService {
-  constructor(private emailService: EmailService) {
-    this.emailService = new EmailService()
+export class UploadService {
+  constructor(private storage: FileStorage) {
+    this.storage = new FileStorage()
   }
 
-  public async sendEmail(options: SendEmailOptions) {
-    this.emailService.send(options)
+  public async upload(file: File) {
+    await this.storage.setItem(file.name, await file.arrayBuffer())
   }
 }
 ```
 
-This act of "lifting the dependency up" allows the consumer to provide an instance of the email service when creating a notification service class:
+This seemingly insignificant change has huge implications on the relationship between these classes. Because their dependency has been "lifted up", this allows the consumer of the upload service to provide any instance of the file storage they want.
 
 ```ts highlight=2
-const emailService = new EmailService()
-const notifications = new NotificationService(emailService)
+const storage = new FileStorage()
+const uploadService = new UploadService(storage)
 ```
 
-Dependency injection transforms a `NotificationService -> EmailService` dependency into a notification service class being a _function of the email service_ (`NotificationService = fn(EmailService)`).
+<callout-info>It almost seems like the file storage is being _injected_ into the upload service :wink:. Hence the name, Dependency Injection.</callout-info>
 
-That is also rather handy when testing!
+Dependency injection transform the `UploadService -> FileStorage` dependency from being tight and internal to being loose and public. An upload service instance effectively becomes a function of file storage!
 
-Since the `NotificationService` accepts its dependency as an argument now, that dependency is no longer an internal implementation detail but rather a part of its public API. And since it's public, you can exclude that dependency altogether by constructing a _matching object_ in its stead, thus isolating the notifications manager's behavior in the test.
+That kind of dependency is extremely handy when testing.
 
-```ts
-const mockEmailService = new MockEmailService()
-const notifications = new NotificationService(new MockEmailService())
+Since an upload service instance accepts _any_ file storage instance, we can pass a _fake_ file storage instance for testing purposes. This will exclude the file storage from the testing equation while giving us control over its behaviors.
+
+```ts highlight=1
+const storage = new FakeFileStorage()
+const uploadService = new UploadService(storage)
 ```
 
-The `MockEmailService` in this example is also known as a _fake_ object. In this exercise, you will learn how to construct such fake objects and use them to model different scenarios of the tested system. But first, I have to give you a warning...
+The only thing we have to do to make this setup work is to ensure that the `FakeFileStorage` is compatible with the actual `FileStorage`. To keep the established API contract.
 
-## :warning: When to use Dependency injection
+But before we do that, let me give you a warning...
+
+## :warning: When to use dependency injection
 
 **Dependency injection is a software design technique, not a testing technique**. I find it extremely harmful to base your design decisions around how your system is going to be tested. You are creating APIs for your _consumers_, and as such, you must have the consumer's best interest in mind when crafting those APIs. Sometimes that will mean more complexity for you to tackle in tests, and that is perfectly fine.
 
