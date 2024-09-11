@@ -8,8 +8,6 @@ import { authorize, User } from './authorize.js'
 // 💰 vi.fn<FunctionType>
 // 💰 vi.hoisted(() => value)
 
-const queryTableMock = vi.hoisted(() => vi.fn<() => Promise<User>>())
-
 // 🐨 Mock the `@workshop/epic-sdk` module by calling `vi.mock()`
 // and providing it with the module import as the first argument.
 // As the second argument, provide an empty function.
