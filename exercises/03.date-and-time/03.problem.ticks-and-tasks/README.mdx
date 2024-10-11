@@ -1,5 +1,7 @@
 # Ticks and tasks
 
+<EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/date-and-time/ticks-and-tasks" />
+
 Since we are touching on the topic of testing logic that executes at a different time, we have to talk about the event loop. JavaScript is a single-threaded language, which means that it executes the operations in your app one-by-one, making them _blocking_ (the next piece of code cannot run until the previous one has finished). To know what code to run, JavaScript uses an _event loop_.
 
 Whenever an action happens in your code, it's added to the execution stack—a queue of all the operations to run. As the name suggests, the event loop constantly iterates over that stack to see if there's anything else left in it to run. Once the stack is empty, it frees the thread so it can schedule next operations, and so on.

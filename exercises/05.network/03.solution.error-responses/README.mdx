@@ -1,5 +1,7 @@
 # Error responses
 
+<EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/network/error-responses/solution" />
+
 I start with restructuring our project a little bit. In order for me to use runtime handlers, I need to have access to the same `server` object created in `vitest.setup.ts`. However, importing from the setup file _is not recommended_.
 
 > :owl: Although Vitest will **cache imports** and not evaluate the global hooks twice if you import from the setup file, it caches imports **per test file**. This works nice in the isolated mode, which Vitest uses by default, but may cause problems if you switch to parallel test runs.

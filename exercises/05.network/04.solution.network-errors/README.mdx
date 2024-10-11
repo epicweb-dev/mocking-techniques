@@ -1,5 +1,7 @@
 # Network errors
 
+<EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/network/network-errors/solution" />
+
 I will start from implementing the error handling for network errors in `get-auth-token.ts` module.
 
 Unlike error responses, network errors will [reject the `fetch` promise](https://kettanaito.com/blog/why-fetch-promise-doesnt-reject-on-error-responses). This means that I can handle those errors in the `catch` callback attached to that promise:
