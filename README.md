@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>Mocking Techniques</h1>
+  <h1>Mocking Techniques in Vitest</h1>
   <strong>
     Everything to know about mocking in JavaScript.
   </strong>
@@ -10,7 +10,7 @@
 <div align="center">
   <a
     alt="Epic Web logo with the words Deployed Version"
-    href="https://epicweb-dev-mocking-techniques.fly.dev/"
+    href="https://mocking-techniques.epicweb.dev"
   >
     <img
       width="300px"
