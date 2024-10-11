@@ -1,5 +1,7 @@
 # Error responses
 
+<EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/network/error-responses" />
+
 Right now, we are sending the exact successful JSON response that the `getAuthToken()` expects. That allows us to reproduce and test the happy path behavior.
 
 But there are more behaviors that we intended for this function, and they happened to concern themselves with error handling.
@@ -28,7 +30,7 @@ const server = setupServer(
   // This is a happy path handler.
   http.get('http://localhost/resource', () => {
     return Response.json({ response: 'happy' })
-  })
+  }),
 )
 server.listen()
 
@@ -41,7 +43,7 @@ server.use(
   // but returns a different mocked response.
   http.get('http://localhost/resource', () => {
     return Response.json({ response: 'override' })
-  })
+  }),
 )
 
 await fetch('http://localhost/resource').then((response) => response.json())

@@ -1,54 +1,5 @@
 # Test boundaries
 
-You will be testing all sorts of code in the wild. Some of it will be simple and self-contained, and some will be tangled with dependencies and side effects. Test boundaries is what helps you to untangle more complex code, focusing on the exact [intention](https://www.epicweb.dev/the-true-purpose-of-testing) you wish to test.
+<EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/boundaries/test-boundaries" />
 
-To help you visualize what mocking does to your tested code I built a little app called [How Mocking Works](https://howmocking.works). Let's explore it together as a part of this exercise.
-
-<callout-info>**You don't have to code anything in this exercise**. There's plenty of coding stored for you later! For now, let's have a proper introduction into mocking with a bit of visual learning.</callout-info>
-
-![How Mocking Works?](https://howmocking.works/og.jpg)
-
-## Mocking visualized
-
-In the app, I represented various JavaScript modules, like `one.js` and `two.js` with geometric shapes, while the dependencies between them with colored lines. The graph that you see represents the extent of the tested code if you are writing a test for the `one.js` module.
-
-By default, _all of the `one.js` dependencies run in the test_. By clicking on the links (lines) between various modules and their methods you can "cut off" (or mock) everything that goes past that link.
-
-The orange double-line injected into the dependency link represents a _mock_. It can be anything, from intercepting an HTTP call to mocking the method or the entire module. Those are the technical details of the mock. No matter what mocking technique you use, it ends up trimming your dependency tree to the scope you need in your test.
-
-## Overmocking
-
-Mocking is a powerful tool. It is crucial you learn from the start that it has to be used sparingly and with a clear purpose. If misused, it can result in tests that don't actually test anything or make your testing experience far more difficult than it has to be.
-
-There are a couple of rules to keep your mocking superpowers at bay:
-
-### Never mock anything directly related to the intention you want to test
-
-If you are testing what happens when the user clicks a button, you mustn't mock that button's behavior. If you do, your test will be testing your mock, and that's not what you want.
-
-> You can reproduce this scenario visually by putting a mock between the `one.js` module and its dependency on the `a()` method. Nothing will be tested if you do!
-
-It may not always be as obvious to determine what's related to the tested intention and what's not. For example, when testing your `Emitter.prototype.emit` method to make sure it calls the previously added listeners, it may be tempting to assume that the listener that's being called is related to the intention.
-
-```ts
-const emitter = new Emitter()
-emitter.on('event', listener)
-emitter.emit('event')
-// Make sure the "listener" function is called!
-```
-
-But the `listener` function itself is not the point. In fact, it can be anything. Its implementation does not influence what you want to test—that _any_ previously added listener gets called when the `event` is emitted.
-
-> :scroll: Follow the [Golden Rule of Assertions](https://www.epicweb.dev/the-golden-rule-of-assertions) to see what influences the result of your test and what doesn't.
-
-### Always mock third-party HTTP calls
-
-No matter the testing level, you must always omit the HTTP calls to _third-party services_ from your test suite. They may seem important but they never are. Your tests can still focus on whether _your application_ performs the necessary requests to those services but their operability must not influence the result of your tests.
-
-> You do not own third-party systems and as such, they mustn't be allowed to affect your test.
-
-### Choose the least intrusive mocking technique possible
-
-In other words, draw the most permissive test boundary that you can.
-
-Coming back to our visual example, if you want to exclude `b()` from the test, mock the `two.js` [dependency on `b()`](https://howmocking.works/#7) and not [the entire `two.js` module](https://howmocking.works/#2). By putting the mock too "high" up the dependency tree, you may lose the important behaviors of your code even if they don't seem related to what you are testing. But most likely, you would end up re-implementing the missing pieces because now _you_ become in charge of the entire `two.js` module.
+I like to start with seemingly basic and straightforward exercises because they end up growing in value as you progress through the material (and beyond). The test boundary is one of such examples. In the end, the entire purpose of mocking is to draw that boundary, and you cannot wield mocking efficiently without understanding it first.

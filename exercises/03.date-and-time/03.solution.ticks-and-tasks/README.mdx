@@ -1,5 +1,7 @@
 # Ticks and tasks
 
+<EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/date-and-time/ticks-and-tasks/solution" />
+
 First thing to mention is that the usual `vi.useFakeTimers()` does _not_ mock `queueMicrotask()`. To enable that, I will provide it with the `toFake` argument configured to include `'queueMicrotask'` in the date mocks:
 
 <CodeFile file="connection.test.ts" range="3-11" highlight="4-6" />
