@@ -1,6 +1,7 @@
 import { FileStorage } from './file-storage.js'
 import { UploadService } from './upload-service.js'
 
+// @ts-expect-error 💣 Remove this before proceeding.
 class FakeFileStorage implements FileStorage {
   // 🐨 In this `FakeFileStorage` class, declare a private variable called
   // `data`. Assign that variable to `new Map<string, Array<ArrayBuffer>>`.
@@ -26,6 +27,8 @@ test('stores a small file in a single chunk', async () => {
   // 🐨 Create a new variable called `storage` and assign it
   // to a new instance of `FakeFileStorage`.
   // 💰 const storage = value
+
+  // @ts-expect-error 💣 Remove this before proceeding.
   const uploadService = new UploadService({
     // 🐨 Provide the fake `storage` instance as the value
     // of the `storage` property to the `UploadService`.
@@ -48,6 +51,8 @@ test('splits a large file in multiple chunks', async () => {
   // 🐨 Similarly, declare a `storage` variable and assign it
   // a new instance of the `FakeFileStorage` class.
   // 💰 const storage = new FakeFileStorage()
+
+  // @ts-expect-error 💣 Remove this before proceeding.
   const uploadService = new UploadService({
     // 🐨 Provide the fake `storage` as the option here.
     // 💰 storage,
