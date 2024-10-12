@@ -4,13 +4,29 @@
 
 I begin from setting up the testing hooks to mock time in this test, using the `vi.useFakeTimers()` and `vi.useRealTimers()` functions, the same way I did in the previous exercise:
 
-<CodeFile file="debounce.test.ts" range="3-9" highlight="4,8" />
+```ts filename=debounce.test.ts nonumber lines=2,6
+beforeAll(() => {
+  vi.useFakeTimers()
+})
+
+afterAll(() => {
+  vi.useRealTimers()
+})
+```
 
 > Note that mocking date and time includes mocking timers and intervals as well!
 
 My next goal is to call the `debouncedFn()` and make sure that the wrapped `fn` function is _not_ called since the debounce duration has not yet passed.
 
-<CodeFile file="debounce.test.ts" range="11-17" highlight="15,16" />
+```ts filename=debounce.test.ts nonumber lines=5-6
+test('executes the callback after the debounce timeout passes', () => {
+  const fn = vi.fn<(input: string) => void>()
+  const debouncedFn = debounce(fn, 250)
+
+  debouncedFn('one')
+  expect(fn).not.toHaveBeenCalled()
+
+```
 
 > Since the `debounce()` accepts _any_ function as the argument, I am creating a mock function via `vi.fn()` so I can spy on its calls and assert them! Passing it a type argument of `(input: number) => void` also allows me to define the call signature of that mocked function to keep it type-safe in tests.
 
@@ -25,15 +41,40 @@ Vitest provides us with a bunch of utility functions to control timers in test:
 
 All of those are great tools to have in your toolbelt. In this test, I will use the `vi.advanceTimersByTime()` function to advance the time in test by 250 milliseconds.
 
-<CodeFile file="debounce.test.ts" range="18" />
+```ts filename=debounce.test.ts nonumber
+vi.advanceTimersByTime(250)
+```
 
 This will immediately fastforward the test universe ahead by 250ms, allowing me to write my expectations toward the tested debounced function:
 
-<CodeFile file="debounce.test.ts" range="18-21" highlight="20-21" />
+```ts filename=debounce.test.ts nonumber lines=3-4
+vi.advanceTimersByTime(250)
+
+expect(fn).toHaveBeenCalledOnce()
+expect(fn).toHaveBeenCalledWith('one')
+```
 
 The second test case will employ everything we've learned thus far to test the repetitive calls to the debounced function:
 
-<CodeFile file="debounce.test.ts" range="24-40" highlight="31,36" />
+```ts filename=debounce.test.ts nonumber lines=8,13
+test('debounces the callback until the timeout passes since the last call', () => {
+  const fn = vi.fn<(input: string) => void>()
+  const debouncedFn = debounce(fn, 250)
+
+  debouncedFn('one')
+  expect(fn).not.toHaveBeenCalled()
+
+  vi.advanceTimersByTime(100)
+
+  debouncedFn('two')
+  expect(fn).not.toHaveBeenCalled()
+
+  vi.advanceTimersByTime(250)
+
+  expect(fn).toHaveBeenCalledOnce()
+  expect(fn).toHaveBeenCalledWith('two')
+})
+```
 
 > Note that you can use fake timers and `vi.advanceTimersByTime()` and `vi.advanceTimersToNextTimer()` to test intervals (`setInterval`) too!
 

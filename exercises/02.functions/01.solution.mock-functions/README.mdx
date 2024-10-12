@@ -4,7 +4,9 @@
 
 In the `emitter.test.ts`, I will start from creating the `listener` function but it won't be a regular JavaScript function. Instead, I will use the `vi.fn()` API from Vitest, which creates a _special_ kind of function.
 
-<CodeFile file="emitter.test.ts" range="5" />
+```ts filename=emitter.test.ts nonumber
+const listener = vi.fn()
+```
 
 > 📜 Learn more about [`vi.fn()`](https://vitest.dev/api/vi.html#vi-fn) from the Vitest documentation.
 
@@ -14,11 +16,15 @@ Calling `vi.fn()` returns a function imbued with superpowers, one of which is th
 
 Now that the mock function is ready, I will use it as a listener argument for the `hello` event:
 
-<CodeFile file="emitter.test.ts" range="7" />
+```ts filename=emitter.test.ts nonumber
+emitter.on('hello', listener)
+```
 
 Everything up to this point was the setup for this test. The action here would be calling the `.emit()` method to emit the `hello` event because the listeners are only called when the respective event gets emitted.
 
-<CodeFile file="emitter.test.ts" range="8" />
+```ts filename=emitter.test.ts nonumber
+emitter.emit('hello', 'John')
+```
 
 I expect two things to happen once the `hello` event is emitted:
 
@@ -29,10 +35,14 @@ The `expect()` function from Vitest comes with handy assertions to describe both
 
 First, I will use the `.toHaveBeenCalledOnce()` assertion:
 
-<CodeFile file="emitter.test.ts" range="10" />
+```ts filename=emitter.test.ts nonumber
+expect(listener).toHaveBeenCalledOnce()
+```
 
 This will only pass if the `listener` function has been called exactly once. If it gets called any other number of times, it's a bug, and the test will fail.
 
 In the same fashion, I will apply the [`.toHaveBeenCalledWith()`](https://vitest.dev/api/expect.html#tohavebeencalledwith) assertion to check that the `listener` function gets called with the right data:
 
-<CodeFile file="emitter.test.ts" range="11" />
+```ts filename=emitter.test.ts nonumber
+expect(listener).toHaveBeenCalledWith('John')
+```

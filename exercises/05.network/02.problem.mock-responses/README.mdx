@@ -4,11 +4,25 @@
 
 Our `getAuthToken()` function depends on the response returned from the server quite singificantly. For starters, there's a validation layer to handle error responses:
 
-<CodeFile file="get-auth-token.ts" range="16-22" />
+```ts filename=get-auth-token.ts nonumber
+if (response.status === 401) {
+  throw new Error('Authentication failed: invalid credentials')
+}
+
+if (!response.ok) {
+  throw new Error('Authentication failed: network error')
+}
+```
 
 Then, there's a successful, "happy path" scenario handling, where we read the response body as JSON and return the `token` property from the response body:
 
-<CodeFile file="get-auth-token.ts" range="24-28" highlight="27" />
+```ts filename=get-auth-token.ts nonumber lines=4
+const json = await response.json()
+
+return {
+  token: json.token,
+}
+```
 
 And we need to test all of those scenarios!
 

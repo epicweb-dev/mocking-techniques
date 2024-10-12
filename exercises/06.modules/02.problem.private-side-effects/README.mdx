@@ -6,13 +6,48 @@ There are cases when a third-party module may introduce root-level side effects 
 
 Take a look at the `authorize` function below. It accepts a `userId` and queries that user in a database, using a made-up `@workshop/epic-sdk` package.
 
-<CodeFile file="authorize.ts" highlight="1,12" />
+```ts filename=authorize.ts lines=1,12
+import { queryTable } from '@workshop/epic-sdk'
+
+export interface User {
+  id: string
+  name: string
+}
+
+export async function authorize(userId: string) {
+  // As a part of authorization, we need to query the database
+  // for the given user. For that, we are using an imaginary
+  // third-party SDK package that performs SQL operations for us.
+  const user = await queryTable<User>('users', {
+    where: { id: { equals: userId } },
+  }).catch((error) => {
+    throw new Error(`Failed to fetch user by id "${userId}"`, {
+      cause: error,
+    })
+  })
+
+  return user
+}
+```
 
 Naturally, you would want to exclude the actual querying logic of `queryTable` from the test, gaining control over that functions implementation. In any other situation, you would use `vi.spyOn()` for that task and we done with it. But there's one catch...
 
 The `@workshop/epic-sdk` package has an internal side-effect that executes once you _import_ that package:
 
-<CodeFile file="@workshop/epic-sdk/index.ts" highlight="3,4,10" />
+```ts filename=@workshop/epic-sdk/index.ts lines=3,4,10
+import { initTelemetry } from './telemetry.js'
+
+const telemetry = initTelemetry()
+await telemetry.record('start', null)
+
+export async function queryTable<T>(
+  tableName: string,
+  query: { where: any },
+): Promise<T> {
+  await telemetry.record('queryTable', { tableName, query })
+  throw new Error(`Querying "${tableName}" in tests is not allowed!`)
+}
+```
 
 You must not allow this telemetry logic to run during your the test either! It may introduce all sorts of variables to your test results, from establishing HTTP connections to simply chipping away at your test's performance. But the most important reason—_it has nothing to do with the intention you are aiming to test_.
 

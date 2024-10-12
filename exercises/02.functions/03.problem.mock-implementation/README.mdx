@@ -9,11 +9,44 @@ In this one, we have an `OrderController` class responsible for handling orders 
 
 The `.createOrder()` method relies on another `.isItemInStock()` method of the same class to check any given cart item's availability.
 
-<CodeFile file="order-controller.ts" range="21-39" highlight="23" />
+```ts filename=order-controller.ts nocopy nonumber lines=2-4
+  public createOrder(args: { cart: Cart }): Order {
+    const itemsOutOfStock = args.cart.filter(
+      (item) => !this.isItemInStock(item),
+    )
+
+    if (itemsOutOfStock.length > 0) {
+      const outOfSocketItemIds = itemsOutOfStock.map((item) => item.id)
+      throw new Error(
+        `Failed to create an order: found out of stock items (${outOfSocketItemIds.join(
+          ', ',
+        )})`,
+      )
+    }
+
+    return {
+      cart: args.cart,
+    }
+  }
+```
 
 The data for the item availability itself comes from the `stock.json` file that 👨‍💼 Peter the Project Manager does a faithful job of updating on a daily basis (think of this JSON file as any source of data—e.g. a database).
 
-<CodeFile file="order-controller.ts" range="1,44-51" highlight="45" />
+```ts filename=order-controller.ts nocopy nonumber lines=7
+import stockJson from './stock.json'
+
+export class OrderController {
+  // ...
+
+  public isItemInStock(item: CartItem): boolean {
+    const itemInStock = stockJson.items.find((existingItem) => {
+      return existingItem.id === item.id
+    })
+
+    return itemInStock && itemInStock.quantity >= item.quantity
+  }
+}
+```
 
 That's the responsibility Peter bestowed upon himself.
 

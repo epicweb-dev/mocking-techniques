@@ -4,19 +4,31 @@
 
 As it often does, the test begins from the setup. In this case, the setup includes the introduction of both `beforeAll` and `afterAll` hooks to the test suite.
 
-<CodeFile file="to-absolute-url.test.ts" range="3-5" highlight="4" />
+```ts filename=to-absolute-url.test.ts nonumber lines=2
+beforeAll(() => {
+  vi.stubGlobal('location', new URL('http://localhost/base/'))
+})
+```
 
 In the `beforeAll()` hook, I'm using the `vi.stubGlobal()` function to replace the value of the global property `location` with a mocked `URL` instance. I intentionally provide a mock URL with a path (`/base/`) to make sure that the `toAbsoluteUrl()` function handles relative paths correctly.
 
 And, of course, I am making sure that the global `location` object is unstubbed by calling `vi.unstubAllGlobals()` in the `afterAll()` hook.
 
-<CodeFile file="to-absolute-url.test.ts" range="7-9" highlight="8" />
+```ts filename=to-absolute-url.test.ts nonumber lines=2
+afterAll(() => {
+  vi.unstubAllGlobals()
+})
+```
 
 Now, to the test cases!
 
 The first one is about the scenario where an absolute URL provided to the tested function is returned as-is. That's precisely what I will do:
 
-<CodeFile file="to-absolute-url.test.ts" range="11-13" highlight="12" />
+```ts filename=to-absolute-url.test.ts nonumber lines=2
+test('returns an absolute url as-is', () => {
+  expect(toAbsoluteUrl('https://example.com/')).toBe('https://example.com/')
+})
+```
 
 The next scenario involves handling relative URLs that only include paths. In itself, it can be split into two use cases:
 
@@ -25,6 +37,11 @@ The next scenario involves handling relative URLs that only include paths. In it
 
 While both being rebased against the mocked `location.href`, these two scenarios will yield different URLs, which I make sure to cover in tests:
 
-<CodeFile file="to-absolute-url.test.ts" range="15-18" highlight="16-17" />
+```ts filename=to-absolute-url.test.ts nonumber lines=2-3
+test('resolves a relative url against the current location', () => {
+  expect(toAbsoluteUrl('/resource')).toBe('http://localhost/resource')
+  expect(toAbsoluteUrl('./resource')).toBe('http://localhost/base/resource')
+})
+```
 
 By mocking the value of `location` in this test suite, I have isolated it. Everything that affects the test results of the `toAbsoluteUrl()` function is now contained within this single test file.

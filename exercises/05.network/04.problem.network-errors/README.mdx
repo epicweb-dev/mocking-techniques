@@ -14,7 +14,7 @@ Here's a few examples of network errors:
 
 These errors have nothing to do with the server response but rather with the network connectivity. Despite that, we can still model those scenarios using Mock Service Worker!
 
-```ts highlight=3
+```ts lines=3 nonumber
 http.post('/endpoint', () => {
   // Produce a network error for this request.
   return Response.error()

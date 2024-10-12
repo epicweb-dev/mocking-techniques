@@ -4,11 +4,15 @@
 
 Let's start by creating a _spy_ for the `logger.log()` method using the [`vi.spyOn()`](https://vitest.dev/api/vi.html#vi-spyon) function from Vitest:
 
-<CodeFile file="user-service.test.ts" range="5-7" highlight="6" />
+```ts filename=user-service.test.ts nonumber lines=2
+const logger = new Logger()
+vi.spyOn(logger, 'log')
+const service = new UserService(logger)
+```
 
 The `spyOn()` function has a bit of unusual call signature since it _will not_ accept the `logger.log` method reference directly. Instead, it expects the object that owns the method first, and then the method name as a string:
 
-```ts
+```ts nonumber
 vi.spyOn(target, method)
 ```
 
@@ -16,11 +20,15 @@ vi.spyOn(target, method)
 
 Now that I have the spy ready and recording, I can write an assertion on that method being called with the correct arguments using the [`.toHaveBeenCalledWith()`](https://vitest.dev/api/expect.html#tohavebeencalledwith) assertion:
 
-<CodeFile file="user-service.test.ts" range="14" />
+```ts filename=user-service.test.ts nonumber
+expect(logger.log).toHaveBeenCalledWith('createUser', { id: 'abc-123' })
+```
 
 Finally, I will make sure that `logger.log()` has been called exactly once:
 
-<CodeFile file="user-service.test.ts" range="15" />
+```ts filename=user-service.test.ts nonumber
+expect(logger.log).toHaveBeenCalledOnce()
+```
 
 To validate the test, I will run `npm test`:
 

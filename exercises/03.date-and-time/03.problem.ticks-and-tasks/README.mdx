@@ -25,7 +25,7 @@ export class Connection extends EventTarget {
 
 You'd expect the consumers of this class to be able to listen to the `connection` event but that's not going to happen:
 
-```ts
+```ts nonumber
 const connection = new Connection()
 connection.addEventListener('connection', () => {
   console.log('This is never called!')

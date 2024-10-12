@@ -4,7 +4,11 @@
 
 I start by going to the `beforeAll()` hook and adding a spy on the `console.log` method using the `vi.spyOn()` utility:
 
-<CodeFile file="print-server-url.test.ts" range="3-5" />
+```ts filename=print-server-url.test.ts nonumber lines=2
+beforeAll(() => {
+  vi.spyOn(console, 'log').mockImplementation(() => {})
+})
+```
 
 I'm overriding the implementation of `console.log` for this test suite by using `.mockImplementation()` and providing it an empty function. With this, I can still assert on the `console.log` calls without it actually printing anything to the terminal output.
 
@@ -12,23 +16,39 @@ From this moment forward, all `console.log` calls are recorded and I can assert 
 
 Next, I need to make sure that the recorded state of spy function is reset between the tests. I will use `vi.resetAllMocks()` for that:
 
-<CodeFile file="print-server-url.test.ts" range="7-9" />
+```ts filename=print-server-url.test.ts nonumber lines=2
+afterEach(() => {
+  vi.resetAllMocks()
+})
+```
 
 > `vi.resetAllMocks()` targets _all_ mocks created in this test suite, not just the spy for `console.log`. Instead of resetting an individual spy, I prefer resetting all mocks because none of them should leak their state to irrelevant tests.
 
 And, finally, restore the original implementation of `console.log` once the tests are done:
 
-<CodeFile file="print-server-url.test.ts" range="11-13" />
+```ts filename=print-server-url.test.ts nonumber lines=2
+afterAll(() => {
+  vi.restoreAllMocks()
+})
+```
 
 This concludes the testing setup changes but we still have some assertions to adjust.
 
 Since I am spying on the global method, I can write assertions on that global method directly:
 
-<CodeFile
-  file="print-server-url.test.ts"
-  range="18-21,27-30"
-  highlight="18,21,27,30"
-/>
+```ts filename=print-server-url.test.ts nonumber lines=1,4
+expect(console.log).toHaveBeenCalledWith(
+  'Sever is listening at http://127.0.0.1/',
+)
+expect(console.log).toHaveBeenCalledOnce()
+```
+
+```ts filename=print-server-url.test.ts nonumber lines=1,4
+expect(console.log).toHaveBeenCalledWith(
+  'Sever is listening at http://127.0.0.1:5639/',
+)
+expect(console.log).toHaveBeenCalledOnce()
+```
 
 The only thing remaining is to run the tests and make sure they are passing:
 
@@ -42,7 +62,7 @@ The only thing remaining is to run the tests and make sure they are passing:
 
 Although Vitest reassigns the value of `console.log` to a spy function on runtime, TypeScript doesn't know about that. In fact, if you attempt to read some of the spy function's properties, you'll be greeted with a type error:
 
-```ts
+```ts nonumber
 console.log.mock.calls
 // Property 'mock' does not exist on type '...'
 ```
@@ -58,7 +78,7 @@ declare namespace console {
 }
 ```
 
-```ts
+```ts nonumber
 console.log.mock.calls
 // [["Server is listening at http://localhost:5639/"]]
 ```
