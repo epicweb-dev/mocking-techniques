@@ -4,7 +4,7 @@
 
 In the `emitter.test.ts`, I will start from creating the `listener` function but it won't be a regular JavaScript function. Instead, I will use the `vi.fn()` API from Vitest, which creates a _special_ kind of function.
 
-```ts filename=emitter.test.ts
+```ts filename=emitter.test.ts nonumber
 const listener = vi.fn()
 ```
 
@@ -16,13 +16,13 @@ Calling `vi.fn()` returns a function imbued with superpowers, one of which is th
 
 Now that the mock function is ready, I will use it as a listener argument for the `hello` event:
 
-```ts filename=emitter.test.ts
+```ts filename=emitter.test.ts nonumber
 emitter.on('hello', listener)
 ```
 
 Everything up to this point was the setup for this test. The action here would be calling the `.emit()` method to emit the `hello` event because the listeners are only called when the respective event gets emitted.
 
-```ts filename=emitter.test.ts
+```ts filename=emitter.test.ts nonumber
 emitter.emit('hello', 'John')
 ```
 
@@ -35,7 +35,7 @@ The `expect()` function from Vitest comes with handy assertions to describe both
 
 First, I will use the `.toHaveBeenCalledOnce()` assertion:
 
-```ts filename=emitter.test.ts
+```ts filename=emitter.test.ts nonumber
 expect(listener).toHaveBeenCalledOnce()
 ```
 
@@ -43,6 +43,6 @@ This will only pass if the `listener` function has been called exactly once. If 
 
 In the same fashion, I will apply the [`.toHaveBeenCalledWith()`](https://vitest.dev/api/expect.html#tohavebeencalledwith) assertion to check that the `listener` function gets called with the right data:
 
-```ts filename=emitter.test.ts
+```ts filename=emitter.test.ts nonumber
 expect(listener).toHaveBeenCalledWith('John')
 ```

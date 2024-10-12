@@ -4,7 +4,7 @@
 
 Let's start by going to the first test case for our `OrderController` and spying on the `isItemInStock` method of the created `controller` instance:
 
-```ts filename=order-controller.test.ts lines=4
+```ts filename=order-controller.test.ts nonumber lines=4
 test('creates an order when all items are in stock', () => {
   const controller = new OrderController()
 
@@ -15,7 +15,7 @@ test('creates an order when all items are in stock', () => {
 
 By using [`.mockReturnValue()`](https://vitest.dev/api/mock.html#mockreturnvalue), I am forcing the `.isItemInStock()` method to always return true when run in this test. With that behavior fixed, I can write the assertions around how the new order should be created:
 
-```ts filename=order-controller.test.ts lines=15-23
+```ts filename=order-controller.test.ts nonumber lines=15-23
 test('creates an order when all items are in stock', () => {
   const controller = new OrderController()
 
@@ -46,7 +46,7 @@ test('creates an order when all items are in stock', () => {
 
 In the next test case, I'd like to do things a little differently. I will still spy on the `.isItemInStock()` method, but instead of mocking its return value, I will _mock that method's implementation_.
 
-```ts filename=order-controller.test.ts lines=4-6
+```ts filename=order-controller.test.ts nonumber lines=4-6
 test('throws an error when one of the items is out of stock', () => {
   const controller = new OrderController()
 
@@ -57,7 +57,7 @@ test('throws an error when one of the items is out of stock', () => {
 
 By mocking the implementation, I am creating a mock with conditional behavior. It will behave differently based on the cart `item` that's being checked. Only the item with `id` that equals `4` will be considered in stock. This way, I am able to reproduce the error throwing logic as well as assert on the `controller` class including the right item IDs in the error message.
 
-```ts filename=order-controller.test.ts lines=26-28
+```ts filename=order-controller.test.ts nonumber lines=26-28
 test('throws an error when one of the items is out of stock', () => {
   const controller = new OrderController()
 
