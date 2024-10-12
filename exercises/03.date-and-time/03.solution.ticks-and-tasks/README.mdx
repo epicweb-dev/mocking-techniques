@@ -4,22 +4,42 @@
 
 First thing to mention is that the usual `vi.useFakeTimers()` does _not_ mock `queueMicrotask()`. To enable that, I will provide it with the `toFake` argument configured to include `'queueMicrotask'` in the date mocks:
 
-<CodeFile file="connection.test.ts" range="3-11" highlight="4-6" />
+```ts filename=connection.test.ts nonumber lines=2-4
+beforeAll(() => {
+  vi.useFakeTimers({
+    toFake: ['queueMicrotask'],
+  })
+})
+
+afterAll(() => {
+  vi.useRealTimers()
+})
+```
 
 Next, I will create a mock `connectionListener` function to be able to spy on it:
 
-<CodeFile file="connection.test.ts" range="13-14" highlight="14" />
+```ts filename=connection.test.ts nonumber lines=2
+test('dispatches the "connection" event', () => {
+  const connectionListener = vi.fn()
+```
 
 I will use the `connectionListener` function to add a new event listener on the `connection` instance:
 
-<CodeFile file="connection.test.ts" range="16-17" highlight="17" />
+```ts filename=connection.test.ts nonumber lines=2
+const connection = new Connection()
+connection.addEventListener('connection', connectionListener)
+```
 
 Writing the call assertion for the `connectionListener` now will fail, since the scheduled dispatch hasn't run yet. To make it run, I will ask Vitest to exhaust the entire execution stack using the [`vi.runAllTicks()`](https://vitest.dev/api/vi.html#vi-runallticks) function:
 
-<CodeFile file="connection.test.ts" range="19" />
+```ts filename=connection.test.ts nonumber
+vi.runAllTicks()
+```
 
 > Note that this is a <u>synchronous</u> function!
 
 Finally, I will add the assertion that the `connectionListener` has been called once:
 
-<CodeFile file="connection.test.ts" range="21" />
+```ts filename=connection.test.ts nonumber
+expect(connectionListener).toHaveBeenCalledOnce()
+```

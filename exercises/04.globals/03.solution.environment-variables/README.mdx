@@ -4,7 +4,20 @@
 
 There are multiple mocks working together in this test suite, so I make sure to establish them (and their cleanup) accordingly:
 
-<CodeFile file="emitter.test.ts" range="3-14" highlight="4,8-9,13" />
+```ts filename=emitter.test.ts nonumber lines=2,6-7,11
+beforeAll(() => {
+  vi.spyOn(console, 'log').mockImplementation(() => {})
+})
+
+afterEach(() => {
+  vi.resetAllMocks()
+  vi.unstubAllEnvs()
+})
+
+afterAll(() => {
+  vi.restoreAllMocks()
+})
+```
 
 I'm using `vi.spyOn(console, 'log')` to be able to assert on `console.log` calls in test, but the most important part is that I'm clearing any environment variable mocks by adding `vi.unstubAllEnvs()` to the `afterEach()` hook.
 
@@ -12,7 +25,11 @@ I'm using `vi.spyOn(console, 'log')` to be able to assert on `console.log` calls
 
 In the first test suite, the intention is to make sure that our `Emitter` class prints messages to the console when `process.env.NODE_ENV` is `"development"`. I will mock the value of that environment variable using `vi.stubEnv()` as the first thing in the test:
 
-<CodeFile file="emitter.test.ts" range="27-29" highlight="28" />
+```ts filename=emitter.test.ts nonumber lines=2
+test('logs debugging messages when run in development', () => {
+  vi.stubEnv('NODE_ENV', 'development')
+
+```
 
 > Note that it's possible (and sometimes even beneficial) to have a combination of both global (the `before*` and `after*` hooks) and local test setups, like we have here with the `vi.stubEnv()` function insise this test.
 
@@ -23,7 +40,7 @@ The `vi.stubEnv()` utility accepts two arguments:
 
 You can imagine the `vi.stubEnv` function doing the following:
 
-```ts
+```ts filename=stub-env.ts nonumber
 function stubEnv(variableName, value) {
   process.env[variableName] = value
 }
@@ -33,7 +50,24 @@ However, unlike this simplified example, the actual function also allows you to 
 
 With that, this test case is configured, and the only thing remaining is to act and assert:
 
-<CodeFile file="emitter.test.ts" range="27-42" highlight="33-36,38-41" />
+```ts filename=emitter.test.ts nonumber lines=7-10,12-15
+test('logs debugging messages when run in development', () => {
+  vi.stubEnv('NODE_ENV', 'development')
+
+  const emitter = new Emitter<{ hello: [firstName: string] }>()
+  const listener = vi.fn()
+
+  emitter.on('hello', listener)
+  expect(console.log).toHaveBeenCalledWith(
+    `adding listener for "hello" event...`,
+  )
+
+  emitter.emit('hello', 'John')
+  expect(console.log).toHaveBeenCalledWith(
+    `emitting listeners for "hello" event (1)`,
+  )
+})
+```
 
 Here, I'm adding new event listeners and emitting events, following those actions with assertions to make sure `console.log` is called appropriately in both cases.
 
@@ -43,6 +77,19 @@ The second test case will be quite similar:
 1. Add listeners/emit events;
 1. Assert that `console.log` has **NOT** been called.
 
-<CodeFile file="emitter.test.ts" range="44-56" highlight="45,50-51,53-54" />
+```ts filename=emitter.test.ts nonumber lines=2,7-8,10-11
+test('does not log debugging messages in production', () => {
+  vi.stubEnv('NODE_ENV', 'production')
+
+  const emitter = new Emitter<{ hello: [firstName: string] }>()
+  const listener = vi.fn()
+
+  emitter.on('hello', listener)
+  expect(console.log).not.toHaveBeenCalled()
+
+  emitter.emit('hello', 'John')
+  expect(console.log).not.toHaveBeenCalled()
+})
+```
 
 > Although this test case will pass even if you omit the `vi.stubEnv()` setup, that won't be correct. It passes because Vitest sets `process.env.NODE_ENV` to `"test"` by default, but your intention is not to test how `Emitter` behaves in test. It is to check how it behaves in **production**.

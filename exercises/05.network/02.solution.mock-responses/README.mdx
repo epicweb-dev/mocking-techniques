@@ -18,7 +18,17 @@ It was a great debugging handler to let us see all the outgoing requests in this
 
 In the same `handler.ts` module, I will create a new request handler for a `POST` request to the `https://api.example.com/auth` endpoint, using the `http.post()` function:
 
-<CodeFile file="handlers.ts" highlight="4-8" />
+```ts filename=handlers.ts lines=4-8
+import { http } from 'msw'
+
+export const handlers = [
+  http.post('https://api.example.com/auth', () => {
+    return Response.json({
+      token: 'abc-123',
+    })
+  }),
+]
+```
 
 To mock a response to the intercepted request, I am _returning a Fetch API `Response` instance_ from its response resolver (the second argument of the request handler: `http.post(path, resolver)`).
 
@@ -54,7 +64,18 @@ But let's not get too happy too soon. Vitest may report the test as passing but 
 
 To complete this test, I will add an assertion for the `token` value returned from the `getAuthToken()` function to be the exact value I've provided in the mocked response:
 
-<CodeFile file="get-auth-token.test.ts" highlight="9" />
+```ts filename=get-auth-token.test.ts lines=9
+import { getAuthToken } from './get-auth-token.js'
+
+test('returns the authentication token on successful authentication', async () => {
+  await expect(
+    getAuthToken({
+      email: 'kody@epicweb.dev',
+      password: 'supersecret123',
+    }),
+  ).resolves.toEqual({ token: 'abc-123' })
+})
+```
 
 > Notice that I've rewritten the entire test to pass the _pending promise_ of `getAuthToken()` to `expect()`, awaiting the assertion itself. By doing so, I'm creating a nicer experience for when this test _fails_. The `await expect().resolves` chaining will print a friendly error message in case `getAuthToken()` rejects, instead of treating it as an unhandled exception in test.
 >

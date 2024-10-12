@@ -6,25 +6,45 @@ You may be noticing a pattern here. I'm trying to keep mock definitions containe
 
 Testing the `getRelativeTime()` function will be no exception:
 
-<CodeFile file="get-relative-time.test.ts" range="3-9" highlight="4,8" />
+```ts filename=get-relative-time.test.ts nonumber lines=2,6
+beforeAll(() => {
+  vi.useFakeTimers()
+})
+
+afterAll(() => {
+  vi.useRealTimers()
+})
+```
 
 Calling `vi.useFakeTimers()` detached this test from the real flow of time, and makes it rely on the internal fake date Vitest has. Correspondingly, the `vi.useRealTimers()` utility undoes that.
 
 To fix date and time in test, I will call `vi.useSystemTime()` function and provide it with the date that I want to be treated as `Date.now()`:
 
-<CodeFile file="get-relative-time.test.ts" range="11-12" highlight="12" />
+```ts filename=get-relative-time.test.ts nonumber lines=2
+test('returns "Just now" for the current date', () => {
+  vi.setSystemTime(new Date('2024-06-01 00:00:00.000Z'))
+```
 
 > :owl: `vi.useSystemTime()` only works in conjunction with `vi.useFakeTimers()`.
 
 In order to model the "Just now" scenario, the delta between the current time and the start time has to be 60 seconds or less. In this test, I will pass the exact same date to the `getRelativeTime()` function as the system time:
 
-<CodeFile file="get-relative-time.test.ts" range="13" />
+```ts filename=get-relative-time.test.ts nonumber
+expect(getRelativeTime(new Date('2024-06-01 00:00:00.000Z'))).toBe('Just now')
+```
 
 > This produces the time delta of `0ms`, which results in the `"Just now"` string being returned from the function.
 
 For the tests that feature an actual time difference, I have to use a slightly different setup. Firsts, the system time (which is `Date.now()`) should be set to the time that has _already passed_. Then, the `getRelativeTime()` function will accept the _starting time_ as an argument.
 
-<CodeFile file="get-relative-time.test.ts" range="21-26" highlight="22,23" />
+```ts filename=get-relative-time.test.ts nonumber lines=2
+test('returns "minute ago" for a date a minute ago', () => {
+  vi.setSystemTime(new Date('2024-06-01 00:01:05.000Z'))
+  expect(getRelativeTime(new Date('2024-06-01 00:00:00.000Z'))).toBe(
+    '1 minute ago',
+  )
+})
+```
 
 Above, I'm setting the `1m 5s 0ms` time difference because the system time is exactly that duration ahead of the starting time passed to `getRelativeTime()`.
 

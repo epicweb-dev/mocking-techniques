@@ -4,13 +4,33 @@
 
 Testing the intentions around side effects is always tricky. Like this `UserService` class that's supposed to log out the `createUser` event whenever a new user is created:
 
-<CodeFile file="user-service.ts" highlight="7" nocopy />
+```ts filename=user-service.ts nocopy lines=7
+import { Logger } from './logger.js'
+
+export class UserService {
+  constructor(private logger: Logger) {}
+
+  public async createUser(initialState: { id: string; name: string }) {
+    this.logger.log('createUser', { id: initialState.id })
+
+    if (!/^\w{3}-\d{3}$/.test(initialState.id)) {
+      throw new Error(
+        `Failed to create a user: incorrect ID ("${initialState.id}")`,
+      )
+    }
+
+    return initialState
+  }
+}
+```
 
 To make things more complicated, logging out the event is not the responsibility of the `UserService` class. Instead, it relies on the `Logger` class and its `.log()` method to do that. So while the actual logging logic is irrelevant in the context of `UserService`, we still have to test the intention of it _calling_ `logger.log()` with the correct arguments.
 
 Luckily, the class accepts a `logger` instance as an argument:
 
-<CodeFile file="user-service.ts" range="4" nocopy />
+```ts filename=user-service.ts nocopy
+constructor(private logger: Logger) {}
+```
 
 This means we can use a _dependency injection_ to provide it with whichever logger instance we want in test. For example, a logger that we will 🕵️ _spy on_.
 

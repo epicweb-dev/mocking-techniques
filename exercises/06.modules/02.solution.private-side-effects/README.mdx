@@ -8,7 +8,13 @@ I am going to utilize that power to both exclude the telemetry side effect and m
 
 In the `beforeAll()` hook, I will use [`vi.mock()`](https://vitest.dev/api/vi.html#vi-mock) function to mock a module.
 
-<CodeFile file="authorize.test.ts" range="5-10" highlight="5" />
+```ts filename=authorize.test.ts nonumber lines=1
+vi.mock(import('@workshop/epic-sdk'), async () => {
+  return {
+    queryTable: queryTableMock,
+  }
+})
+```
 
 The `vi.mock()` function accepts two arguments:
 
@@ -19,23 +25,65 @@ The `vi.mock()` function accepts two arguments:
 
 I will also provide the _factory function_ to control the exact exports returned from the mocked module. In this case, I will swap the actual `queryTable` function with the `queryTableMock` introduced earlier:
 
-<CodeFile file="authorize.test.ts" range="1-9" highlight="3,7" />
+```ts filename=authorize.test.ts nonumber lines=3,7
+import { authorize, User } from './authorize.js'
+
+const queryTableMock = vi.hoisted(() => vi.fn<() => Promise<User>>())
+
+vi.mock(import('@workshop/epic-sdk'), async () => {
+  return {
+    queryTable: queryTableMock,
+  }
+})
+```
 
 :owl: Since `vi.mock()` function is _hoisted_ (gets evaluated as the first thing no matter where it's defined), it won't be able to reference any values in the test's scope, like the `queryTableMock` function. To solve this, I am wrapping the mock function in the [`vi.hoisted()`](https://vitest.dev/api/vi.html#vi-hoisted) utility:
 
-<CodeFile file="authorize.test.ts" range="3" />
+```ts filename=authorize.test.ts nonumber
+const queryTableMock = vi.hoisted(() => vi.fn<() => Promise<User>>())
+```
 
 This will expose the `queryTableMock` function to the `vi.mock()` factory correctly so it could use it as the value of the `queryTable` export. Nice!
 
 And since I am using a mock function, to begin with, I need to make sure its call information and implementation are reset between tests:
 
-<CodeFile file="authorize.test.ts" range="11-13" highlight="12" />
+```ts filename=authorize.test.ts nonumber lines=2
+afterEach(() => {
+  vi.resetAllMocks()
+})
+```
 
 By mocking the entire `@workshop/epic-sdk` module, my test becomes in full control over its exports, but also over what gets evaluated at its root level (which, in this case, is nothing). This gives me two for the price of one: I am mocking the behavior I need (`queryTable`) while also excluding the side effects I don't (telemetry).
 
 From this point on, the rest of the test is not much different from using mock functions you've practiced earlier. Using the `.mockResolvedValue` and `.mockRejectedValue()` built-in methods in Vitest, I will model different behavior scenarios of the `queryTable` function to test my `authorize()` function:
 
-<CodeFile file="authorize.test.ts" range="15-39" highlight="16-19,28,34" />
+```ts filename=authorize.test.ts nonumber lines=2-5,14,20
+test('returns the authorized user', async () => {
+  queryTableMock.mockResolvedValue({
+    id: 'abc-123',
+    name: 'Kody Koala',
+  })
+
+  await expect(authorize('abc-123')).resolves.toEqual({
+    id: 'abc-123',
+    name: 'Kody Koala',
+  })
+})
+
+test('returns null if no user was found', async () => {
+  queryTableMock.mockResolvedValue(null)
+
+  await expect(authorize('abc-123')).resolves.toBeNull()
+})
+
+test('throws an error if querying the user failed', async () => {
+  queryTableMock.mockRejectedValue(new Error('Original error'))
+
+  await expect(authorize('abc-123')).rejects.toThrow(
+    'Failed to fetch user by id "abc-123"',
+  )
+})
+```
 
 ## `vi.mock()` vs `vi.doMock()`
 

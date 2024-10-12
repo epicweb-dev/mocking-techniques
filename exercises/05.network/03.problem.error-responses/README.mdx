@@ -8,11 +8,19 @@ But there are more behaviors that we intended for this function, and they happen
 
 First, there's the logic that throws an error if the server responds with a 401 response (i.e. we are sending invalid user credentials and the authorization fails):
 
-<CodeFile file="get-auth-token.ts" range="16-18" />
+```ts filename=get-auth-token.ts nonumber
+if (response.status === 401) {
+  throw new Error('Authentication failed: invalid credentials')
+}
+```
 
 Then, there's another check for generic response errors as well:
 
-<CodeFile file="get-auth-token.ts" range="20-22" />
+```ts filename=get-auth-token.ts nonumber
+if (!response.ok) {
+  throw new Error('Authentication failed: network error')
+}
+```
 
 Let's model both of these scenarios in tests with MSW!
 
@@ -22,7 +30,7 @@ In simple terms, a runtime handler is a request handler you can add on runtime. 
 
 Runtime handlers can be added using the [`server.use()`](https://mswjs.io/docs/api/setup-server/use) function:
 
-```ts highlight=15-22
+```ts lines=15-22 nonumber
 import { http } from 'msw'
 import { setupServer } from 'msw/node'
 

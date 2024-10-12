@@ -15,11 +15,31 @@ I start with restructuring our project a little bit. In order for me to use runt
   vitest.setup.ts # import { server } from '...'
 ```
 
-With these changes, I can reuse the same `server` object from `./mocks/node.ts` in both `vite.setup.ts` and in the test suite as well.
+With these changes, I can reuse the same `server` object from `./mocks/node.ts` in both `vitest.setup.ts` and in the test suite as well.
 
-<CodeFile file="vitest.setup.ts" highlight="1" />
+```ts filename=vitest.setup.ts add=1
+import { server } from './mocks/node.js'
 
-<CodeFile file="get-auth-token.test.ts" range="1-5" highlight="2" />
+beforeAll(() => {
+  server.listen({
+    onUnhandledRequest: 'error',
+  })
+})
+
+afterEach(() => {
+  server.resetHandlers()
+})
+
+afterAll(() => {
+  server.close()
+})
+```
+
+```ts filename=get-auth-token.test.ts add=2
+import { http } from 'msw'
+import { server } from './mocks/node.js'
+import { getAuthToken } from './get-auth-token.js'
+```
 
 At last, I can prepend request handlers using the [`server.use()`](https://mswjs.io/docs/api/setup-server/use) API to model network scenarios on a per-test basis! The workflow for overriding the network will be the same no matter where I'm going to use it:
 
@@ -29,13 +49,35 @@ At last, I can prepend request handlers using the [`server.use()`](https://mswjs
 
 Here's how the invalid credentials scenario will look like with the runtuime handler in place:
 
-<CodeFile file="get-auth-token.test.ts" range="14-24" highlight="15-19" />
+```ts filename=get-auth-token.test.ts nonumber add=2-6
+test('throws an error if the user credentials are invalid', async () => {
+  server.use(
+    http.post('https://api.example.com/auth', () => {
+      return new Response(null, { status: 401 })
+    }),
+  )
+
+  await expect(() =>
+    getAuthToken({
+      email: 'kody@epicweb.dev',
+      password: 'supersecret123',
+    }),
+  ).rejects.toThrow('Authentication failed: invalid credentials')
+})
+```
 
 > `server.use()` **prepends** request handlers so they take higher priority. The prepended handlers will persist until `server.resetHandlers()` function is called, which in our case is called in the `afterEach()` hook in `vitest.setup.ts`.
 
 In a similar fashion, I will create a runtime request handler to emulate a generic 500 server error response in another test case:
 
-<CodeFile file="get-auth-token.test.ts" range="29-34" highlight="30-34" />
+```ts filename=get-auth-token.test.ts nonumber add=2-6
+test('throws an error if the server responds with an error', async () => {
+  server.use(
+    http.post('https://api.example.com/auth', () => {
+      return new Response(null, { status: 500 })
+    }),
+  )
+```
 
 Lastly, I will run the tests to make sure everything works as expected:
 

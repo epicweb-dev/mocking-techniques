@@ -12,7 +12,7 @@ Yes, of course, I'm talking about MSW!
 
 You can control the response timing using the [`delay()`](https://mswjs.io/docs/api/delay) function exported from the `msw` package:
 
-```ts highlight=1,4
+```ts lines=1 add=4 nonumber
 import { http, delay } from 'msw'
 
 http.get('/resource', async () => {

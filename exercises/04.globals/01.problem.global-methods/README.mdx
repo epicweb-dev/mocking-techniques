@@ -8,7 +8,7 @@ In that regard, mocking global methods is no different than mocking or spying on
 
 In fact, it's identical. It's always `vi.spyOn()`. The only thing that changes is the target object we provide to that utility:
 
-```ts
+```ts nonumber
 // Spying on a method of the object you own.
 vi.spyOn(myObj, 'method')
 
@@ -18,7 +18,7 @@ vi.spyOn(console, 'log')
 
 Since we are touching on the same utility yet again, let's take a look at how `vi.spyOn()` actually works. Here's a simplified implementation from Vitest:
 
-```ts filename=spyOn.ts
+```ts filename=spy-on.ts nonumber
 const kState = Symbol('kState')
 
 function spyOn<T extends Object>(target: T, method: keyof T) {
@@ -65,7 +65,22 @@ Instead, relying on the tools that your testing framework provides is the way to
 
 You have a helper function called `printServerUrl()` that is meant to print any provided URL to the console:
 
-<CodeFile file="print-server-url.ts" />
+```ts filename=print-server-url.ts nocopy
+interface Server {
+  host: string
+  port?: number
+}
+
+/**
+ * Print the server URL to the console.
+ */
+export function printServerUrl(server: Server) {
+  const url = new URL(`http://${server.host}`)
+  url.port = server.port?.toString() || ''
+
+  console.log(`Server is listening at ${url.href}`)
+}
+```
 
 Since the very intention behind this function concerns itself around `console.log`, you would have to gain control over that global method to spy on its calls and make sure that the correct URL is indeed being printed out.
 

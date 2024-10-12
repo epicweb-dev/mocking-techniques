@@ -4,23 +4,90 @@
 
 Let's start by going to the first test case for our `OrderController` and spying on the `isItemInStock` method of the created `controller` instance:
 
-<CodeFile file="order-controller.test.ts" range="3-6" highlight="6" />
+```ts filename=order-controller.test.ts lines=4
+test('creates an order when all items are in stock', () => {
+  const controller = new OrderController()
+
+  vi.spyOn(controller, 'isItemInStock').mockReturnValue(true)
+```
 
 <callout-info>Since the object I'm spying on (`controller`) is scoped to this particular test, there's no need to introduce any test setup to reset the mock.</callout-info>
 
 By using [`.mockReturnValue()`](https://vitest.dev/api/mock.html#mockreturnvalue), I am forcing the `.isItemInStock()` method to always return true when run in this test. With that behavior fixed, I can write the assertions around how the new order should be created:
 
-<CodeFile file="order-controller.test.ts" range="3-26" highlight="17-25" />
+```ts filename=order-controller.test.ts lines=15-23
+test('creates an order when all items are in stock', () => {
+  const controller = new OrderController()
+
+  vi.spyOn(controller, 'isItemInStock').mockReturnValue(true)
+
+  const cart: Cart = [
+    {
+      id: 4,
+      name: 'Porcelain vase',
+      quantity: 1,
+    },
+  ]
+  const order = controller.createOrder({ cart })
+
+  expect(order).toEqual<Order>({
+    cart: [
+      {
+        id: 4,
+        name: 'Porcelain vase',
+        quantity: 1,
+      },
+    ],
+  })
+})
+```
 
 > I prefer keeping my assertions explicit so I _repeat_ the entire `cart` object within my `expect()` statement.
 
 In the next test case, I'd like to do things a little differently. I will still spy on the `.isItemInStock()` method, but instead of mocking its return value, I will _mock that method's implementation_.
 
-<CodeFile file="order-controller.test.ts" range="28-33" highlight="31-33" />
+```ts filename=order-controller.test.ts lines=4-6
+test('throws an error when one of the items is out of stock', () => {
+  const controller = new OrderController()
+
+  vi.spyOn(controller, 'isItemInStock').mockImplementation((item) => {
+    return item.id === 4
+  })
+```
 
 By mocking the implementation, I am creating a mock with conditional behavior. It will behave differently based on the cart `item` that's being checked. Only the item with `id` that equals `4` will be considered in stock. This way, I am able to reproduce the error throwing logic as well as assert on the `controller` class including the right item IDs in the error message.
 
-<CodeFile file="order-controller.test.ts" range="28-56" highlight="53-55" />
+```ts filename=order-controller.test.ts lines=26-28
+test('throws an error when one of the items is out of stock', () => {
+  const controller = new OrderController()
+
+  vi.spyOn(controller, 'isItemInStock').mockImplementation((item) => {
+    return item.id === 4
+  })
+
+  const cart: Cart = [
+    {
+      id: 4,
+      name: 'Porcelain vase',
+      quantity: 1,
+    },
+    {
+      id: 5,
+      name: 'Sofa',
+      quantity: 3,
+    },
+    {
+      id: 6,
+      name: 'Microwave',
+      quantity: 1,
+    },
+  ]
+
+  expect(() => controller.createOrder({ cart })).toThrowError(
+    'Failed to create an order: found out of stock items (5, 6)',
+  )
+})
+```
 
 ## Alternative approach
 

@@ -6,13 +6,33 @@
 
 Take a look at the `debounce` function implementation below:
 
-<CodeFile file="debounce.ts" />
+```ts filename=debounce.ts
+/**
+ * Debounce the given callback function.
+ */
+export function debounce<Args extends Array<unknown>>(
+  callback: (...args: Args) => unknown,
+  duration: number,
+): (...args: Args) => void {
+  let timeout: NodeJS.Timeout | null = null
+
+  return function (...args) {
+    const effect = () => {
+      timeout = null
+      return callback.apply(this, args)
+    }
+
+    clearTimeout(timeout)
+    timeout = setTimeout(effect, duration)
+  }
+}
+```
 
 The intention behind the `debounce()` function is to accept a `callback` and keep delaying its execution until a certain time `duration` has passed since its last call.
 
 For example, consider this usage scenario:
 
-```ts
+```ts nonumber
 // Create a debounced function of "foo"
 // with the debounce duration of 250ms.
 const bar = debounce(foo, 250)
@@ -30,7 +50,7 @@ Here, the `bar()` function is just a debounced wrapped over `foo()`. Not all cal
 
 Let's try putting this very use case into an automated test:
 
-```ts filename=debounce.test.ts
+```ts filename=debounce.test.ts nonumber nocopy
 test('executes the callback after the debounce timeout', () => {
   const foo = vi.fn<(input: string) => void>()
   const bar = debounce(foo, 250)
@@ -46,7 +66,7 @@ test('executes the callback after the debounce timeout', () => {
 
 Running this test, however, will produce something _unexpected_:
 
-```txt highlight=6
+```txt lines=6
  FAIL  debounce.test.ts > executes the callback after the debounce timeout
 AssertionError: expected "spy" to be called once, but got 0 times
  ❯ debounce.test.ts:19:15

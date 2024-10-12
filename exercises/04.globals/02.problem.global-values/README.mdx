@@ -6,13 +6,29 @@
 
 In this exercise, we are testing the `toAbsoluteUrl()` function that looks like this:
 
-<CodeFile file="to-absolute-url.ts" />
+```ts filename=to-absolute-url.ts
+/**
+ * Returns absolute URL from the given URL.
+ */
+export function toAbsoluteUrl(url: string): string {
+  return new URL(url, location.href).href
+}
+```
 
 This is a browser-only function which purpose is to ensure the `url` we provided to it is returned as an absolute URL. If the `url` is absolute from the start, it's returned as-is. But if it is a relative URL (i.e. a pathname), it must be resolved against the current `location.href`.
 
 Because of the dependency on `location`, we will be testing the `toAbsoluteUrl()` function in the `happy-dom` environment, which polyfills the global `location` object.
 
-<CodeFile file="vitest.config.ts" highlight="6" />
+```ts filename=vitest.config.ts lines=6
+import { defineConfig } from 'vitest/config'
+
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'happy-dom',
+  },
+})
+```
 
 By default, `location.href` in HappyDOM is set to `http://localhost:3000/`. However, for our new test to comply with the [Golden Rule of Assertions](https://www.epicweb.dev/the-golden-rule-of-assertions), the value of the `location.href` must be set on the test's level. Otherwise, a change in Vitest configuration can result in different absolute URLs being produced, thus failing the test prematurely.
 
