@@ -1,3 +1,149 @@
 # Dependency injection
 
 <EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/modules/dependency-injection/solution" />
+
+First, let's complete the `FakeFileStorage` class.
+
+I will create an in-memory storage for the files on my `FakeFileStorage` class by defining a private property `data` and making it a `Map`:
+
+```ts filename=upload-service.test.ts nonumber add=2
+class FakeFileStorage implements FileStorage {
+  private data = new Map<string, Array<ArrayBuffer>>()
+}
+```
+
+> I'm using `string` as the type argument for the keys stored in the map (i.e. file names), and `Array<ArrayBuffer>` as the value type representing a list of buffer chunks that belong to a single file.
+
+Next, let's implement the `setItem()` method on the fake file storage class. Because I'm using `implements` for the fake class, TypeScript forces my fake class to be _type-compliant_ with the original file storage. But it doesn't have to be _implementation-compliant_.
+
+In fact, I will implement the `setItem()` method by storing the given file in-memory, using the private `data` I've introduced earlier.
+
+```ts filename=upload-service.test.ts nonumber add=4-7
+class FakeFileStorage implements FileStorage {
+  private data = new Map<string, Array<ArrayBuffer>>()
+
+  public setItem(key: string, value: Array<ArrayBuffer>): Promise<void> {
+    this.data.set(key, value)
+    return Promise.resolve()
+  }
+}
+```
+
+> I'm using `Map.prototype.set` to store the `value` (the file chunks) by the file's `key`.
+
+Next on the list is the `get()` method of the fake storage. For this one, since the original `getItem()` method returns a `Promise`, I will wrap my `data` value access in `Promise.resolve()`. This will make my fake method to return a promise that resolves to the result of looking up the file in the `data` map.
+
+```ts filename=upload-service.test.ts nonumber add=9-11
+class FakeFileStorage implements FileStorage {
+  private data = new Map<string, Array<ArrayBuffer>>()
+
+  public setItem(key: string, value: Array<ArrayBuffer>): Promise<void> {
+    this.data.set(key, value)
+    return Promise.resolve()
+  }
+
+  public getItem(key: string): Promise<Array<ArrayBuffer> | undefined> {
+    return Promise.resolve(this.data.get(key))
+  }
+}
+```
+
+With my file storage fake ready, I can continue with using it in tests.
+
+In the first test, I will declare a `store` variable and assign it to be an instance of the `FakeFileStorage` class:
+
+```ts filename=upload-service.test.ts nonumber add=2
+test('stores a small file in a single chunk', async () => {
+  const storage = new FakeFileStorage()
+```
+
+I can then provide the fake `storage` instance as an argument to the `UploadService` constructor to use the fake storage during the test run:
+
+```ts filename=upload-service.test.ts nonumber add=4
+test('stores a small file in a single chunk', async () => {
+  const storage = new FakeFileStorage()
+  const uploadService = new UploadService({
+    storage,
+    maxChunkSize: 5,
+  })
+```
+
+The upload service instance for this test is configured to have `5` bytes as the maximum allowed chunk size:
+
+```ts filename=upload-service.test.ts nonumber lines=2
+const uploadService = new UploadService({
+  storage,
+  maxChunkSize: 5,
+})
+```
+
+Since I'm uploading a file with the content `'hello'`, and it's _exactly_ 5 bytes long, I am expecting a single chunk to be stored in my fake storage. Let's write an assertion just for that:
+
+```ts filename=upload-service.test.ts nonumber add=14
+test('stores a small file in a single chunk', async () => {
+  const storage = new FakeFileStorage()
+  const uploadService = new UploadService({
+    storage,
+    maxChunkSize: 5,
+  })
+
+  const storedItem = await uploadService.upload(
+    new File(['hello'], 'hello.txt'),
+  )
+
+  const chunks = storedItem.map((chunk) => Buffer.from(chunk).toString())
+
+  expect(chunks).toEqual(['hello'])
+})
+```
+
+> To have a better diff when asserting on buffers (file content), I'm introducing a `chunks` variable that maps all the `storedItem` file chunks to _strings_ just for testing purposes.
+
+But what about uploading larger files?
+
+Jumping to the second test, I will create a fake storage instance as before, and provide it to the `UploadService` constructor.
+
+```ts filename=upload-service.test.ts nonumber add=2,4
+test('splits a large file in multiple chunks', async () => {
+  const storage = new FakeFileStorage()
+  const uploadService = new UploadService({
+    storage,
+    maxChunkSize: 5,
+  })
+```
+
+Then, I will upload a larger file, containing `hello-world` as its content.
+
+```ts filename=upload-service.test.ts nonumber
+const storedItem = await uploadService.upload(
+  new File(['hello-world'], 'hello.txt'),
+)
+```
+
+Since this file content exceeds the `maxChunkSize` of 5 bytes, I expect _three_ chunks to be uploaded to the fake storage:
+
+- `hello` (first 5 bytes);
+- `-worl` (next 5 bytes);
+- `d` (the remaining 1 byte).
+
+```ts filename=upload-service.test.ts nonumber add=14
+test('splits a large file in multiple chunks', async () => {
+  const storage = new FakeFileStorage()
+  const uploadService = new UploadService({
+    storage,
+    maxChunkSize: 5,
+  })
+
+  const storedItem = await uploadService.upload(
+    new File(['hello-world'], 'hello.txt'),
+  )
+
+  const chunks = storedItem.map((chunk) => Buffer.from(chunk).toString())
+
+  expect(chunks).toEqual(['hello', '-worl', 'd'])
+})
+```
+
+Now, these two file upload scenarios for my `UploadService` are passing in tests because I'm excluding the actual uploading functionality, delegating it to my `FakeFileStorage` class that _still stores the uploaded files_, doing that in memory.
+
+This excludes the actual `FileStorage` implementation from the test since it's irrelevant, while simultaneously giving me access to the actually uploaded chunks to assert my upload service reliably.
