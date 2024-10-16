@@ -21,7 +21,7 @@
     "onboardingVideo": "https://www.epicweb.dev/tips/get-started-with-the-epic-workshop-app",
     "product": {
       "host": "www.epicweb.dev",
-      "slug": "mocking-techniques",
+      "slug": "mocking-techniques-in-vitest",
       "displayName": "EpicWeb.dev",
       "displayNameShort": "Epic Web",
       "logo": "/logo.svg",
