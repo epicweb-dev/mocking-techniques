@@ -2,7 +2,7 @@
 
 <EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/date-and-time/ticks-and-tasks/solution" />
 
-First thing to mention is that the usual `vi.useFakeTimers()` does _not_ mock `queueMicrotask()`. To enable that, I will provide it with the `toFake` argument configured to include `'queueMicrotask'` in the date mocks:
+The first thing to mention is that by default `vi.useFakeTimers()` does _not_ mock `queueMicrotask()`. To enable that, I will provide it with the `toFake` argument configured to include `'queueMicrotask'` in the timer mocks:
 
 ```ts filename=connection.test.ts nonumber lines=2-4
 beforeAll(() => {
@@ -38,7 +38,7 @@ vi.runAllTicks()
 
 > Note that this is a <u>synchronous</u> function!
 
-Finally, I will add the assertion that the `connectionListener` has been called once:
+Finally, I will add an assertion that the `connectionListener` has been called once:
 
 ```ts filename=connection.test.ts nonumber
 expect(connectionListener).toHaveBeenCalledOnce()
