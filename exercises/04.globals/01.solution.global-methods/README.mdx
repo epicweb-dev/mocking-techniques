@@ -14,7 +14,7 @@ I'm overriding the implementation of `console.log` for this test suite by using 
 
 From this moment forward, all `console.log` calls are recorded and I can assert on them in any test!
 
-Next, I need to make sure that the recorded state of spy function is reset between the tests. I will use `vi.resetAllMocks()` for that:
+Next, I need to reset the recorded state of the spy function for each test run. I will use `vi.resetAllMocks()` for that:
 
 ```ts filename=print-server-url.test.ts nonumber lines=2
 afterEach(() => {
@@ -34,7 +34,7 @@ afterAll(() => {
 
 This concludes the testing setup changes but we still have some assertions to adjust.
 
-Since I am spying on the global method, I can write assertions on that global method directly:
+Since I am spying on a global method, I can write assertions on that global method directly:
 
 ```ts filename=print-server-url.test.ts nonumber lines=1,4
 expect(console.log).toHaveBeenCalledWith(
@@ -83,4 +83,4 @@ console.log.mock.calls
 // [["Server is listening at http://localhost:5639/"]]
 ```
 
-The way you extend the global type will depend on the declaration for that type. The type of `console.log` happened to be declared in a global namespace `console` so that's the namespace we extend above. Inspect the type declaration of the global you wish to extend to know how to properly do so.
+The way you extend the global type will depend on the declaration for that type. The type of `console.log` happened to be declared in a global namespace `console` so that's the namespace we extend above. Inspect the type declaration of the global you want to extend to ensure it's done correctly.
