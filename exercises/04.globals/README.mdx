@@ -9,7 +9,7 @@ All dependencies you encounter can be divided into two groups:
 - Explicit dependencies (things you `import()` yourself);
 - Implicit dependencies (i.e. globals).
 
-In this exercise, you learn how to mock _global_ dependencies. Those are implicit since you don't import them manually and instead get them from the `globalThis` object of your environment, most commonly just referencing them by their name.
+In this exercise, you will learn how to mock _global_ dependencies. These are implicit since you don't import them manually and instead get them from the `globalThis` object of your environment, most commonly just referencing them by their name.
 
 ```ts nocopy nonumber
 console.log(process.env.NODE_ENV)
@@ -24,6 +24,6 @@ Globals are also not limited to built-in native APIs, as you can create your own
 
 Mocking globals, however, can be quite dangerous. That is mostly due to the fact that globals are often the things _you do not own_. You don't own the `console` or the `process` object. You haven't defined them, have no access to their implementation, and aren't aware of countless intricacies they may have under the hood.
 
-When mocking globals for testing purposes, your main concern becomes the integerity of your environment. In other words, you don't want to end up in a test environment where the `process` object behaves dramatically different than it does in production.
+When mocking globals for testing, the integrity of your environment is your main concern. In other words, you don’t want a test environment where the process object behaves dramatically differently than it does in production.
 
-In this exercies block, you will learn how to mock global methods, values, and environment variables in a way that is safe and reliable. Without further ado, let's dive in!
+In this exercise block, you will learn how to mock global methods, values, and environment variables in a way that is safe and reliable. Without further ado, let's dive in!
