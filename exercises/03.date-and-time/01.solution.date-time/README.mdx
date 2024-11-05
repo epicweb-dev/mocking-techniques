@@ -4,7 +4,7 @@
 
 You may be noticing a pattern here. I'm trying to keep mock definitions contained and use the hooks like `beforeAll()` and `afterAll()` to make sure no mocks are left once the tests are done (and, often, even between the tests).
 
-Testing the `getRelativeTime()` function will be no exception:
+Testing the `getRelativeTime()` function is no exception:
 
 ```ts filename=get-relative-time.test.ts nonumber lines=2,6
 beforeAll(() => {
@@ -16,7 +16,7 @@ afterAll(() => {
 })
 ```
 
-Calling `vi.useFakeTimers()` detached this test from the real flow of time, and makes it rely on the internal fake date Vitest has. Correspondingly, the `vi.useRealTimers()` utility undoes that.
+Calling `vi.useFakeTimers()` detaches this test from the real flow of time, making it rely on the internal fake date Vitest has. Correspondingly, the `vi.useRealTimers()` utility undoes that.
 
 To fix date and time in test, I will call `vi.useSystemTime()` function and provide it with the date that I want to be treated as `Date.now()`:
 
@@ -35,7 +35,7 @@ expect(getRelativeTime(new Date('2024-06-01 00:00:00.000Z'))).toBe('Just now')
 
 > This produces the time delta of `0ms`, which results in the `"Just now"` string being returned from the function.
 
-For the tests that feature an actual time difference, I have to use a slightly different setup. Firsts, the system time (which is `Date.now()`) should be set to the time that has _already passed_. Then, the `getRelativeTime()` function will accept the _starting time_ as an argument.
+For the tests that feature an actual time difference, I have to use a slightly different setup. First, the system time (which is `Date.now()`) should be set to the time that has _already passed_. Then, the `getRelativeTime()` function will accept the _starting time_ as an argument.
 
 ```ts filename=get-relative-time.test.ts nonumber lines=2
 test('returns "minute ago" for a date a minute ago', () => {
