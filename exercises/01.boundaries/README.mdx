@@ -33,7 +33,7 @@ test('doubles what "two" returns', () => {
 
 This creates an _integration test_ where the connection between `one()` and `two()` is important. This test will fail if `one()` behaves unexpectedly. This test will also fail if `two()` happened to do the same, despite being the test for the `one()` function.
 
-This behavior is neither good nor bad. You are testing the code as-is, and the code has a dependency on another code. If you do nothing about that dependency, you will bring it into the test as well, which is precisely what you want for an integration test!
+This behavior is neither good nor bad. You are testing the code as-is, and the code has a dependency on some other code. If you do nothing about that dependency, you will bring it into the test as well, which is precisely what you want for an integration test!
 
 Sometimes, however, you need to test certain behaviors in isolation. Sometimes, you need to make dependencies behave a certain way to put your tested code in the right state. In those situations, you need to establish a test boundary.
 
@@ -65,7 +65,7 @@ return result * 2
 //            ^^^
 ```
 
-Because everything else in `one()` is now _mocked_. The test will no longer fail if `two()` has a bug, only if `one()` fails to do the multiplication correctly.
+Because everything else in `one()` is now _mocked_, the test will no longer fail if `two()` has a bug — it will only fail if `one()` fails to do the multiplication correctly.
 
 > You use mocking to preserve the dependency but lift its behavior from the code to the test, making it controllable.
 
@@ -99,15 +99,15 @@ But also, perhaps the most important question: What does mocking do to my code?
 
 ## What mocking does to your code
 
-Mocking is an essential tool for test testing. It can be your lever to transition between different testing levels, handle dependencies, model required behaviors, and focus on particular logic (not to mention various mocking applications outside of the realm of testing!). But beware: when mocking, **you are modifying your code**.
+Mocking is an essential tool for testing. It can be your lever to transition between different testing levels, handle dependencies, model required behaviors, and focus on particular logic (not to mention various mocking applications outside of the realm of testing!). But beware: when mocking, **you are modifying your code**.
 
 <callout-info class="important">
   The more you alter the system under test, the more you are testing a different
   system.
 </callout-info>
 
-Any mock you introduce creates a tiny alternative universe where the code you are testing is mostly the same but not quite. Those "not quite"s can be desired and controllable, but they can also decrease the quality of your tests and make you trust them less. Like any tool, mocking has to be handled with purpose and care.
+Any mock you introduce creates a tiny parallel universe where the code you are testing is mostly the same but not quite. Those "not quite"s can be desired and controllable, but they can also decrease the quality of your tests and make you trust them less. Like any tool, mocking has to be handled with purpose and care.
 
-You don't want to end up in the state where you are running tests against mocks alone. If that happens, you aren't testing anything and should take a good dozen of steps back to reconsider your testing strategy.
+You don't want to end up in the state where you are running tests against mocks alone. If that happens, you aren't testing anything and should take a good step back and reconsider your testing strategy.
 
 In this workshop, we will take a look at the most common applications of mocking and also when and how to use those. But before we begin, let's make sure you get the hang of the concept of a "test boundary" first.
