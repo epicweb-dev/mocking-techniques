@@ -43,7 +43,7 @@ export function getRelativeTime(date: Date): string {
 
 > We are also using the standard [`Intl.RelativeTimeFormat()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat) API to help us format the time: "1 minute ago" but "5 minute<u>s</u> ago". Give it a read if you're not familiar with it!
 
-By using mocking, we can become magicians who can bend time and space! Well, maybe just time, for now. Vitest comes with a built-in [`vi.useFakeTimers()`](https://vitest.dev/api/vi.html#vi-usefaketimers) utility to make otherwise unpredictable date and time fixed and given.
+By using mocking, we can become magicians who can bend time and space! Well, maybe just time—for now. Vitest comes with a built-in [`vi.useFakeTimers()`](https://vitest.dev/api/vi.html#vi-usefaketimers) utility to make otherwise unpredictable date and time fixed and given.
 
 Since mocking time is such a common use case, Vitest gives you a more comfortable API to work with while also allowing to toggle between the "fake" and the "real" date whenever you need.
 
@@ -57,6 +57,6 @@ vi.setSystemTime(new Date('2024-06-01 00:00:00.000Z'))
 // will resolve to the midnight of the 1st of June 2024.
 ```
 
-But this is, of course, not enough. We don't need a specific date but _different_ days to model relative scenarios (1 minute ago, 2 months ago, etc). Loos like each test will exist in its own, separate little universe!
+But this is, of course, not enough. We don't need a specific date but _different_ days to model relative scenarios (1 minute ago, 2 months ago, etc). Each test will exist in its own separate little universe!
 
 👨‍💼 Complete the test suite for the `getRelativeTime()` function. Remember that `vi.useFakeTimers()` is still a mock and must be treated as such (cleanup?). Verify your solution by running `npm test`.
