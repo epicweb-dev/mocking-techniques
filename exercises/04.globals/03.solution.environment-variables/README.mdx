@@ -19,11 +19,11 @@ afterAll(() => {
 })
 ```
 
-I'm using `vi.spyOn(console, 'log')` to be able to assert on `console.log` calls in test, but the most important part is that I'm clearing any environment variable mocks by adding `vi.unstubAllEnvs()` to the `afterEach()` hook.
+I'm using `vi.spyOn(console, 'log')` to be able to assert on `console.log` calls in tests, but more importantly I'm clearing any environment variable mocks by adding `vi.unstubAllEnvs()` to the `afterEach()` hook.
 
-> I'm using the `afterEach()` hook here so that individual test cases could have different values for the same environment variables.
+> I'm using the `afterEach()` hook here so that individual test cases can have different values for the same environment variables.
 
-In the first test suite, the intention is to make sure that our `Emitter` class prints messages to the console when `process.env.NODE_ENV` is `"development"`. I will mock the value of that environment variable using `vi.stubEnv()` as the first thing in the test:
+In the first test, the intention is to make sure that our `Emitter` class prints messages to the console when `process.env.NODE_ENV` is `"development"`. I will mock the value of that environment variable using `vi.stubEnv()` as the first thing in the test:
 
 ```ts filename=emitter.test.ts nonumber lines=2
 test('logs debugging messages when run in development', () => {
@@ -31,7 +31,7 @@ test('logs debugging messages when run in development', () => {
 
 ```
 
-> Note that it's possible (and sometimes even beneficial) to have a combination of both global (the `before*` and `after*` hooks) and local test setups, like we have here with the `vi.stubEnv()` function insise this test.
+> Note that it's possible (and sometimes even beneficial) to have a combination of both global (the `before*` and `after*` hooks) and local test setups, like we have here with the `vi.stubEnv()` function inside this test.
 
 The `vi.stubEnv()` utility accepts two arguments:
 
@@ -92,4 +92,4 @@ test('does not log debugging messages in production', () => {
 })
 ```
 
-> Although this test case will pass even if you omit the `vi.stubEnv()` setup, that won't be correct. It passes because Vitest sets `process.env.NODE_ENV` to `"test"` by default, but your intention is not to test how `Emitter` behaves in test. It is to check how it behaves in **production**.
+> Although this test case will pass even if you omit the `vi.stubEnv()` setup, that isn't correct. It passes because Vitest sets `process.env.NODE_ENV` to `"test"` by default, but your intention is not to test how `Emitter` behaves in test. It is to check how it behaves in **production**.
