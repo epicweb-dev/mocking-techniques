@@ -50,6 +50,6 @@ export class OrderController {
 
 That's the responsibility Peter bestowed upon himself.
 
-Your responsibility, however, is to test the `.createOrder()` method on **the** `controller` class. There are couple of ways you can use mocking to help you with that, especially when it comes to modeling different item availability states.
+Your responsibility, however, is to test the `.createOrder()` method on the `OrderController` class. There are a couple of ways you can use mocking to help you with that, especially when it comes to modeling different item availability states.
 
 👨‍💼 Write automated tests for _both_ of the expectations toward the `.createOrder()` method by using [`.mockReturnValue()`](https://vitest.dev/api/mock.html#mockreturnvalue) and [`.mockImplementation()`](https://vitest.dev/api/mock.html#mockimplementation) utilities in Vitest to control the behavior of the `.isItemInStock()` method. By the end of the exercise, `npm test` must pass!
