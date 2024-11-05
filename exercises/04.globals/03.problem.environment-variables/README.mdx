@@ -2,9 +2,9 @@
 
 <EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/globals/environment-variables" />
 
-Another kind of global dependency your code may have is that on the environment. That is often done via _environment variables_, which, in JavaScript, are often exposed to the process via the `process.env` object.
+Another kind of global dependency your code may have is on the environment. This is often done via _environment variables_, which, in JavaScript, are often exposed to the process via the `process.env` object.
 
-You reach out to environment variables in cases like managing API secrets, feature flags, implementing different environment-depending logic, etc. And as such, dependency on environment variable is also one you have to know how to mock to orchestrate your tests correctly.
+You use environment variables for tasks like managing API secrets, feature flags, or implementing environment-specific logic. Consequently, environment variables are another dependency you need to know how to mock to properly orchestrate your tests.
 
 One of the most common usages of environment variables is the dependency on the current process' environment, i.e. `process.env.NODE_ENV`. That's precisely what our `Emitter` class does to imbue its methods with logging capabilities if run in development:
 
@@ -56,16 +56,16 @@ First, it determines the environment on runtime via the `isDevelopment()` functi
 
 But how do you test this?
 
-You can, of course, set a different `NODE_ENV` environment variable on the test script itself:
+You can, of course, set a different `NODE_ENV` environment variable when running the test script itself:
 
 ```sh
 NODE_ENV=development npm test
 ```
 
-But this won't play nicely on different operating systems, and will affect _the entire test run_ instead of focusing on a single test suite. The worst part, you won't be able to swap the value of `NODE_ENV` only in some test cases to see how your code behaves.
+But this won't play nicely on different operating systems, and will affect _the entire test run_ instead of focusing on a single test suite. The worst part is that you won’t be able to change the `NODE_ENV` value only for specific test cases to see how your code behaves.
 
-Alternatively, you can mock `process.env.NODE_ENV` as a _global value_, like you did in the previous exercise. That would work, but you would have not to forget to forward all the existing environment variables on `process.env` before mocking your own variable or two. This can easily slip past your mind, resulting in unreliable and, at times, broken tests.
+Alternatively, you can mock `process.env.NODE_ENV` as a _global value_, like you did in the previous exercise. That would work, but you would have to remember to forward all existing environment variables on `process.env` before mocking your own variables. This can easily be forgotten, leading to unreliable or even broken tests.
 
-**You can also use [`vi.stubEnv()`](https://vitest.dev/api/vi.html#vi-stubenv)**!
+**You can use [`vi.stubEnv()`](https://vitest.dev/api/vi.html#vi-stubenv)**!
 
-👨‍💼 The time has come for you to get to know `vi.stubEnv()`. In this exercise, complete new test cases for the <InlineFile file="emitter.test.ts" /> test suite by mocking the value of `process.env.NODE_ENV` using the built-in `vi.stubEnv()` API in Vitest. Verify your solution by running `npm test`. And remember, you will be asserting on `console.log` calls too!
+👨‍💼 The time has come for you to get to know `vi.stubEnv()`. In this exercise, add new test cases for the <InlineFile file="emitter.test.ts" /> test suite by mocking the value of `process.env.NODE_ENV` using the built-in Vitest `vi.stubEnv()` API. Verify your solution by running `npm test`. And remember, you will be asserting on `console.log` calls too!
