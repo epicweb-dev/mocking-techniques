@@ -4,7 +4,7 @@
 
 Right now, we are sending the exact successful JSON response that the `getAuthToken()` expects. That allows us to reproduce and test the happy path behavior.
 
-But there are more behaviors that we intended for this function, and they happened to concern themselves with error handling.
+But there are more behaviors that we intended for this function, and they happen to concern themselves with error handling.
 
 First, there's the logic that throws an error if the server responds with a 401 response (i.e. we are sending invalid user credentials and the authorization fails):
 
@@ -24,9 +24,9 @@ if (!response.ok) {
 
 Let's model both of these scenarios in tests with MSW!
 
-The request handlers we write in `handlers.ts` are meant to describe the happy path behaviors. In order to test the error handling that we have, we will utilize something called _runtime request handlers_.
+The request handlers we write in `handlers.ts` are meant to describe the happy path behaviors. In order to test our error handling, we will use a feature called _runtime request handlers_.
 
-In simple terms, a runtime handler is a request handler you can add on runtime. It _extends_ your network description and allows you to prepend new network behaviors to your happy paths from `handlers.ts`.
+In simple terms, a runtime request handler is a request handler you can add in individual tests. It _extends_ your network description and allows you to add new network behaviors to your happy paths defined in `handlers.ts`.
 
 Runtime handlers can be added using the [`server.use()`](https://mswjs.io/docs/api/setup-server/use) function:
 
@@ -58,7 +58,7 @@ await fetch('http://localhost/resource').then((response) => response.json())
 // {"response":"override"}
 ```
 
-> Above is the example of adding a runtime handler for the `GET http://localhost/resource` endpoint. Notice how the response to the `fetch()` call changes based on whether the request has been made before or after the runtime handler has been added.
+> Above is an example of adding a runtime handler for the `GET http://localhost/resource` endpoint. Notice how the response to the `fetch()` call changes based on whether the request was made before or after the runtime handler was added.
 
 👨‍💼 It's time you learned to use the power of runtime handlers! Rewrite the <InlineFile file="get-auth-token.test.ts" /> test to add new test cases for the error handling logic of the `getAuthToken()` function.
 
