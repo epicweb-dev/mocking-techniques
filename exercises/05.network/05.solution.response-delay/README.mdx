@@ -6,7 +6,7 @@
 
 First, let's take a look at how the request timeout handling is implemented in the `getAuthToken()` function. Handling timeouts often comes down to introducing a _race condition_ between the asynchronous operation in question and the timeout itself.
 
-To start, I will drop the `await` from the `fetch()` call and instead store the pending response promise in a new variable called `responsePromise`:
+To start with, I will drop the `await` from the `fetch()` call and instead store the pending response promise in a new variable called `responsePromise`:
 
 ```ts filename=get-auth-token.ts nonumber remove=1 add=2
 const responsePromise = await fetch('https://api.example.com/auth', {
@@ -18,7 +18,7 @@ const responsePromise = fetch('https://api.example.com/auth', {
   the background.
 </callout-info>
 
-I do want it to continue, because the next thing I'm going to do is introduce a `timeoutPromise`:
+I want it to continue though, because the next thing I'm going to do is introduce a `timeoutPromise`:
 
 ```ts filename=get-auth-token.ts nonumber
 const timeoutPromise = new Promise<never>((_, reject) => {
@@ -30,7 +30,7 @@ const timeoutPromise = new Promise<never>((_, reject) => {
 
 This is a plain promise that always rejects after a certain period of time (i.e. the timeout).
 
-> :owl: Note that annotating the resolved type of the promise as `Promise<never>` I'm making sure that my code understands that this promise _never_ resolves, only rejects.
+> :owl: Note that by annotating the resolved type of the promise as `Promise<never>` I'm making sure that my code understands that this promise _never_ resolves, only rejects.
 
 And, finally, I will create a race condition between the `responsePromise` and the `timeoutPromise` using the [`Promise.race()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race) API in JavaScript:
 
@@ -40,7 +40,7 @@ const response = await Promise.race([responsePromise, timeoutPromise])
 
 > Using `Promise.race()` will resolve or reject whenever any of the given promises resolves or rejects. This basically means that whichever of the two promises is faster wins (either the response promise or the timeout promise).
 
-The important part from the logic is that I've set the 3000 milliseconds to be the timeout duration. I'd need to keep that duration in mind to write a proper test. Speaking of which...
+The important part of the logic is that I've set the 3000 milliseconds to be the timeout duration. I'll need to keep that duration in mind to write a proper test. Speaking of which...
 
 ## Test
 
@@ -50,7 +50,7 @@ In the `get-auth-token.test.ts` module, I will import the `delay` function from 
 import { http, delay } from 'msw'
 ```
 
-I will add a new test case called `'handles the request timeout'` where I'll add a new runtime handler for the same `POST https://api.example.com/auth` endpoint, using `server.use()`. In the response resolver, I will await the `delay()` function which I called with the `'infinite'` delay mode as an argument:
+I will add a new test case called `'handles the request timeout'` where I'll add a new runtime handler for the same `POST https://api.example.com/auth` endpoint, using `server.use()`. In the response resolver, I will await the `delay()` function which I call with the `'infinite'` delay mode as an argument:
 
 ```ts filename=get-auth-token.test.ts nonumber lines=2-6
 test('handles the request timeout', async () => {
@@ -64,9 +64,9 @@ test('handles the request timeout', async () => {
 
 > The `'infinite'` delay mode simulates an infinitely pending request.
 
-The next thing would be to call the `getAuthToken()` function. If I call it straight away, it will reject as expected, but the test would have to wait the entire 3000 milliseconds before that happens. That is a rather needless overhead!
+The next thing to do would be to call the `getAuthToken()` function. If I call it straight away, it will reject as expected, but the test would have to wait the entire 3000 milliseconds before that happens. That is a rather needless overhead!
 
-Instead, I will _mock_ that time, using the same old `vi.useFameTimers()` utility!
+Instead, I will _mock_ that time, using the same `vi.useFakeTimers()` utility we've used before!
 
 ```ts filename=get-auth-token.test.ts add=5-7,9-11
 import { http, delay } from 'msw'
@@ -82,7 +82,7 @@ afterAll(() => {
 })
 ```
 
-While using the fake timers, the time and space is frozen in this test until I decide what to do with it. I will store the pending auth token promise in a `tokenPromise` variable:
+While using fake timers, time and space is frozen in this test until I decide what to do with it. First, I will store the pending auth token promise in a `tokenPromise` variable:
 
 ```ts filename=get-auth-token.test.ts nonumber lines=8-11
 test('handles the request timeout', async () => {
@@ -116,7 +116,7 @@ test('handles the request timeout', async () => {
   vi.advanceTimersByTime(3000)
 ```
 
-This will skip right to the part where the `timeoutPromise` rejects, which I then assert in the test:
+This will skip right to the part of the code where the `timeoutPromise` rejects, which I then assert in the test:
 
 ```ts filename=get-auth-token.test.ts nonumber
 await expect(tokenPromise).rejects.toThrow(
