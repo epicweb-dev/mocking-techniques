@@ -2,11 +2,11 @@
 
 <EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/network/set-up-msw" />
 
-Setting up Mock Service Worker in your project consists of three steps:
+Setting up Mock Service Worker in your project involves three steps:
 
 1. Installing the library;
 1. Describing the network using [request handlers](https://mswjs.io/docs/concepts/request-handler);
-1. Integrating MSW into the environments or tools you need.
+1. Integrating MSW with the environments or tools you use.
 
 There are many use cases for API mocking. In this exercise, we will focus primarily on using MSW for integration testing in Node.js (Vitest). Please refer to the [Getting started](https://mswjs.io/docs/getting-started) guide in the library's documentation for more detailed instructions on using it for other purposes.
 
@@ -24,11 +24,11 @@ npm install msw --save-dev
 
 When working with MSW, you describe the network using functions called _request handlers_. They decide which requests to intercept and how to handle their responses.
 
-It's a good practice to start with a single `handlers.ts` file that will contain all the request handlers for your application or tests. This is where you describe the "happy paths" of your network.
+It's good practice to start with a single `handlers.ts` file that will contain all the request handlers for your application or tests. This is where you describe the "happy paths" of your network.
 
-🐨 <InlineFile file="handlers.ts">Click here to create a `handlers.ts` file.</InlineFile>
+🐨 <InlineFile file="handlers.ts">Click here to create the `handlers.ts` file.</InlineFile>
 
-In `handlers.ts`, we will add a single request handler that will print any requests happening during the test to the console.
+In `handlers.ts`, we will add a single request handler that will print all requests that occur during the test to the console.
 
 🐨 Paste the following contents into `handlers.ts`:
 
@@ -42,17 +42,17 @@ export const handlers = [
 ]
 ```
 
-> This is an illustrational request handler that matches all request methods (`http.all()`) to all paths (`*`). You will learn more about request handlers in the upcoming exercises.
+> This is an example request handler that matches all request methods (`http.all()`) to all paths (`*`). You will learn more about request handlers in the upcoming exercises.
 
 ## Integrate
 
-MSW is installed and request handlers are written but it doesn't do anything yet. To kick off mocking, you have to integrate MSW into your environment (browser or Node.js).
+We've installed MSW and written request handlers, but it’s not active yet. To kick off mocking, we have to integrate MSW into your environment (browser or Node.js).
 
-We are going to use MSW in Vitest, and it's a good practice to integrate it as a part of the global test setup. So, let's create a setup file just for that!
+We are going to use MSW in Vitest, and it's recommended to integrate it as a part of the global test setup. So, let's create a setup file just for that!
 
 🐨 <InlineFile file="handlers.ts">Click here to create a `vitest.setup.ts` file.</InlineFile>
 
-Next, go to `vitest.config.ts` and add the `setupFiles` property to the configuration to use the newly create setup module:
+Next, go to `vitest.config.ts` and add the `setupFiles` property to the configuration to use the newly created setup module:
 
 ```ts filename=vitest.config.ts add=6
 import { defineConfig } from 'vitest/config'
@@ -71,7 +71,7 @@ export default defineConfig({
 import { setupServer } from 'msw/node'
 ```
 
-> The [`setupServer()`](https://mswjs.io/docs/api/setup-server/) function enables MSW in any Node.js environment, like Vitest! Despite the name, there are no actual servers involved, and the mocking happens in the same process as the `setupServer()` call.
+> The [`setupServer()`](https://mswjs.io/docs/api/setup-server/) function enables MSW in any Node.js environment, such as Vitest! Despite the name, there are no actual servers involved—the mocking happens in the same process as the `setupServer()` call.
 
 ```ts filename=vitest.setup.ts add=2,4
 import { setupServer } from 'msw/node'
@@ -80,7 +80,7 @@ import { handlers } from './handlers.js'
 const server = setupServer(...handlers)
 ```
 
-Because using MSW is still mocking something, let's make sure that it starts and finishes as a part of the test run.
+Since MSW is still a form of mocking, let’s ensure it starts and finishes as part of the test run.
 
 🐨 Add the `beforeAll()` and `afterAll()` hooks and call `server.listen()` and `server.close()` in them, respectively:
 
@@ -99,9 +99,9 @@ afterAll(() => {
 })
 ```
 
-> The [`server.listen()`](https://mswjs.io/docs/api/setup-server/listen) and [`server.close()`](https://mswjs.io/docs/api/setup-server/close) functions start and stop the interception of requests in this process, respectively.
+> The [`server.listen()`](https://mswjs.io/docs/api/setup-server/listen) and [`server.close()`](https://mswjs.io/docs/api/setup-server/close) functions start and stop the interception of requests in this process.
 
-🐨 To complete the setup, add the `afterEach()` hook and call the `server.resetHandlers()` function in there. This will reset any per-test mocks we will introduce later in tests.
+🐨 To complete the setup, add the `afterEach()` hook and call the `server.resetHandlers()` function in there. This will reset any per-test mocks we introduce later in tests.
 
 ```ts filename=vitest.setup.ts add=10-12
 import { setupServer } from 'msw/node'
@@ -122,4 +122,4 @@ afterAll(() => {
 })
 ```
 
-> The [`server.resetHandlers()`](https://mswjs.io/docs/api/setup-server/reset-handlers) function removes any request handlers override that were added during the test.
+> The [`server.resetHandlers()`](https://mswjs.io/docs/api/setup-server/reset-handlers) function removes any request handler overrides that were added during tests.
