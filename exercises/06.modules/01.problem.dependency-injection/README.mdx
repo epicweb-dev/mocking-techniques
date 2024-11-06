@@ -2,11 +2,11 @@
 
 <EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/modules/dependency-injection" />
 
-First, let's see how you can use _dependency injection_ as an alternative to module mocking. We've already touched on dependency injection when mocking functions, but now, let's how a proper introduction to it.
+First, let's see how you can use _dependency injection_ as an alternative to module mocking. We've previously touched on dependency injection when mocking functions, but now, let's give it a proper introduction.
 
 ## What is dependency injection?
 
-Dependency injection (short, DI) is a software design technique that reverses the dependency relation, making the system a function of a dependency.
+Dependency injection (DI) is a software design technique that reverses dependency relationships, making the system dependent on an external dependency.
 
 Consider this implementation of an `UploadService` class:
 
@@ -30,9 +30,9 @@ The purpose of this class is to upload files via the `.upload()` method. Interna
 
 This means that the `UploadService -> FileStorage` dependency is _implicit_. Nobody using the upload service knows about it, and that includes our tests!
 
-Because of this implicit dependency, the two classes become tightly coupled. If you would want to exclude the behaviors of the `FileStorage` class while testing the `UploadService` class, you would have to expose the implementation detail of that dependency to the test. That will make the test brittle, failing if you restructure your classes.
+Because of this implicit dependency, the two classes become tightly coupled. If you want to exclude the behaviors of the `FileStorage` class while testing the `UploadService` class, you would have to expose the implementation detail of that dependency to the test. This will make the test brittle, as it will fail if you restructure your classes.
 
-You can avoid this tight coupling by refactoring the `UploadService` class to _accept_ an instance of a `FileStorage` as an argument (i.e. explicit dependency):
+You can avoid this tight coupling by refactoring the `UploadService` class to _accept_ an instance of a `FileStorage` as an argument (i.e. an explicit dependency):
 
 ```ts add=4 remove=5
 import { FileStorage } from './file-storage.js'
@@ -48,7 +48,7 @@ export class UploadService {
 }
 ```
 
-This seemingly insignificant change has huge implications on the relationship between these classes. Because their dependency has been "lifted up", this allows the consumer of the upload service to provide any instance of the file storage they want.
+This seemingly insignificant change has huge implications on the relationship between these classes. Because their dependency has been "lifted up", this allows the consumer of the upload service to provide any file storage object they want.
 
 ```ts highlight=2
 const storage = new FileStorage()
@@ -68,7 +68,7 @@ const storage = new FakeFileStorage()
 const uploadService = new UploadService(storage)
 ```
 
-The only thing we have to do to make this setup work is to ensure that the `FakeFileStorage` is compatible with the actual `FileStorage`. To keep the established API contract.
+The only thing we have to do to make this setup work is to ensure that the `FakeFileStorage` is compatible with the actual `FileStorage` to fulfill the established API contract.
 
 But before we do that, let me give you a warning...
 
@@ -76,7 +76,7 @@ But before we do that, let me give you a warning...
 
 **Dependency injection is a software design technique, not a testing technique**. I find it extremely harmful to base your design decisions around how your system is going to be tested. You are creating APIs for your _consumers_, and as such, you must have the consumer's best interest in mind when crafting those APIs. Sometimes that will mean more complexity for you to tackle in tests, and that is perfectly fine.
 
-In other words, be cautious not to rewrite your code for the sake of easier testing experience. This workshop alone gives you enough tools to tackle any complexity your system may introduce. **Let it not sway you from the correct API decisions**.
+In other words, be cautious about rewriting your code for the sake of an easier testing experience. This workshop alone gives you enough tools to tackle any complexity your system may introduce. **Don't let it sway you from good API decisions**.
 
 <callout-info class="important">Design your software for the _user_, not the tests.</callout-info>
 
