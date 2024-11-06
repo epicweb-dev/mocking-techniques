@@ -2,9 +2,11 @@
 
 <EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/network/error-responses/solution" />
 
-I start with restructuring our project a little bit. In order for me to use runtime handlers, I need to have access to the same `server` object created in `vitest.setup.ts`. However, importing from the setup file _is not recommended_.
+I start by restructuring our project a little bit. In order to use runtime handlers, I need to have access to the same `server` object created in `vitest.setup.ts`. However, importing from the setup file _is not recommended_.
 
-> :owl: Although Vitest will **cache imports** and not evaluate the global hooks twice if you import from the setup file, it caches imports **per test file**. This works nice in the isolated mode, which Vitest uses by default, but may cause problems if you switch to parallel test runs.
+> :owl: Although Vitest will **cache imports** and won't evaluate the global hooks twice if you import from the setup file, it caches imports **per test file**. This works nicely in the isolated mode, which Vitest uses by default, but may cause problems if you switch to parallel test runs.
+
+The directory structure should now look like this:
 
 ```shell
 /
@@ -41,13 +43,13 @@ import { server } from './mocks/node.js'
 import { getAuthToken } from './get-auth-token.js'
 ```
 
-At last, I can prepend request handlers using the [`server.use()`](https://mswjs.io/docs/api/setup-server/use) API to model network scenarios on a per-test basis! The workflow for overriding the network will be the same no matter where I'm going to use it:
+At last, I can prepend request handlers using the [`server.use()`](https://mswjs.io/docs/api/setup-server/use) API to model network scenarios on a per-test basis! The workflow for overriding the network will be the same no matter where I use it:
 
 1. Go to the test case that needs a different network behavior;
 1. Call `server.use()` with a request handler for the same request but describe a different mocked response;
-1. Execute the tested code (the code that does the request).
+1. Execute the tested code (the code that makes the request).
 
-Here's how the invalid credentials scenario will look like with the runtuime handler in place:
+Here's what the invalid credentials scenario will look like with the runtime handler in place:
 
 ```ts filename=get-auth-token.test.ts nonumber add=2-6
 test('throws an error if the user credentials are invalid', async () => {
@@ -90,4 +92,4 @@ Lastly, I will run the tests to make sure everything works as expected:
 
 ## Further reading
 
-Runtime request handlers is a powerful way to describe dynamic network behaviors. I highly recommend you to read the :scroll: [Network behavior overrides](https://mswjs.io/docs/best-practices/network-behavior-overrides) best practice to learn more how you can utilize it during developing and testing your projects.
+Runtime request handlers are a powerful way to describe dynamic network behaviors. I highly recommend you to read the :scroll: [Network behavior overrides](https://mswjs.io/docs/best-practices/network-behavior-overrides) best practice guide to learn more how you can use them when developing and testing your projects.
