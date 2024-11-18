@@ -31,13 +31,6 @@ test('handles network errors', async () => {
       return Response.error()
     }),
   )
-
-  await expect(() =>
-    getAuthToken({
-      email: 'kody@epicweb.dev',
-      password: 'supersecret123',
-    }),
-  ).rejects.toThrow('Authentication failed: network error')
 })
 ```
 

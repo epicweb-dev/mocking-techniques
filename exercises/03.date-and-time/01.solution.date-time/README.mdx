@@ -18,14 +18,14 @@ afterAll(() => {
 
 Calling `vi.useFakeTimers()` detached this test from the real flow of time, and makes it rely on the internal fake date Vitest has. Correspondingly, the `vi.useRealTimers()` utility undoes that.
 
-To fix date and time in test, I will call `vi.useSystemTime()` function and provide it with the date that I want to be treated as `Date.now()`:
+To fix date and time in test, I will call `vi.setSystemTime()` function and provide it with the date that I want to be treated as `Date.now()`:
 
 ```ts filename=get-relative-time.test.ts nonumber lines=2
 test('returns "Just now" for the current date', () => {
   vi.setSystemTime(new Date('2024-06-01 00:00:00.000Z'))
 ```
 
-> :owl: `vi.useSystemTime()` only works in conjunction with `vi.useFakeTimers()`.
+> :owl: `vi.setSystemTime()` only works in conjunction with `vi.useFakeTimers()`.
 
 In order to model the "Just now" scenario, the delta between the current time and the start time has to be 60 seconds or less. In this test, I will pass the exact same date to the `getRelativeTime()` function as the system time:
 
