@@ -2,7 +2,7 @@
 
 <EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/date-and-time/timers/solution" />
 
-I begin from setting up the testing hooks to mock time in this test, using the `vi.useFakeTimers()` and `vi.useRealTimers()` functions, the same way I did in the previous exercise:
+I begin by setting up the testing hooks to mock time in this test, using the `vi.useFakeTimers()` and `vi.useRealTimers()` functions, the same way I did in the previous exercise:
 
 ```ts filename=debounce.test.ts nonumber lines=2,6
 beforeAll(() => {
@@ -45,7 +45,7 @@ All of those are great tools to have in your toolbelt. In this test, I will use 
 vi.advanceTimersByTime(250)
 ```
 
-This will immediately fastforward the test universe ahead by 250ms, allowing me to write my expectations toward the tested debounced function:
+This will immediately fast-forward the test universe ahead by 250ms, allowing me to write my expectations against the tested debounced function:
 
 ```ts filename=debounce.test.ts nonumber lines=3-4
 vi.advanceTimersByTime(250)
@@ -54,7 +54,7 @@ expect(fn).toHaveBeenCalledOnce()
 expect(fn).toHaveBeenCalledWith('one')
 ```
 
-The second test case will employ everything we've learned thus far to test the repetitive calls to the debounced function:
+The second test case will use everything we've learned so far to test repeated calls to the debounced function:
 
 ```ts filename=debounce.test.ts nonumber lines=8,13
 test('debounces the callback until the timeout passes since the last call', () => {
@@ -78,7 +78,7 @@ test('debounces the callback until the timeout passes since the last call', () =
 
 > Note that you can use fake timers and `vi.advanceTimersByTime()` and `vi.advanceTimersToNextTimer()` to test intervals (`setInterval`) too!
 
-## Difference with `sleep()`
+## Difference from `sleep()`
 
 You may be wondering about the difference between `vi.advanceTimersByTime()` and something like a `sleep()` function. Since in this case we do need to wait for a fixed period of time to pass, using `sleep()` may seem like a viable alternative. But the two behave completely differently.
 

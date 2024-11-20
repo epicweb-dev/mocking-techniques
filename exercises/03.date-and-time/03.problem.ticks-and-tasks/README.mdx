@@ -2,11 +2,11 @@
 
 <EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/date-and-time/ticks-and-tasks" />
 
-Since we are touching on the topic of testing logic that executes at a different time, we have to talk about the event loop. JavaScript is a single-threaded language, which means that it executes the operations in your app one-by-one, making them _blocking_ (the next piece of code cannot run until the previous one has finished). To know what code to run, JavaScript uses an _event loop_.
+Since we are touching on the topic of testing logic that executes at a later time, we have to talk about the event loop. JavaScript is a single-threaded language, which means that it executes the operations in your app one-by-one, making them _blocking_ (the next piece of code cannot run until the previous one has finished). To know what code to run, JavaScript uses an _event loop_.
 
-Whenever an action happens in your code, it's added to the execution stack—a queue of all the operations to run. As the name suggests, the event loop constantly iterates over that stack to see if there's anything else left in it to run. Once the stack is empty, it frees the thread so it can schedule next operations, and so on.
+Whenever an action occurs in your code, it gets added to the execution stack—a queue of all the operations to run. As the name suggests, the event loop constantly iterates over that stack to see if there's anything else left in it to run. Once the stack is empty, it frees the thread so it can schedule the next operations, and so on.
 
-There are cases when you want for an operation to _escape_ the current event loop and be scheduled for its next iteration (otherwise known as a "tick"). By doing that, you can unblock the thread and ensure that the operation runs _after_ all the following operations have completed.
+Sometimes, you may want an operation to _escape_ the current event loop and be scheduled for its next iteration (otherwise known as a "tick"). This unblocks the thread, ensuring the operation runs only _after_ all subsequent operations have completed.
 
 Let's take a look at an example.
 
@@ -39,7 +39,7 @@ To help you understand this behavior, let's visualize the event loop for this ex
 1. `this.dispatchEvent(new Event('connection'))`
 1. `connection.addEventListener('connection', () => { ... })`
 
-The class dispatches the `connection` event (3) _before_ the consumer code adds a listener for it (4). If we wish for the consumers to listen to that event happening in the constructor, we have to _schedule its dispatch for later_.
+The class dispatches the `connection` event (3) _before_ the consumer code can add a listener for it (4). If we want consumers to listen for that event when it occurs in the constructor, we have to _schedule its dispatch for later_.
 
 ## Scheduling tasks
 
@@ -72,12 +72,12 @@ With this changes, the event loop for this code will look like this:
 1. (next tick)
 1. (queued) `this.dispatchEvent(new Event('connection'))`
 
-Notice how adding the event listener and dispatching the event swapped places! By scheduling the event dispatch to the next tick, we can make sure that any consumers listening to that event will attach the listeners before that event is actually dispatched.
+Notice how adding the event listener and dispatching the event swapped places! By scheduling the event dispatch for the next tick, we ensure that consumers have time to attach listeners before the event is actually dispatched.
 
 ## Writing tests
 
-The event loop controls everything that runs in JavaScript, including your tests. It's important to know how you can await event loop iterations in test to assert things like that `connection` event being dispatched correctly.
+The event loop controls everything that runs in JavaScript, including your tests. It's important to know how you can await event loop iterations in tests to assert things like the `connection` event being dispatched correctly.
 
-I think that's a fantastic task for you!
+I think this is a fantastic task for you!
 
-👨‍💼 Finish the automated test for <InlineFile file="connection.test.ts" /> to await the next tick before asserting on the `connection` event listener being called (you may want to _spy_ on it!). Verify your solution by running `npm test`.
+👨‍💼 Finish the automated test for <InlineFile file="connection.test.ts" /> by awaiting the next tick before asserting on the `connection` event listener being called (you may want to _spy_ on it!). Verify your solution by running `npm test`.

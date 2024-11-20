@@ -2,19 +2,19 @@
 
 <EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/network/intro-to-network" />
 
-Network is the most common reason to introduce mocking to your test suite. Because that's also the most common thing you find in every application. You build products so they _do_ something, and on the web it takes the client and the server to achieve that. No wonder that many developers when told about mocking imagine API mocking, specifically.
+Network interactions are the most common reason to introduce mocking to your test suite, as nearly every application depends on them. You build products so they _do_ something, and on the web it takes the client and the server to achieve that. It’s no surprise that many developers, when thinking of mocking, specifically imagine API mocking.
 
 ## Why you should mock the network
 
-The reasons to mock network requests are quite similar to mocking anything else: to rule the network out of the testing equation. To make it stop affecting the test results.
+The reasons for mocking network requests are similar to mocking anything else: to eliminate the network’s impact on test results.
 
-But why? Your application does those requests in production, shouldn't you keep the behavior the same in tests?
+But why? Your application makes those requests in production, shouldn't you keep the behavior the same in tests?
 
-Yes and no. To help me explain this, I will reach out to the :scroll: [Golden Rule of Assertions](https://www.epicweb.dev/the-golden-rule-of-assertions):
+Yes and no. To help me explain this, I will reach again for the :scroll: [Golden Rule of Assertions](https://www.epicweb.dev/the-golden-rule-of-assertions):
 
 > A test must fail if, and only if, the intention behind the system is not met.
 
-Effectively, this means that the things that affect the test results must be directly related to the intention behind that test. Making the request itself is never the intention. The network is the protocol to _do_ something. You always have the actual logic surrounding the request to achieve that.
+This means that factors affecting test results should align with the test’s purpose. Making the request itself is never the purpose; the network is simply a protocol to _do_ something. The real focus is the logic surrounding the request.
 
 For example, you may be fetching the user object to render a personalized message in the UI:
 
@@ -28,15 +28,15 @@ async function Greet({ id }: { id: string }) {
 }
 ```
 
-Indeed, making the `GET /users/:id` request is a part of the implementation, but that's not the purpose of the `Greet` component. The purpose is to _render_ the received data. Often, it is also to handle request or response errors gracefully so they wouldn't disrupt the user experience.
+Indeed, making the `GET /users/:id` request is a part of the implementation, but that's not the purpose of the `Greet` component. The purpose is to _render_ the received data. Often, it is also to handle request or response errors gracefully so they don't disrupt the user experience.
 
-But think about what happens if you leave that request as-is in tests. First, it's going to take time to communicate with the server. But a far more important thing is that _the server response becomes directly responsible for the test result_.
+But think about what happens if you leave that request as-is in tests. First, it's going to take time to communicate with the server. But a far more important thing is that _the server response is directly responsible for the test result_.
 
-You aren't testing the server though. If talking about the integration level testing, the server has nothing to do with your `Greet` component. It's simply another variable part of the testing equation, much like date and time!
+You aren't testing the server though. When talking about integration level testing, the server has nothing to do with your `Greet` component—it's simply another variable part of the testing equation, much like date and time!
 
 <callout-info class="important">If your system is functioning correctly, the tests must pass.</callout-info>
 
-And you can use API mocking to control the network, allowing you to respond to the same request in different ways so you can test edge cases and error handling.
+You can use API mocking to control the network, allowing you to respond to the same request in different ways to test edge cases and error handling.
 
 ## How does API mocking work?
 
@@ -46,7 +46,7 @@ That also means you already know about the dangers of patching globals too. Thos
 
 > If you would like to dive deeper into the request interception in JavaScript, I have written a series of articles on API mocking. The best place to start is by reading :scroll: [The Request Journey](https://egghead.io/blog/understanding-api-mocking-the-http-request-journey).
 
-Mocking is deviating, so you naturally want to deviate your tested code as little as possible from its behavior in production. There are multiple API mocking solutions out there, and I encourage you to explore them all, but some tend to deviate your code more than others.
+Mocking introduces deviations, so you naturally want to minimize how much your tested code diverges from its behavior in production. There are multiple API mocking solutions out there, and I encourage you to explore them all, but some tend to diverge your code more than others.
 
 That is why in this workshop we will be using [Mock Service Worker](https://mswjs.io/). It builds on top of the web standards, like the Service Worker and the Fetch API, and provides one of the least intrusive interception algorithms in JavaScript, allowing your tests to run as much of the actual network code as possible.
 

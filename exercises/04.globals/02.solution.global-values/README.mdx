@@ -35,7 +35,7 @@ The next scenario involves handling relative URLs that only include paths. In it
 - When an _absolute_ path is provided (e.g. `/abc`);
 - When a _relative_ path is provided (e.g. `./abc`; notice the dot `.`).
 
-While both being rebased against the mocked `location.href`, these two scenarios will yield different URLs, which I make sure to cover in tests:
+While both being based on the mocked `location.href`, these two scenarios will yield different URLs, which I make sure to cover in tests:
 
 ```ts filename=to-absolute-url.test.ts nonumber lines=2-3
 test('resolves a relative url against the current location', () => {

@@ -17,14 +17,14 @@ POST https://api.example.com/auth
    × returns the authentication token on successful authentication
 ```
 
-This confirms that MSW is able to intercept the request we make in `getAuthToken()`. But the test itself is still failing!
+This confirms that MSW can intercept the request made in `getAuthToken()`. But the test itself is still failing!
 
 ```
 Caused by: Error: getaddrinfo ENOTFOUND api.example.com
 ```
 
-Althought the error is caused by us requesting a non-existing URL, the underlying issue is that we still **allow the test to make the actual request**.
+Although the error is caused by requesting a non-existent URL, the real issue is that we're still **allowing the test to make the actual request**.
 
-> That's right, MSW is **transparent** by default, and will allow all the intercepted requests to pass through unless you instruct it otherwise.
+> That's right, **MSW operates in pass-through mode by default**, allowing all intercepted requests to proceed unless instructed otherwise.
 
-It is time for us to change that by mocking that request with MSW!
+It is time for us to change that by mocking the request with MSW!

@@ -2,11 +2,11 @@
 
 <EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/globals/global-methods" />
 
-Often, global behaviors you would want to mock will be encapsulated to particular global objects. For example, the `log()` method is a part of the `console` object, which means you don't have to mock the entire `console` just to know when it prints something.
+Often, the global behaviors you want to mock are encapsulated within specific global objects. For example, the `log()` method is part of the `console` object, so you don’t need to mock the entire `console` just to track when it prints something.
 
-In that regard, mocking global methods is no different than mocking or spying on regular functions!
+In that regard, mocking global methods is no different from mocking or spying on regular functions!
 
-In fact, it's identical. It's always `vi.spyOn()`. The only thing that changes is the target object we provide to that utility:
+In fact, it's identical—it's always `vi.spyOn()`. The only difference is the target object we provide to the utility:
 
 ```ts nonumber
 // Spying on a method of the object you own.
@@ -50,16 +50,16 @@ function spyOn<T extends Object>(target: T, method: keyof T) {
 ```
 
 1. Store the original value (e.g. a function).
-2. Create as `spy` that has internal `state` to keep track of the function's calls.
+2. Create a `spy` with internal `state` to keep track of the function's calls.
 3. Replace the original function with the spy.
 
 You know what this reminds me of? **Monkey patching**.
 
-> :owl: Monkey patching is a technique to change or extend the behavior of a function or a method at runtime. It's often used to add logging, debugging, or testing capabilities to the existing code.
+> :owl: Monkey patching is a technique for changing or extending the behavior of a function or a method at runtime. It's often used to add logging, debugging, or testing capabilities to existing code.
 
-On its own, monkey-patching globals is rather :scroll: [dangerous](https://kettanaito.com/blog/why-patching-globals-is-harmful) and you shouldn't be using it directly. Doing things like `console.log = vi.fn()` in test can quickly lead to verbose test setups and brittle tests.
+On its own, monkey-patching globals is rather :scroll: [dangerous](https://kettanaito.com/blog/why-patching-globals-is-harmful) and you shouldn't use it directly. Doing things like `console.log = vi.fn()` in test can quickly lead to verbose test setups and brittle tests.
 
-Instead, relying on the tools that your testing framework provides is the way to go. They are battle-tested and are implemented with both yours and your test environment's best interests in mind.
+Instead, rely on the tools provided by your testing framework. They are battle-tested and designed with both your needs and the stability of your test environment in mind.
 
 ## Your task
 
@@ -84,4 +84,4 @@ export function printServerUrl(server: Server) {
 
 Since the very intention behind this function concerns itself around `console.log`, you would have to gain control over that global method to spy on its calls and make sure that the correct URL is indeed being printed out.
 
-👨‍💼 Rewrite <InlineFile file="print-server-url.test.ts" /> test suite to use the `vi.spyOn()` API from Vitest and spy on the global `console.log` method. Adjust the setup phase and the assertions to reflect the changes. Verify your solution by running `npm test`.
+👨‍💼 Rewrite <InlineFile file="print-server-url.test.ts" /> test suite to use the `vi.spyOn()` API from Vitest and spy on the global `console.log` method. Adjust the setup phase and assertions to reflect the changes. Verify your solution by running `npm test`.

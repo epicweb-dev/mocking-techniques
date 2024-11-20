@@ -2,15 +2,15 @@
 
 <EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/modules/intro-to-modules" />
 
-Mocking modules should be your last resort because it's the most intrusive mocking technique out there. As we've previously covered, mocking focuses on either _values_ or _behaviors_. When mocking a module, you are throwing away both, and leave it up to your mock to fill in the gaps in the best way possible.
+Mocking modules should be a last resort, as it’s the most intrusive mocking technique. As we've previously covered, mocking typically targets either _values_ or _behaviors_. When you mock a module, you discard both, leaving your mock to fill in the gaps as best it can.
 
-In practice, mocking modules may harm more than it may help. You rarely want to mock an _entire module_. You are problably thinking of a particular value or a behavior introduced by that module, and you should be mocking that instead, using the techniques you've already learned at this point.
+In practice, mocking entire modules often causes more harm than good. You rarely need to mock an _entire module_; usually, you’re focused on a specific value or behavior it introduces. Instead, use the techniques you’ve already learned to mock only what you need.
 
 ## Case study: Mocking Axios
 
-A common example of module mockingin the wild is mocking request clients, like `axios`. Let's take a look at how that works, what problems that has, and why it may not be the best idea.
+A common example of module mocking in the wild is mocking request clients, like `axios`. Let's take a look at how that works, what problems that has, and why it may not be the best idea.
 
-Here's a `fetchUser()` function that depends on `axios` to get the user by ID:
+Here's a `fetchUser()` function that depends on `axios` to get a user by ID:
 
 ```ts filename=fetch-user.ts
 import axios from 'axios'
@@ -21,7 +21,7 @@ export async function fetchUser(userId: string) {
 }
 ```
 
-What is often proposed is to mock the `axios` dependency in a test in order to remove the actual HTTP request from the testing equation and gain control over the returned response.
+What is often proposed is to mock the `axios` dependency in a test to remove the actual HTTP request from the testing equation and gain control over the returned response.
 
 ```ts filename=fetch-user.test.ts highlight=4,15-17
 import axios from 'axios'
@@ -56,12 +56,12 @@ The implications of mocking the `axios` module in this test are as big as they a
 
 **Those are enough reasons to scrap this test and start over**.
 
-Now that you know what is the true purpose of mocking, you can take a step back and ask yourself a question: What is it I _really_ need to mock in this test? The answer will be twofold:
+Now that you know the true purpose of mocking, you can take a step back and ask yourself a question: What is it I _really_ need to mock in this test? The answer will be twofold:
 
 1. Remove the HTTP request from the test (i.e. behavior);
 1. Control what response is returned from the server (i.e. value).
 
-The correct approach to orchestrating such a test for the `fetchUser()` function is to _mock the HTTP request_ and leave the `axios` out of the picture entirely. Your users don't know that you depend on Axios, and neither should your tests.
+The correct approach to orchestrating such a test for the `fetchUser()` function is to _mock the HTTP request_ and leave `axios` out of the picture entirely. Your users don't know that you depend on Axios, and neither should your tests.
 
 Compare the previous example with a test that uses API mocking instead:
 
@@ -101,4 +101,4 @@ test('returns the user by ID', async () => {
 
 ## The argument for module mocking
 
-That being said, mocking modules is still a technique you need to know. Mostly, to know of its dangers, but also because there are cases when mocking a module is a preferrable or, sometimes, even the only suitable approach. Let's dive into those cases!
+That said, mocking modules is still a technique worth knowing—not only to understand its risks but also because, in some cases, it’s the preferred or even the only viable approach. Let’s dive into those cases!

@@ -15,7 +15,7 @@ export function toAbsoluteUrl(url: string): string {
 }
 ```
 
-This is a browser-only function which purpose is to ensure the `url` we provided to it is returned as an absolute URL. If the `url` is absolute from the start, it's returned as-is. But if it is a relative URL (i.e. a pathname), it must be resolved against the current `location.href`.
+This is a browser-only function whose purpose is to ensure the `url` we provided to it is returned as an absolute URL. If the `url` is absolute already, it's returned as-is. But if it is a relative URL (i.e. a pathname), it must be resolved against the current `location.href`.
 
 Because of the dependency on `location`, we will be testing the `toAbsoluteUrl()` function in the `happy-dom` environment, which polyfills the global `location` object.
 
@@ -30,7 +30,7 @@ export default defineConfig({
 })
 ```
 
-By default, `location.href` in HappyDOM is set to `http://localhost:3000/`. However, for our new test to comply with the [Golden Rule of Assertions](https://www.epicweb.dev/the-golden-rule-of-assertions), the value of the `location.href` must be set on the test's level. Otherwise, a change in Vitest configuration can result in different absolute URLs being produced, thus failing the test prematurely.
+By default, `location.href` in HappyDOM is set to `http://localhost:3000/`. However, for our new test to comply with the [Golden Rule of Assertions](https://www.epicweb.dev/the-golden-rule-of-assertions), the value of the `location.href` must be set on the test's level. Otherwise, a change in Vitest configuration could result in different absolute URLs being produced, thus failing the test prematurely.
 
 Moreover, bringing the actual `location.href` value to the test level will give us more control over different URL-related scenarios (e.g. IPv4 vs IPv6 URLs).
 

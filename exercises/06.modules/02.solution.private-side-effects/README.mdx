@@ -2,9 +2,9 @@
 
 <EpicVideo url="https://www.epicweb.dev/workshops/mocking-techniques-in-vitest/modules/private-side-effects/solution" />
 
-As a rule of thumb, you should always strive toward mocking at the lowest possible level. Module mocking, however, lies on the higher spectrum of things. But that's not a bad thing in itself. In fact, if module mocking is justified, it gives you _full control over that module's values and behaviors_.
+As a rule of thumb, you should always aim to mock at the lowest possible level. Module mocking, however, lies on the higher spectrum of things. But that's not necessarily a bad thing. In fact, if module mocking is justified, it gives you _full control over that module's values and behaviors_.
 
-I am going to utilize that power to both exclude the telemetry side effect and mock the implementation of the `queryTable` function exported from `@workshop/epic-sdk`.
+I am going to use the power of module mocking to both exclude the telemetry side effect and mock the implementation of the `queryTable` function exported from `@workshop/epic-sdk`.
 
 In the `beforeAll()` hook, I will use [`vi.mock()`](https://vitest.dev/api/vi.html#vi-mock) function to mock a module.
 
@@ -21,7 +21,7 @@ The `vi.mock()` function accepts two arguments:
 - The module import to mock (`import('@workshop/epic-sdk')`).;
 - An optional factory function to implement the module.
 
-> Using a dynamic `import()` here allows proper type inference from the mocked module as well as makes the mock proof to renaming or deleting the module.
+> Using a dynamic `import()` here enables proper type inference from the mocked module and makes the mock resilient to module renaming or deletion.
 
 I will also provide the _factory function_ to control the exact exports returned from the mocked module. In this case, I will swap the actual `queryTable` function with the `queryTableMock` introduced earlier:
 
@@ -37,15 +37,15 @@ vi.mock(import('@workshop/epic-sdk'), async () => {
 })
 ```
 
-:owl: Since `vi.mock()` function is _hoisted_ (gets evaluated as the first thing no matter where it's defined), it won't be able to reference any values in the test's scope, like the `queryTableMock` function. To solve this, I am wrapping the mock function in the [`vi.hoisted()`](https://vitest.dev/api/vi.html#vi-hoisted) utility:
+:owl: Since `vi.mock()` function is _hoisted_ (gets evaluated as the first thing no matter where it's defined), it won't be able to reference any values in the test's scope, like the `queryTableMock` function. To solve this, I wrap the mock function in the [`vi.hoisted()`](https://vitest.dev/api/vi.html#vi-hoisted) utility:
 
 ```ts filename=authorize.test.ts nonumber
 const queryTableMock = vi.hoisted(() => vi.fn<() => Promise<User>>())
 ```
 
-This will expose the `queryTableMock` function to the `vi.mock()` factory correctly so it could use it as the value of the `queryTable` export. Nice!
+This will expose the `queryTableMock` function to the `vi.mock()` factory correctly so it can use it as the value of the `queryTable` export. Nice!
 
-And since I am using a mock function, to begin with, I need to make sure its call information and implementation are reset between tests:
+And since I am using a mock function, to begin with, I need to make sure its call state and implementation are reset between tests:
 
 ```ts filename=authorize.test.ts nonumber lines=2
 afterEach(() => {
@@ -53,9 +53,9 @@ afterEach(() => {
 })
 ```
 
-By mocking the entire `@workshop/epic-sdk` module, my test becomes in full control over its exports, but also over what gets evaluated at its root level (which, in this case, is nothing). This gives me two for the price of one: I am mocking the behavior I need (`queryTable`) while also excluding the side effects I don't (telemetry).
+By mocking the entire `@workshop/epic-sdk` module, my test is in full control over its exports, but also over what gets evaluated at its root level (which, in this case, is nothing). This gives me two for the price of one: I am mocking the behavior I need (`queryTable`) while also excluding the side effects I don't (telemetry).
 
-From this point on, the rest of the test is not much different from using mock functions you've practiced earlier. Using the `.mockResolvedValue` and `.mockRejectedValue()` built-in methods in Vitest, I will model different behavior scenarios of the `queryTable` function to test my `authorize()` function:
+From this point on, the rest of the test is not much different from using the mock functions you've practiced earlier. Using Vitest's `.mockResolvedValue()` and `.mockRejectedValue()` methods, I can simulate different scenarios for the `queryTable` function to test my `authorize()` function:
 
 ```ts filename=authorize.test.ts nonumber lines=2-5,14,20
 test('returns the authorized user', async () => {
@@ -96,7 +96,7 @@ They may look similar on the surface, but the way they behave is drastically dif
 
 ### `vi.mock()`
 
-`vi.mock()` function is _hoisted_. It means that no matter where you write it in your test file, it will _always be evaluated as the first thing in that test module_. This makes it useful for mocking module dependencies of the code you import in test, since imports are also hoisted, and would otherwise be subjected to import order issues:
+`vi.mock()` function is _hoisted_. It means that no matter where you call it in your test file, it will _always be evaluated as the first thing in that test module_. This makes it useful for mocking module dependencies of the code you import in tests, since imports are also hoisted, and would otherwise be subjected to import order issues:
 
 ```ts lines=4
 import { something } from 'dependency'
@@ -111,7 +111,7 @@ This affects any dependencies `vi.mock()` itself has as well. For example, if yo
 
 ### `vi.doMock()`
 
-`vi.doMock()` is the unhoisted alternative to `vi.mock()`. Unlike its sibling, `vi.doMock()` calls _are not hoisted_, which ...
+`vi.doMock()` is the unhoisted alternative to `vi.mock()`. Unlike its sibling, `vi.doMock()` calls _are not hoisted_:
 
 ```ts lines=4
 import { something } from 'dependency'
@@ -123,7 +123,7 @@ import { something } from 'dependency'
 // `something` has the mocked value from now on.
 ```
 
-This gives you more control over the import order in exchange for requiring you to import your tested code _dynamically_ to circumvent the standard imports hoisting and have the module mock take effect.
+This gives you more control over the import order in exchange for requiring you to import your tested code _dynamically_ to circumvent the standard imports hoisting and have the module mock take effect:
 
 ```ts lines=9
 beforeAll(() => {

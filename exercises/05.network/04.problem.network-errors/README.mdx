@@ -4,15 +4,15 @@
 
 It's time to use API mocking to help us discover blind spots in our `getAuthToken()` function!
 
-One of the common mistakes when dealing with the network is forgetting about network error handling. Now, I'm not talking about error responses (we've handled those in the previous exercise) but about the scenarios when the _request fails altogether_.
+A common mistake when dealing with the network is forgetting about network error handling. Now, I'm not talking about error responses (we covered those in the previous exercise), but rather the scenarios where the _request fails entirely_.
 
-Here's a few examples of network errors:
+Here are a few examples of network errors:
 
 - The requested server is down;
 - The client goes offline or the server connection is interrupted;
 - The client performs an invalid request.
 
-These errors have nothing to do with the server response but rather with the network connectivity. Despite that, we can still model those scenarios using Mock Service Worker!
+These errors aren't related to the server response but rather to network connectivity issues. Despite that, we can still model these scenarios using Mock Service Worker!
 
 ```ts lines=3 nonumber
 http.post('/endpoint', () => {
@@ -21,9 +21,9 @@ http.post('/endpoint', () => {
 })
 ```
 
-> The [`Response.error()`](https://developer.mozilla.org/en-US/docs/Web/API/Response/error_static) static method is a standard API for creating network errors primarily designed to be used in Service Workers.
+> The [`Response.error()`](https://developer.mozilla.org/en-US/docs/Web/API/Response/error_static) static method is the standard API for creating network errors primarily designed to be used in Service Workers.
 
-In the request handler above, MSW will respond to `POST /endpoint` requests with a network error. That, in turn, will [reject the response promise](https://kettanaito.com/blog/why-fetch-promise-doesnt-reject-on-error-responses) and allow us to test how well we handle that scenario in code.
+In the request handler above, MSW will respond to `POST /endpoint` requests with a network error. That, in turn, will [reject the response promise](https://kettanaito.com/blog/why-fetch-promise-doesnt-reject-on-error-responses) and allow us to test how well we handle that scenario in our code.
 
 👨‍💼 Use what you've learned about the runtime request handlers (`server.use()`) to complete the network error handling test case in <InlineFile file="get-auth-token.test.ts" />.
 

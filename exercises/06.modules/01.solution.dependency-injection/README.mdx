@@ -4,7 +4,7 @@
 
 First, let's complete the `FakeFileStorage` class.
 
-I will create an in-memory storage for the files on my `FakeFileStorage` class by defining a private property `data` and making it a `Map`:
+I will create an in-memory store for the files in my `FakeFileStorage` class by defining a private property `data` and making it a `Map`:
 
 ```ts filename=upload-service.test.ts nonumber add=2
 class FakeFileStorage implements FileStorage {
@@ -31,7 +31,7 @@ class FakeFileStorage implements FileStorage {
 
 > I'm using `Map.prototype.set` to store the `value` (the file chunks) by the file's `key`.
 
-Next on the list is the `get()` method of the fake storage. For this one, since the original `getItem()` method returns a `Promise`, I will wrap my `data` value access in `Promise.resolve()`. This will make my fake method to return a promise that resolves to the result of looking up the file in the `data` map.
+Next on the list is the `get()` method of the fake storage object. For this one, since the original `getItem()` method returns a `Promise`, I will wrap my `data` value access in `Promise.resolve()`. This will make my fake method to return a promise that resolves to the result of looking up the file in the `data` map.
 
 ```ts filename=upload-service.test.ts nonumber add=9-11
 class FakeFileStorage implements FileStorage {
@@ -48,7 +48,7 @@ class FakeFileStorage implements FileStorage {
 }
 ```
 
-With my file storage fake ready, I can continue with using it in tests.
+With my file storage fake ready, I can use it in tests.
 
 In the first test, I will declare a `store` variable and assign it to be an instance of the `FakeFileStorage` class:
 
@@ -57,7 +57,7 @@ test('stores a small file in a single chunk', async () => {
   const storage = new FakeFileStorage()
 ```
 
-I can then provide the fake `storage` instance as an argument to the `UploadService` constructor to use the fake storage during the test run:
+I can then provide the fake `storage` instance as an argument to the `UploadService` constructor to use the fake storage object during the test run:
 
 ```ts filename=upload-service.test.ts nonumber add=4
 test('stores a small file in a single chunk', async () => {
@@ -70,14 +70,14 @@ test('stores a small file in a single chunk', async () => {
 
 The upload service instance for this test is configured to have `5` bytes as the maximum allowed chunk size:
 
-```ts filename=upload-service.test.ts nonumber lines=2
+```ts filename=upload-service.test.ts nonumber lines=3
 const uploadService = new UploadService({
   storage,
   maxChunkSize: 5,
 })
 ```
 
-Since I'm uploading a file with the content `'hello'`, and it's _exactly_ 5 bytes long, I am expecting a single chunk to be stored in my fake storage. Let's write an assertion just for that:
+Since I'm uploading a file with the content `'hello'`, and it's _exactly_ 5 bytes long, I am expecting a single chunk to be stored in my fake storage object. Let's write an assertion just for that:
 
 ```ts filename=upload-service.test.ts nonumber add=14
 test('stores a small file in a single chunk', async () => {
@@ -144,6 +144,6 @@ test('splits a large file in multiple chunks', async () => {
 })
 ```
 
-Now, these two file upload scenarios for my `UploadService` are passing in tests because I'm excluding the actual uploading functionality, delegating it to my `FakeFileStorage` class that _still stores the uploaded files_, doing that in memory.
+Now, both file upload scenarios for `UploadService` pass in tests because the actual upload functionality is excluded. Instead, it’s delegated to `FakeFileStorage`, which _still stores the uploaded files_, but does so in memory rather than hitting the network.
 
-This excludes the actual `FileStorage` implementation from the test since it's irrelevant, while simultaneously giving me access to the actually uploaded chunks to assert my upload service reliably.
+This excludes the actual `FileStorage` implementation from the test, as it’s irrelevant, while still giving access to the uploaded chunks to reliably assert the behavior of my upload service.
