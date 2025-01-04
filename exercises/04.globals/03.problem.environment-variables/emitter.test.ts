@@ -52,7 +52,7 @@ test('logs debugging messages when run in development', () => {
 
 test('does not log debugging messages in production', () => {
   // 🐨 In a similar fashion, mock the `process.env.NODE_ENV` variable
-  // to equal to "development".
+  // to equal to "production".
   // 💰 vi.stubEnv(variableName, value)
 
   const emitter = new Emitter<{ hello: [firstName: string] }>()
