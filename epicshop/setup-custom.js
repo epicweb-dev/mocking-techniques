@@ -1,15 +1,15 @@
 import path from 'node:path'
-import fsExtra from 'fs-extra'
+import { warm } from '@epic-web/workshop-cli/warm'
 import {
 	getApps,
 	isProblemApp,
 	setPlayground,
 } from '@epic-web/workshop-utils/apps.server'
+import fsExtra from 'fs-extra'
+
+await warm()
 
 const allApps = await getApps()
-const uniqueApps = allApps.filter(
-	(a, index) => allApps.findIndex(b => b.fullPath === a.fullPath) === index,
-)
 const problemApps = allApps.filter(isProblemApp)
 
 if (!process.env.SKIP_PLAYGROUND) {
@@ -25,7 +25,7 @@ if (!process.env.SKIP_PLAYGROUND) {
 			() => {
 				console.log('✅ first problem app set up')
 			},
-			error => {
+			(error) => {
 				console.error(error)
 				throw new Error('❌  first problem app setup failed')
 			},
