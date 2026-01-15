@@ -2,6 +2,6 @@
   "name": "exercises__sep__01.boundaries__sep__01.problem.boundaries",
   "type": "module",
   "devDependencies": {
-    "vitest": "^2.0.4"
+    "vitest": "^2.1.4"
   }
 }

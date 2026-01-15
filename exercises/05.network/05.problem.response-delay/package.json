@@ -5,7 +5,7 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "msw": "^2.3.0",
-    "vitest": "^2.0.4"
+    "msw": "^2.6.0",
+    "vitest": "^2.1.4"
   }
 }
