@@ -73,8 +73,7 @@ To fix this, you need to extend the type of `Console['log']` in your test and ma
 import { MockInstance } from 'vitest'
 
 declare namespace console {
-  var log: Console['log'] &
-    MockInstance<Parameters<Console['log']>, ReturnType<Console['log']>>
+  var log: Console['log'] & MockInstance<Console['log']>
 }
 ```
 
