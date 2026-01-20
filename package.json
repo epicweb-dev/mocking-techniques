@@ -33,11 +33,11 @@
   },
   "type": "module",
   "scripts": {
-    "postinstall": "cd ./epicshop && npm install",
-    "build": "npm run build --if-present --workspaces",
-    "start": "npx --prefix ./epicshop epicshop start",
-    "dev": "npx --prefix ./epicshop epicshop start",
-    "test": "npm run test --silent --prefix playground",
+    "postinstall": "cd ./epicshop && pkgmgr install",
+    "build": "pkgmgr run build --if-present --workspaces",
+    "start": "pkgmgrx --prefix ./epicshop epicshop start",
+    "dev": "pkgmgrx --prefix ./epicshop epicshop start",
+    "test": "pkgmgr run test --silent --prefix playground",
     "setup": "node ./setup.js",
     "setup:custom": "node ./epicshop/setup-custom.js",
     "lint": "eslint .",
@@ -73,6 +73,7 @@
     "@typescript-eslint/parser": "^7.1.0",
     "eslint": "^8.57.0",
     "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "pkgmgr": "^1.1.1"
   }
 }
