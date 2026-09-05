@@ -1,6 +1,6 @@
 import { authorize, User } from './authorize.js'
 
-const queryTableMock = vi.hoisted(() => vi.fn<() => Promise<User>>())
+const queryTableMock = vi.hoisted(() => vi.fn<() => Promise<User | null>>())
 
 vi.mock(import('@workshop/epic-sdk'), async () => {
   return {

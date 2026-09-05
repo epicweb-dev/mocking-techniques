@@ -28,7 +28,7 @@ I will also provide the _factory function_ to control the exact exports returned
 ```ts filename=authorize.test.ts nonumber lines=3,7
 import { authorize, User } from './authorize.js'
 
-const queryTableMock = vi.hoisted(() => vi.fn<() => Promise<User>>())
+const queryTableMock = vi.hoisted(() => vi.fn<() => Promise<User | null>>())
 
 vi.mock(import('@workshop/epic-sdk'), async () => {
   return {
@@ -40,7 +40,7 @@ vi.mock(import('@workshop/epic-sdk'), async () => {
 :owl: Since `vi.mock()` function is _hoisted_ (gets evaluated as the first thing no matter where it's defined), it won't be able to reference any values in the test's scope, like the `queryTableMock` function. To solve this, I wrap the mock function in the [`vi.hoisted()`](https://vitest.dev/api/vi.html#vi-hoisted) utility:
 
 ```ts filename=authorize.test.ts nonumber
-const queryTableMock = vi.hoisted(() => vi.fn<() => Promise<User>>())
+const queryTableMock = vi.hoisted(() => vi.fn<() => Promise<User | null>>())
 ```
 
 This will expose the `queryTableMock` function to the `vi.mock()` factory correctly so it can use it as the value of the `queryTable` export. Nice!
